@@ -30,6 +30,13 @@ CREATE TABLE disposiciones (
     FOREIGN KEY (id_laberinto) REFERENCES laberintos(id)
 );
 
+CREATE TABLE preguntas (
+	id INT PRIMARY KEY AUTO_INCREMENT,
+	pregunta VARCHAR(100) NOT NULL,
+	respuesta VARCHAR(40) NOT NULL,
+	pista VARCHAR(60) NOT NULL
+);
+
 CREATE TABLE partidas(
 	id_usuario INT,
     id_laberinto INT,
