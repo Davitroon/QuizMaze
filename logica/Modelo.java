@@ -70,4 +70,24 @@ public class Modelo {
 		
 		return rset;
 	}
+	
+	
+	/**
+	 * Método para agregar usuario a la base de datos.
+	 * @param usuario Nombre del usuario
+	 * @param contrasena Contraseña del usuario
+	 */
+	public void agregarUsuario(String usuario, String contrasena) {
+		String consulta = "INSERT INTO usuarios (usuario, contraseña) VALUES (?, ?)";
+		
+		try {
+			PreparedStatement stmt = conexion.prepareStatement(consulta);
+			stmt.setString(1, usuario);
+			stmt.setString(2, contrasena);
+			stmt.executeUpdate();	
+			
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}		
+	}
 }
