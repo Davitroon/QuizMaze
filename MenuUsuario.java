@@ -14,6 +14,7 @@ public class MenuUsuario extends JFrame {
 	private static final long serialVersionUID = 1L;
 	private JPanel contentPane;
 	private Login logeo;
+	private String nombreUsuario;
 
 	public MenuUsuario(Login logeo) {
 		this.logeo = logeo;
@@ -58,6 +59,11 @@ public class MenuUsuario extends JFrame {
 		btnNewButton_1_1.setBackground(Color.RED);
 		btnNewButton_1_1.setBounds(15, 231, 84, 23);
 		contentPane.add(btnNewButton_1_1);
+		
+		JLabel lblNewLabel = new JLabel("Hola " + logeo.getNombreUsuario());
+		lblNewLabel.setFont(new Font("Tahoma", Font.PLAIN, 20));
+		lblNewLabel.setBounds(153, 68, 161, 27);
+		contentPane.add(lblNewLabel);
 	}
 
 }
