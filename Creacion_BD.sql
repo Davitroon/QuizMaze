@@ -1,5 +1,5 @@
-CREATE DATABASE Laberinto25;
-USE Laberinto25;
+CREATE DATABASE laberinto25;
+USE laberinto25;
 
 CREATE TABLE usuarios (
 	id INT PRIMARY KEY AUTO_INCREMENT,
