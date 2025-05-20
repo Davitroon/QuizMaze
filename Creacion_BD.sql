@@ -157,5 +157,3 @@ CREATE TABLE disposiciones_matriz (
 	PRIMARY KEY (cord_x, cord_y, id_disposicion),
     FOREIGN KEY (id_disposicion) REFERENCES disposiciones(id)
 );
-
-drop database laberinto25
