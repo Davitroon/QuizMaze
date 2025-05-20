@@ -1,124 +1,158 @@
-package Ejercicioractico;
+package Logica;
 
-import java.awt.EventQueue;
-import javax.swing.*;
-import java.awt.event.*;
-import java.awt.*;
+import java.sql.*;
+import java.util.Scanner;
 
-public class Principal {
+import Vista.MenuAdmin;
+import Vista.MenuUsuario;
 
-	private JFrame frame;
-	private JTextField txtCantidad;
-	private final ButtonGroup buttonGroup = new ButtonGroup();
-	private JLabel txtError;
-	private JRadioButton rdbtnGasto;
-	private JRadioButton rdbtnIngreso;
-	private JButton btnAñadir;
-	private TablaGastosIngresos pantalla1 = new TablaGastosIngresos(this);;
+public class Login {
 
-	public static void main(String[] args) {
-		EventQueue.invokeLater(() -> {
-			try {
-				Principal window = new Principal();
-				window.frame.setVisible(true);
-			} catch (Exception e) {
-				e.printStackTrace();
+	private String database = "laberinto25";
+	private String login = "root";
+	private String pwd = "Purruku_2006";
+	private String url = "jdbc:mysql://localhost/" + database;
+	private Connection conexion;
+	private MenuAdmin interfazAdmin;
+	private MenuUsuario interfazUsuario;
+	private String nombreUsuario;
+
+	public String getNombreUsuario() {
+		return nombreUsuario;
+	}
+
+	public Login() {
+		try {
+			Class.forName("com.mysql.cj.jdbc.Driver");
+			conexion = DriverManager.getConnection(url, login, pwd);
+			System.out.println("-> Conexión con BD establecida");
+		} catch (ClassNotFoundException e) {
+			System.out.println("Driver JDBC No encontrado");
+			e.printStackTrace();
+			System.exit(0);
+		} catch (SQLException e) {
+			System.out.println("Error al conectarse a la BD");
+			e.printStackTrace();
+			System.exit(0);
+		} catch (Exception e) {
+			System.out.println("Error general de Conexión");
+			e.printStackTrace();
+			System.exit(0);
+		}
+	}
+
+	public ResultSet consultarDato(String tabla, int id) {
+		ResultSet rset = null;
+		String consulta = "SELECT * FROM " + tabla + " WHERE id = ?";
+
+		try {
+			PreparedStatement stmt = conexion.prepareStatement(consulta);
+			stmt.setInt(1, id);
+			rset = stmt.executeQuery();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+
+		return rset;
+	}
+
+	public ResultSet consultarUsuario(String usuario, String contrasena) {
+		ResultSet rset = null;
+		String consulta = "SELECT * FROM usuarios WHERE usuario = ? AND contraseña = ?";
+
+		try {
+			PreparedStatement stmt = conexion.prepareStatement(consulta);
+			stmt.setString(1, usuario);
+			stmt.setString(2, contrasena);
+			rset = stmt.executeQuery();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+
+		return rset;
+	}
+
+	public void logearse() {
+		Scanner scn = new Scanner(System.in);
+		boolean accesoConcedido = false;
+		int opciones = 0;
+		while (true) {
+			System.out.println("Introduce lo que quieres hacer: 1.Crear Usuario 2.Iniciar Sesión");
+			if (scn.hasNextInt()) {
+				opciones = scn.nextInt();
+				scn.nextLine();
+				if (opciones == 2 || opciones == 1) {
+					break;
+				}
+				System.out.println("Has introducido un rango no valido, intentalo de nuevo");
+			} else {
+				System.out.println("Error, introduce un valor valido: ");
+				scn.nextLine();
 			}
-		});
-	}
+		}
+		while (!accesoConcedido) {
+			switch (opciones) {
+			case 1:
+				System.out.print("Nombre de usuario nuevo: ");
+				String usuarioNuevo = scn.nextLine();
 
-	public Principal() {
-		initialize();
-	}
+				System.out.print("Contraseña: ");
+				String contraseñaNueva = scn.nextLine();
 
-	private void initialize() {
-		frame = new JFrame();
-		frame.setBounds(100, 100, 450, 300);
-		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		frame.getContentPane().setLayout(null);
+				System.out.print("Repite la contraseña: ");
+				String contraseñaRepetida = scn.nextLine();
 
-		JLabel txtImporte = new JLabel("Importe: ");
-		txtImporte.setFont(new Font("Tahoma", Font.PLAIN, 20));
-		txtImporte.setBounds(95, 75, 84, 25);
-		frame.getContentPane().add(txtImporte);
+				if (!contraseñaRepetida.equals(contraseñaNueva)) {
+					System.out.println("Las contraseñas no son iguales");
+					break;
+				}
 
-		txtCantidad = new JTextField();
-		txtCantidad.setBounds(180, 75, 143, 29);
-		frame.getContentPane().add(txtCantidad);
-		txtCantidad.setColumns(10);
-
-		rdbtnIngreso = new JRadioButton("Ingreso");
-		rdbtnIngreso.setSelected(true);
-		rdbtnIngreso.setFont(new Font("Tahoma", Font.PLAIN, 15));
-		buttonGroup.add(rdbtnIngreso);
-		rdbtnIngreso.setBounds(95, 125, 84, 29);
-		frame.getContentPane().add(rdbtnIngreso);
-
-		rdbtnGasto = new JRadioButton("Gasto");
-		rdbtnGasto.setFont(new Font("Tahoma", Font.PLAIN, 15));
-		buttonGroup.add(rdbtnGasto);
-		rdbtnGasto.setBounds(95, 157, 84, 29);
-		frame.getContentPane().add(rdbtnGasto);
-
-		txtError = new JLabel("");
-		txtError.setForeground(Color.RED);
-		txtError.setFont(new Font("Tahoma", Font.ITALIC, 11));
-		txtError.setBounds(180, 106, 200, 25);
-		frame.getContentPane().add(txtError);
-
-		btnAñadir = new JButton("Añadir");
-		btnAñadir.setEnabled(false);
-		btnAñadir.setBounds(190, 130, 133, 56);
-		frame.getContentPane().add(btnAñadir);
-
-		txtCantidad.addKeyListener(new KeyAdapter() {
-			@Override
-			public void keyReleased(KeyEvent e) {
 				try {
-					int cantidad = Integer.parseInt(txtCantidad.getText());
+					String sql = "INSERT INTO USUARIOS (USUARIO, CONTRASEÑA) VALUES (?, ?)";
+					PreparedStatement stmt = conexion.prepareStatement(sql);
+					stmt.setString(1, usuarioNuevo);
+					stmt.setString(2, contraseñaNueva);
+					stmt.executeUpdate();
+					System.out.println("Usuario creado correctamente");
+				} catch (Exception e) {
+					System.out.println("Error al crear usuario");
+				}
+				return;
 
-					if (cantidad <= 0) {
-						txtError.setText("La cantidad debe ser mayor que 0");
-						btnAñadir.setEnabled(false);
-						return;
-					}
+			case 2:
+				System.out.print("Usuario: ");
+				nombreUsuario = scn.nextLine();
 
-					if (rdbtnIngreso.isSelected()) {
-						txtError.setText("");
-						btnAñadir.setEnabled(true);
-					} else if (rdbtnGasto.isSelected()) {
-						if (cantidad <= pantalla1.getSaldoActual()) {
-							txtError.setText("");
-							btnAñadir.setEnabled(true);
+				System.out.print("Contraseña: ");
+				String contraseña = scn.nextLine();
+
+				ResultSet rs = consultarUsuario(nombreUsuario, contraseña);
+
+				try {
+					if (rs != null && rs.next()) {
+						System.out.println("Has iniciado sesión como " + nombreUsuario);
+						accesoConcedido = true;
+
+						if (nombreUsuario.equals("admin") && contraseña.equals("root")) {
+							interfazAdmin = new MenuAdmin(this);
+							interfazAdmin.setVisible(true);
 						} else {
-							txtError.setText("Saldo insuficiente para el gasto");
-							btnAñadir.setEnabled(false);
+							interfazUsuario = new MenuUsuario(this);
+							interfazUsuario.setVisible(true);
 						}
+					} else {
+						System.out.println("Usuario o contraseña incorrectos");
 					}
-				} catch (NumberFormatException ex) {
-					btnAñadir.setEnabled(false);
-					txtError.setText("Formato inválido");
+				} catch (Exception e) {
+					System.out.println("Error al iniciar sesión");
+					e.printStackTrace();
 				}
 			}
-		});
-
-		btnAñadir.addActionListener(e -> {
-			int cantidad = Integer.parseInt(txtCantidad.getText());
-
-			if (rdbtnIngreso.isSelected()) {
-				pantalla1.agregarMovimiento(0, cantidad);
-			} else {
-				pantalla1.agregarMovimiento(cantidad, 0);
-			}
-
-			txtCantidad.setText("");
-			btnAñadir.setEnabled(false);
-			pantalla1.setVisible(true);
-			frame.setVisible(false);
-		});
+		}
 	}
 
-	public void setVisible(boolean b) {
-		frame.setVisible(b);
+	public static void main(String[] args) {
+		Login acceder = new Login();
+		acceder.logearse();
 	}
 }
