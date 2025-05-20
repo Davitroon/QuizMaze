@@ -48,7 +48,7 @@ public class Modelo {
 	
 	
 	/**
-	 * Método para consultar los datos de un usuario especifico.
+	 * Método para consultar los datos de un usuario especifico, el usuario y contraseña debe coincidir.
 	 * @param usuario Nombre del usuario
 	 * @param contrasena Contraseña del usuario
 	 * @return Resultado de la consulta SQL. null si el dato no existe.
@@ -77,7 +77,7 @@ public class Modelo {
 	 * @param usuario Nombre del usuario
 	 * @param contrasena Contraseña del usuario
 	 */
-	public void agregarUsuario(String usuario, String contrasena) {
+	public void insertarUsuario(String usuario, String contrasena) {
 		String consulta = "INSERT INTO usuarios (usuario, contraseña) VALUES (?, ?)";
 		
 		try {
@@ -86,8 +86,46 @@ public class Modelo {
 			stmt.setString(2, contrasena);
 			stmt.executeUpdate();	
 			
-		} catch (SQLException e) {
+		} catch (SQLException e) { 
 			e.printStackTrace();
 		}		
 	}
+	
+	
+	/**
+	 * Método para agregar usuario a la base de datos.
+	 * @param usuario Nombre del usuario
+	 * @param contrasena Contraseña del usuario
+	 */
+	public void insertarLaberinto(Laberinto laberinto) {
+		String consulta = "INSERT INTO laberintos (ancho, alto, num_cocodrilos, daño_cocodrilos, num_botiquines, vida_botiquines, tiempo_pregunta, daño_pregunta, num_preguntas) "
+				+ "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+		
+		try {
+			PreparedStatement stmt = conexion.prepareStatement(consulta);
+			stmt.setInt(1, laberinto.getAncho());
+            stmt.setInt(2, laberinto.getAlto());
+            stmt.setInt(3, laberinto.getNumCocodrilos());
+            stmt.setInt(4, laberinto.getDanoCocodrilos());
+            stmt.setInt(5, laberinto.getNumBotiquines());
+            stmt.setInt(6, laberinto.getVidaBotiquines());
+            stmt.setInt(7, laberinto.getTiempoPregunta());
+            stmt.setInt(8, laberinto.getDañoPregunta());
+            stmt.setInt(9, laberinto.getNumPreguntas());
+			stmt.executeUpdate();	
+			
+	        // Obtener la clave generada (id)
+	        var rs = stmt.getGeneratedKeys();
+	        if (rs.next()) {
+	            int idGenerado = rs.getInt(1);
+	            laberinto.setId(idGenerado); // Asignar al objeto
+	        }
+			
+		} catch (SQLException e) { 
+			e.printStackTrace();
+		}		
+	}
+	
+	
+	
 }
