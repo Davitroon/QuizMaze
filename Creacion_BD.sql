@@ -1,3 +1,5 @@
+DROP DATABASE IF EXISTS laberinto25;
+
 CREATE DATABASE laberinto25;
 USE laberinto25;
 
