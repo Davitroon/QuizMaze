@@ -1,9 +1,14 @@
+package Logica;
+
 import java.sql.*;
 import java.util.Scanner;
 
+import Vista.MenuAdmin;
+import Vista.MenuUsuario;
+
 public class Login {
 
-	private String database = "laberinto";
+	private String database = "laberinto25";
 	private String login = "root";
 	private String pwd = "Purruku_2006";
 	private String url = "jdbc:mysql://localhost/" + database;
@@ -24,12 +29,15 @@ public class Login {
 		} catch (ClassNotFoundException e) {
 			System.out.println("Driver JDBC No encontrado");
 			e.printStackTrace();
+			System.exit(0);
 		} catch (SQLException e) {
 			System.out.println("Error al conectarse a la BD");
 			e.printStackTrace();
+			System.exit(0);
 		} catch (Exception e) {
 			System.out.println("Error general de Conexión");
 			e.printStackTrace();
+			System.exit(0);
 		}
 	}
 
@@ -67,11 +75,20 @@ public class Login {
 	public void logearse() {
 		Scanner scn = new Scanner(System.in);
 		boolean accesoConcedido = false;
-		System.out.println("Introduce lo que quieres hacer: 1.Crear Usuario 2.Iniciar Sesión");
-		int opciones = scn.nextInt();
-		scn.nextLine();
-		while (!accesoConcedido) {
-			switch (opciones) {
+		int opciones = 0;
+		while (true) {
+			System.out.println("Introduce lo que quieres hacer: 1.Crear Usuario 2.Iniciar Sesión");
+			if (scn.hasNextInt()) {
+				opciones = scn.nextInt();
+				scn.nextLine();
+				break;
+			} else {
+				System.out.println("Error, introduce un valor valido: ");
+				scn.nextLine();
+			}
+		}
+			while (!accesoConcedido) {
+				switch (opciones) {
 				case 1:
 					System.out.print("Nombre de usuario nuevo: ");
 					String usuarioNuevo = scn.nextLine();
@@ -128,13 +145,9 @@ public class Login {
 						e.printStackTrace();
 					}
 					break;
-
-				default:
-					System.out.println("Opción no válida");
-					return;
+				}
 			}
 		}
-	}
 
 	public static void main(String[] args) {
 		Login acceder = new Login();
