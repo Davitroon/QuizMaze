@@ -32,7 +32,7 @@ public class Modelo {
 	public ResultSet consultarDato(String tabla, int id) {
 		
 		ResultSet rset = null;
-		String consulta = "SELECT * FROM " + tabla + "WHERE id = ?";
+		String consulta = "SELECT * FROM " + tabla + " WHERE id = ?";
 		
 		try {
 			PreparedStatement stmt = conexion.prepareStatement(consulta);
@@ -102,7 +102,7 @@ public class Modelo {
 				+ "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
 		
 		try {
-			PreparedStatement stmt = conexion.prepareStatement(consulta);
+			PreparedStatement stmt = conexion.prepareStatement(consulta, PreparedStatement.RETURN_GENERATED_KEYS);
 			stmt.setInt(1, laberinto.getAncho());
             stmt.setInt(2, laberinto.getAlto());
             stmt.setInt(3, laberinto.getNumCocodrilos());
@@ -126,6 +126,57 @@ public class Modelo {
 		}		
 	}
 	
+	
+	/**
+	 * Método para agregar una disposicion a la base de datos
+	 * @param idLaberinto
+	 */
+	public void insertarDisposicion(Disposicion disposicion) {
+		String consulta = "INSERT INTO disposiciones (id_laberinto) VALUES (?)";
+		
+		try {
+			PreparedStatement stmt = conexion.prepareStatement(consulta, PreparedStatement.RETURN_GENERATED_KEYS);
+			stmt.setInt(1, disposicion.getIdLaberinto());
+			stmt.executeUpdate();
+			
+	        // Obtener la clave generada (id)
+	        var rs = stmt.getGeneratedKeys();
+	        if (rs.next()) {
+	            int idGenerado = rs.getInt(1);
+	            disposicion.setId(idGenerado); // Asignar al objeto
+	        }
+			
+		} catch (SQLException e) { 
+			e.printStackTrace();
+		}
+	}
+	
+	
+
+	/**
+	 * Método para agregar la matriz de una disposición a la base de datos
+	 * @param cordX Coordenada X
+	 * @param cordY Coordenada Y
+	 * @param idDisposicion Id de la disposición
+	 * @param elemento Elemento que se encuentra en la casilla
+	 */
+    public void insertarDisposicionMatriz(int cordX, int cordY, int idDisposicion, int elemento) {
+        String consulta = "INSERT INTO disposiciones_matriz (cord_x, cord_y, id_disposicion, elemento) VALUES (?, ?, ?, ?)";
+
+        try {
+        	PreparedStatement stmt = conexion.prepareStatement(consulta);
+
+            stmt.setInt(1, cordX);
+            stmt.setInt(2, cordY);
+            stmt.setInt(3, idDisposicion);
+            stmt.setInt(4, elemento);
+
+            stmt.executeUpdate();
+            
+        } catch (SQLException e) {
+        	e.printStackTrace();
+        }
+    }
 	
 	
 }

@@ -1,5 +1,8 @@
 package logica;
 
+/**
+ * Clase laberinto que creará el usuario.
+ */
 public class Laberinto {
 	
 	private int id;
@@ -14,9 +17,11 @@ public class Laberinto {
 	private int numPreguntas;
 	
 	private int [][] mapa;
+	
+	private Modelo modelo;
 
 	public Laberinto(int ancho, int alto, int num_cocodrilos, int dano_cocodrilos, int num_botiquines,
-			int vida_botiquines, int tiempo_pregunta, int daño_pregunta, int num_perguntas) {
+			int vida_botiquines, int tiempo_pregunta, int daño_pregunta, int num_perguntas, Modelo modelo) {
 		this.ancho = ancho;
 		this.alto = alto;
 		this.numCocodrilos = num_cocodrilos;
@@ -26,41 +31,19 @@ public class Laberinto {
 		this.tiempoPregunta = tiempo_pregunta;
 		this.dañoPregunta = daño_pregunta;
 		this.numPreguntas = num_perguntas;
-		this.mapa = new int [ancho][alto];
-	}
-
-	
-	public void setMapa(int[][] mapa) {
-		this.mapa = mapa;
-	}
-
-	
-	public int[][] getMapa() {
-		return mapa;
+		this.modelo = modelo;
+		
+		mapa = new int [ancho][alto];
 	}
 	
 	
+	/**
+	 * Generar una nueva disposición al azar.
+	 */
 	public void generarDisposicion() {
-		
-		int botiquines;
-		int cocodrilos;
-		
-		// 0 - Vacio. 1 - Botiquin. 2 - Cocodrilo. 3 - Muro.
-		for (int i = 0; i < alto; i++) {
-			for (int j = 0; j < ancho; j++) {
-				if (mapa[i][j] == 0) {
-					double numero = Math.random();
-					
-					if (numero <= 0.15) {
-						mapa[i][j] = 1;
-					}
-					
-					if (numero > 0.15 && numero <= 0.30) {
-						mapa[i][j] = 2;
-					}
-				}
-			}
-		}	
+	
+		Disposicion disposicion = new Disposicion(mapa, this.getId(), modelo);
+		disposicion.generarMatriz(numBotiquines, numCocodrilos);	
 	}
 
 
