@@ -22,8 +22,7 @@ CREATE TABLE laberintos (
     num_botiquines INT NOT NULL,
     vida_botiquines INT NOT NULL,
     tiempo_pregunta INT NOT NULL,
-    daño_pregunta INT NOT NULL,
-    num_preguntas INT NOT NULL
+    daño_pregunta INT NOT NULL
 );
 
 CREATE TABLE disposiciones (
