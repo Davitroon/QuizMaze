@@ -81,73 +81,75 @@ public class Login {
 			if (scn.hasNextInt()) {
 				opciones = scn.nextInt();
 				scn.nextLine();
-				break;
+				if (opciones == 2 || opciones == 1) {
+					break;
+				}
+				System.out.println("Has introducido un rango no valido, intentalo de nuevo");
 			} else {
 				System.out.println("Error, introduce un valor valido: ");
 				scn.nextLine();
 			}
 		}
-			while (!accesoConcedido) {
-				switch (opciones) {
-				case 1:
-					System.out.print("Nombre de usuario nuevo: ");
-					String usuarioNuevo = scn.nextLine();
+		while (!accesoConcedido) {
+			switch (opciones) {
+			case 1:
+				System.out.print("Nombre de usuario nuevo: ");
+				String usuarioNuevo = scn.nextLine();
 
-					System.out.print("Contraseña: ");
-					String contraseñaNueva = scn.nextLine();
+				System.out.print("Contraseña: ");
+				String contraseñaNueva = scn.nextLine();
 
-					System.out.print("Repite la contraseña: ");
-					String contraseñaRepetida = scn.nextLine();
+				System.out.print("Repite la contraseña: ");
+				String contraseñaRepetida = scn.nextLine();
 
-					if (!contraseñaRepetida.equals(contraseñaNueva)) {
-						System.out.println("Las contraseñas no son iguales");
-						break;
-					}
-
-					try {
-						String sql = "INSERT INTO USUARIOS (USUARIO, CONTRASEÑA) VALUES (?, ?)";
-						PreparedStatement stmt = conexion.prepareStatement(sql);
-						stmt.setString(1, usuarioNuevo);
-						stmt.setString(2, contraseñaNueva);
-						stmt.executeUpdate();
-						System.out.println("Usuario creado correctamente");
-					} catch (Exception e) {
-						System.out.println("Error al crear usuario");
-					}
-					return;
-
-				case 2:
-					System.out.print("Usuario: ");
-					nombreUsuario = scn.nextLine();
-
-					System.out.print("Contraseña: ");
-					String contraseña = scn.nextLine();
-
-					ResultSet rs = consultarUsuario(nombreUsuario, contraseña);
-
-					try {
-						if (rs != null && rs.next()) {
-							System.out.println("Has iniciado sesión como " + nombreUsuario);
-							accesoConcedido = true;
-
-							if (nombreUsuario.equals("admin") && contraseña.equals("root")) {
-								interfazAdmin = new MenuAdmin(this);
-								interfazAdmin.setVisible(true);
-							} else {
-								interfazUsuario = new MenuUsuario(this);
-								interfazUsuario.setVisible(true);
-							}
-						} else {
-							System.out.println("Usuario o contraseña incorrectos");
-						}
-					} catch (Exception e) {
-						System.out.println("Error al iniciar sesión");
-						e.printStackTrace();
-					}
+				if (!contraseñaRepetida.equals(contraseñaNueva)) {
+					System.out.println("Las contraseñas no son iguales");
 					break;
+				}
+
+				try {
+					String sql = "INSERT INTO USUARIOS (USUARIO, CONTRASEÑA) VALUES (?, ?)";
+					PreparedStatement stmt = conexion.prepareStatement(sql);
+					stmt.setString(1, usuarioNuevo);
+					stmt.setString(2, contraseñaNueva);
+					stmt.executeUpdate();
+					System.out.println("Usuario creado correctamente");
+				} catch (Exception e) {
+					System.out.println("Error al crear usuario");
+				}
+				return;
+
+			case 2:
+				System.out.print("Usuario: ");
+				nombreUsuario = scn.nextLine();
+
+				System.out.print("Contraseña: ");
+				String contraseña = scn.nextLine();
+
+				ResultSet rs = consultarUsuario(nombreUsuario, contraseña);
+
+				try {
+					if (rs != null && rs.next()) {
+						System.out.println("Has iniciado sesión como " + nombreUsuario);
+						accesoConcedido = true;
+
+						if (nombreUsuario.equals("admin") && contraseña.equals("root")) {
+							interfazAdmin = new MenuAdmin(this);
+							interfazAdmin.setVisible(true);
+						} else {
+							interfazUsuario = new MenuUsuario(this);
+							interfazUsuario.setVisible(true);
+						}
+					} else {
+						System.out.println("Usuario o contraseña incorrectos");
+					}
+				} catch (Exception e) {
+					System.out.println("Error al iniciar sesión");
+					e.printStackTrace();
 				}
 			}
 		}
+	}
 
 	public static void main(String[] args) {
 		Login acceder = new Login();
