@@ -155,7 +155,7 @@ CREATE TABLE disposiciones_matriz (
     cord_y INT NOT NULL,
     id_disposicion INT NOT NULL,
     -- 1: Cocodrilo, 2: Botiquín, 3: Muro
-    elemento ENUM(1, 2, 3),
+    elemento INT NOT NULL,
 	PRIMARY KEY (cord_x, cord_y, id_disposicion),
     FOREIGN KEY (id_disposicion) REFERENCES disposiciones(id)
 );
