@@ -21,7 +21,7 @@ public class Laberinto {
 	private Modelo modelo;
 
 	public Laberinto(int ancho, int alto, int num_cocodrilos, int dano_cocodrilos, int num_botiquines,
-			int vida_botiquines, int tiempo_pregunta, int daño_pregunta, int num_perguntas, Modelo modelo) {
+			int vida_botiquines, int tiempo_pregunta, int daño_pregunta, int num_perguntas) {
 		this.ancho = ancho;
 		this.alto = alto;
 		this.numCocodrilos = num_cocodrilos;
@@ -31,7 +31,6 @@ public class Laberinto {
 		this.tiempoPregunta = tiempo_pregunta;
 		this.dañoPregunta = daño_pregunta;
 		this.numPreguntas = num_perguntas;
-		this.modelo = modelo;
 		
 		mapa = new int [ancho][alto];
 	}
@@ -144,6 +143,11 @@ public class Laberinto {
 
 	public void setId(int id) {
 		this.id = id;
+	}
+
+
+	public int[][] getMapa() {
+		return mapa;
 	}
 
 

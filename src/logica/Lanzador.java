@@ -7,8 +7,9 @@ import java.sql.SQLException;
  */
 public class Lanzador {
 	
-	static Modelo modelo;
-
+	private static Modelo modelo;
+	private static Login login;
+	
 	public static void main(String[] args) {
 		
 		try {
@@ -22,5 +23,7 @@ public class Lanzador {
 		}
 		
 		// Aqui habria que crear el resto de las clases
+		login = new Login (modelo);
+		login.logearse();
 	}
 }

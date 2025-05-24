@@ -1,47 +1,76 @@
-import java.awt.EventQueue;
-import javax.swing.JFrame;
-import javax.swing.*;
-import javax.swing.JLabel;
+package Vista;
+
 import java.awt.Font;
-import javax.swing.JSpinner;
-import javax.swing.JSlider;
-import javax.swing.event.ChangeListener;
-import javax.swing.event.ChangeEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
-public class InterfazAdministradorCreaciónMapa {
+import java.awt.event.ActionListener;
+
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JScrollPane;
+import javax.swing.JSlider;
+import javax.swing.JSpinner;
+import javax.swing.JTable;
+import javax.swing.SpinnerModel;
+import javax.swing.SpinnerNumberModel;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
+
+import logica.Disposicion;
+import logica.Laberinto;
+import logica.Modelo;
+public class CreadorMapa {
 
 	private JFrame frame;
 	private JButton btnCrear;
 	private JTable tablaLaberinto;
-
-	/**
-	 * Launch the application.
-	 */
-	public static void main(String[] args) {
-		EventQueue.invokeLater(new Runnable() {
-			public void run() {
-				try {
-					InterfazAdministradorCreaciónMapa window = new InterfazAdministradorCreaciónMapa();
-					window.frame.setVisible(true);
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-		});
-	}
+	private JSpinner spinnerAltura;
+	private JSpinner spinnerAnchura;
+	private JSpinner spinnerNumCocodrilos;
+	private JSpinner spinnerNumBotiquines;
+	private JSlider sliderDanoCocodrilo;
+	private JSlider sliderCuraBotiquin;
+	private JSpinner spinnerTiempoPregunta;
+	private JSlider sliderDanoPregunta;
+	private JScrollPane scrollPaneTABLALABERINTO;
+	
+	private MenuAdmin menuAdmin;
+	private Laberinto laberinto;
+	private Modelo modelo;
+	private Disposicion disposicion;
 
 	/**
 	 * Create the application.
+	 * @param menuAdmin 
 	 */
-	public InterfazAdministradorCreaciónMapa() {
+	public CreadorMapa(MenuAdmin menuAdmin, Modelo modelo) {
 		initialize();
+		this.menuAdmin = menuAdmin;
+		this.modelo = modelo;
 	}	
 
+	public JFrame getFrame() {
+		return frame;
+	}
+
+	
 	/**
 	 * Initialize the contents of the frame.
 	 */
 	private void initialize() {
+		
+	    // Asignacion variables
+	    int valorMINTiempoPrg = 5;
+		int valorMAXTiempoPrg = 45;
+		
+		int valorMAXBotiquines = 10;
+		int valorMAXCocodrilos = 10;
+		
+		int valorMINAltura = 3;
+		int valorMAXAltura = 10;
+		int valorMINAnchura = 3;
+		int valorMAXAnchura = 10;
+		
 		frame = new JFrame();
 		frame.setBounds(100, 100, 680, 403);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -72,7 +101,7 @@ public class InterfazAdministradorCreaciónMapa {
 		lbl_NumBotiquines.setBounds(10, 176, 182, 24);
 		frame.getContentPane().add(lbl_NumBotiquines);
 		
-		JLabel lbl_DanoCocodrilo = new JLabel("Daño Cocodrilo ");
+		JLabel lbl_DanoCocodrilo = new JLabel("Daño Cocodrilo = 25 HP");
 		lbl_DanoCocodrilo.setFont(new Font("Tahoma", Font.BOLD, 14));
 		lbl_DanoCocodrilo.setBounds(10, 225, 182, 24);
 		frame.getContentPane().add(lbl_DanoCocodrilo);
@@ -95,21 +124,17 @@ public class InterfazAdministradorCreaciónMapa {
 	    JLabel lbl_TiempoPregunta = new JLabel("Tiempo por Pregunta =");
 	    lbl_TiempoPregunta.setFont(new Font("Tahoma", Font.BOLD, 14));
 	    lbl_TiempoPregunta.setBounds(10, 311, 182, 24);
-	    frame.getContentPane().add(lbl_TiempoPregunta);
-	    
-	    // TIEMPO DE LAS PREGUNTAS ---------------------------------
-	    int valorMINTiempoPrg = 5;
-		int valorMAXTiempoPrg = 45;
+	    frame.getContentPane().add(lbl_TiempoPregunta);	 
 		
 		SpinnerNumberModel modeloTiempoPregunta = new SpinnerNumberModel(valorMINTiempoPrg, valorMINTiempoPrg, valorMAXTiempoPrg, 5);
-	    JSpinner spinnerTiempoPregunta = new JSpinner(modeloTiempoPregunta);
+	    spinnerTiempoPregunta = new JSpinner(modeloTiempoPregunta);
 	    spinnerTiempoPregunta.setBounds(202, 313, 63, 25);
 	    frame.getContentPane().add(spinnerTiempoPregunta);
 		// % DAÑO COCODRILO ----------------------------------------
-		JSlider sliderDanoCocodrilo = new JSlider();
+	    sliderDanoCocodrilo = new JSlider(JSlider.HORIZONTAL, 10, 90, 25);
 		sliderDanoCocodrilo.addChangeListener(new ChangeListener() {
 			public void stateChanged(ChangeEvent e) {
-				lbl_DanoCocodrilo.setText("Daño = "+sliderDanoCocodrilo.getValue()+" HP");
+				lbl_DanoCocodrilo.setText("Daño Cocodrilo = "+sliderDanoCocodrilo.getValue()+" HP");
 			}
 		});
 		sliderDanoCocodrilo.setValue(25);
@@ -119,7 +144,7 @@ public class InterfazAdministradorCreaciónMapa {
 		sliderDanoCocodrilo.setBounds(10, 266, 200, 26);
 		frame.getContentPane().add(sliderDanoCocodrilo);
 		// % CURA BOTIQUÍN -----------------------------------------
-		JSlider sliderCuraBotiquin = new JSlider();
+		sliderCuraBotiquin = new JSlider(JSlider.HORIZONTAL, 10, 90, 25);
 		sliderCuraBotiquin.addChangeListener(new ChangeListener() {
 			public void stateChanged(ChangeEvent e) {
 				lbl_CuraBotiquin.setText("Cura = "+sliderCuraBotiquin.getValue()+" HP");
@@ -132,7 +157,7 @@ public class InterfazAdministradorCreaciónMapa {
 		sliderCuraBotiquin.setBounds(236, 266, 200, 26);
 		frame.getContentPane().add(sliderCuraBotiquin);
 		// DAÑO PREGUNTA -------------------------------------------
-		JSlider sliderDanoPregunta = new JSlider();
+		sliderDanoPregunta = new JSlider(JSlider.HORIZONTAL, 10, 90, 25);
 		sliderDanoPregunta.addChangeListener(new ChangeListener() {
 			public void stateChanged(ChangeEvent e) {
 				lbl_DanoPregunta.setText("Daño Pregunta = "+sliderDanoPregunta.getValue()+" HP");
@@ -145,33 +170,29 @@ public class InterfazAdministradorCreaciónMapa {
 	    sliderDanoPregunta.setBounds(446, 266, 200, 26);
 	    frame.getContentPane().add(sliderDanoPregunta);
 		//.............................
-		int valorMAXBotiquines = 10;
-		int valorMAXCocodrilos = 10;
+
 		SpinnerModel valorBotiquin = new SpinnerNumberModel(1, 0, valorMAXBotiquines, 1); //
 		SpinnerModel valorCocodrilo = new SpinnerNumberModel(2, 0, valorMAXCocodrilos, 1); //
 		// CANTIDAD BOTIQUINES -------------------------------------------
-		JSpinner spinnerNumBotiquines = new JSpinner(valorBotiquin);
+		spinnerNumBotiquines = new JSpinner(valorBotiquin);
 		spinnerNumBotiquines.setFont(new Font("Tahoma", Font.BOLD, 12));
 		spinnerNumBotiquines.setBounds(202, 178, 40, 25);
 		frame.getContentPane().add(spinnerNumBotiquines);
 		
 		// CANTIDAD COCODRILOS -------------------------------------------
-		JSpinner spinnerNumCocodrilos = new JSpinner(valorCocodrilo);
+		spinnerNumCocodrilos = new JSpinner(valorCocodrilo);
 		spinnerNumCocodrilos.setFont(new Font("Tahoma", Font.BOLD, 12));
 		spinnerNumCocodrilos.setBounds(202, 147, 40, 25);
 		//
 		frame.getContentPane().add(spinnerNumCocodrilos);
 		///////////////////////// VARIABLES QUE ASIGNAN LOS LIMITES PERMITIDOS DE ANCHO Y ALTO
-		int valorMINAltura = 3;
-		int valorMAXAltura = 10;
-		int valorMINAnchura = 3;
-		int valorMAXAnchura = 10;
+
 		/////////////////////////	
 		
 		//.............
 		SpinnerNumberModel modeloAltura = new SpinnerNumberModel(valorMINAltura, valorMINAltura, valorMAXAltura, 1);
 		// ALTURA LABERINTO -------------------------------------------------
-		JSpinner spinnerAltura = new JSpinner(modeloAltura);
+		spinnerAltura = new JSpinner(modeloAltura);
 		spinnerAltura.setFont(new Font("Tahoma", Font.BOLD, 12));
 		spinnerAltura.setBounds(94, 64, 40, 25);
 		frame.getContentPane().add(spinnerAltura);
@@ -179,12 +200,12 @@ public class InterfazAdministradorCreaciónMapa {
 		//.............		
 		SpinnerNumberModel modeloAnchura = new SpinnerNumberModel(valorMINAnchura, valorMINAnchura, valorMAXAnchura, 1);
 		// ANCHURA LABERINTO -------------------------------------------------
-		JSpinner spinnerAnchura = new JSpinner(modeloAnchura);
+		spinnerAnchura = new JSpinner(modeloAnchura);
 		spinnerAnchura.setFont(new Font("Tahoma", Font.BOLD, 12));
 		spinnerAnchura.setBounds(94, 98, 40, 25);
 		frame.getContentPane().add(spinnerAnchura);
 		
-		JScrollPane scrollPaneTABLALABERINTO = new JScrollPane();
+		scrollPaneTABLALABERINTO = new JScrollPane();
 		scrollPaneTABLALABERINTO.setBounds(327, 47, 163, 163);
 		frame.getContentPane().add(scrollPaneTABLALABERINTO);
 		
@@ -195,7 +216,7 @@ public class InterfazAdministradorCreaciónMapa {
 		frame.getContentPane().add(btnActualizar);
 		//
 		btnActualizar.addActionListener(e -> {
-			btnCrear.setVisible(true);  // Mostrar botón CREAR cuando se pulsa Actualizar
+			btnCrear.setEnabled(true);  // Mostrar botón CREAR cuando se pulsa Actualizar
 
 		    int filas = (Integer) spinnerAltura.getValue();  // Alto
 		    int columnas = (Integer) spinnerAnchura.getValue();       // Ancho
@@ -248,11 +269,7 @@ public class InterfazAdministradorCreaciónMapa {
 		});////////////////////////////// Boton Actualizar
 		
 		btnCrear = new JButton("CREAR");
-		btnCrear.setVisible(false);  // Ocultarlo inicialmente 
-	    btnCrear.addActionListener(new ActionListener() {
-	    	public void actionPerformed(ActionEvent e) {
-	    	}
-	    });
+		btnCrear.setEnabled(false); 
 	    btnCrear.setFont(new Font("Tahoma", Font.BOLD, 14));
 	    btnCrear.setBounds(518, 95, 110, 53);
 	    frame.getContentPane().add(btnCrear);
@@ -268,6 +285,37 @@ public class InterfazAdministradorCreaciónMapa {
 	    lblAviso.setBounds(327, 8, 182, 32);
 	    frame.getContentPane().add(lblAviso);
 
-
-	}
+	    // Clic boton volver
+	    btnVolver.addActionListener(new ActionListener() {
+	    	public void actionPerformed(ActionEvent e) {
+	    		frame.setVisible(false);
+	    		menuAdmin.setVisible(true);
+	    	}
+	    });
+	    
+	    // Clic boton crear
+	    btnCrear.addActionListener(new ActionListener() {
+	    	public void actionPerformed(ActionEvent e) {
+	    		int ancho = (int) spinnerAnchura.getValue();
+	    		int alto = (int) spinnerAltura.getValue();
+	    		int num_cocodrilos = (int) spinnerNumCocodrilos.getValue();
+	    		int dano_cocodrilos =  sliderDanoCocodrilo.getValue();
+	    		int num_botiquines = (int) spinnerNumBotiquines.getValue();
+	    		int vida_botiquines = sliderCuraBotiquin.getValue();
+	    		int tiempo_pregunta = (int) spinnerTiempoPregunta.getValue();
+	    		int dano_pregunta = sliderDanoPregunta.getValue();
+	    		int num_preguntas = 20;
+	    		
+	    		laberinto = new Laberinto(ancho, alto, num_cocodrilos, dano_cocodrilos, num_botiquines,
+	    				vida_botiquines, tiempo_pregunta, dano_pregunta, num_preguntas);
+	    		modelo.insertarLaberinto(laberinto);
+	    		
+	    		disposicion = new Disposicion(laberinto.getMapa(), laberinto.getId(), modelo);	    		
+	    		modelo.insertarDisposicion(disposicion);
+	    		
+	    		disposicion.generarMatriz(num_botiquines, num_cocodrilos);
+	    		disposicion.guardarMatriz();
+	    	}
+	    });
+	}	
 }

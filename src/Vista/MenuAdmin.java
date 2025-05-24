@@ -6,6 +6,7 @@ import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 
 import logica.Login;
+import logica.Modelo;
 
 import javax.swing.JLabel;
 import java.awt.Font;
@@ -18,10 +19,9 @@ public class MenuAdmin extends JFrame {
 
 	private static final long serialVersionUID = 1L;
 	private JPanel contentPane;
-	private Login logeo;
-
-	public MenuAdmin(Login logeo) {
-		this.logeo = logeo;
+	private CreadorMapa creadorMapa;
+	
+	public MenuAdmin(Login logeo, Modelo modelo) {
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 450, 300);
 		contentPane = new JPanel();
@@ -35,11 +35,11 @@ public class MenuAdmin extends JFrame {
 		lblLabelAdmin.setBounds(150, 11, 149, 27);
 		contentPane.add(lblLabelAdmin);
 		
-		JButton btnBorrarLaberinto = new JButton("BorrarLaberinto");
+		JButton btnBorrarLaberinto = new JButton("Borrar laberinto");
 		btnBorrarLaberinto.setBounds(238, 93, 149, 92);
 		contentPane.add(btnBorrarLaberinto);
 		
-		JButton btnAgregarLaberinto = new JButton("AñadirLaberinto");
+		JButton btnAgregarLaberinto = new JButton("Añadir laberinto");
 		btnAgregarLaberinto.setBounds(40, 93, 149, 92);
 		contentPane.add(btnAgregarLaberinto);
 		
@@ -59,7 +59,11 @@ public class MenuAdmin extends JFrame {
 		// Clic boton añadir laberinto
 		btnAgregarLaberinto.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				// pendiente
+				if (creadorMapa == null) {
+					creadorMapa = new CreadorMapa(MenuAdmin.this, modelo);
+				}
+				creadorMapa.getFrame().setVisible(true);
+				setVisible(false);
 			}
 		});
 		

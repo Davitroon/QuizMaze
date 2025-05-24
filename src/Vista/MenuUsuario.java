@@ -17,11 +17,8 @@ public class MenuUsuario extends JFrame {
 
 	private static final long serialVersionUID = 1L;
 	private JPanel contentPane;
-	private Login logeo;
-	private String nombreUsuario;
 
 	public MenuUsuario(Login logeo) {
-		this.logeo = logeo;
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 450, 300);
 		contentPane = new JPanel();

@@ -5,11 +5,11 @@ USE laberinto25;
 
 CREATE TABLE usuarios (
 	id INT PRIMARY KEY AUTO_INCREMENT,
-	usuario VARCHAR(25) NOT NULL,
+	nombre VARCHAR(25) UNIQUE NOT NULL,
     contraseña VARCHAR(25) NOT NULL
 );
 
-INSERT INTO usuarios (usuario, contraseña) VALUES 
+INSERT INTO usuarios (nombre, contraseña) VALUES 
   ('admin', 'root'), 
   ('usuario1', 'user123');
 
@@ -22,7 +22,8 @@ CREATE TABLE laberintos (
     num_botiquines INT NOT NULL,
     vida_botiquines INT NOT NULL,
     tiempo_pregunta INT NOT NULL,
-    daño_pregunta INT NOT NULL
+    daño_pregunta INT NOT NULL,
+    num_preguntas INT NOT NULL
 );
 
 CREATE TABLE disposiciones (
@@ -150,11 +151,13 @@ CREATE TABLE partidas(
 );
 
 CREATE TABLE disposiciones_matriz (
+    id_disposicion INT NOT NULL,
 	cord_x INT NOT NULL,
     cord_y INT NOT NULL,
-    id_disposicion INT NOT NULL,
     -- 1: Cocodrilo, 2: Botiquín, 3: Muro
     elemento INT NOT NULL,
 	PRIMARY KEY (cord_x, cord_y, id_disposicion),
     FOREIGN KEY (id_disposicion) REFERENCES disposiciones(id)
 );
+
+select * from usuarios;

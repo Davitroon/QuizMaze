@@ -1,14 +1,13 @@
-import java.awt.BorderLayout;
+package Vista;
+
 import java.awt.EventQueue;
+import java.awt.Font;
+import java.awt.GridLayout;
 
 import javax.swing.BorderFactory;
-import javax.swing.JFrame;
-import javax.swing.JTable;
-import javax.swing.table.DefaultTableModel;
-import java.awt.Font;
-import javax.swing.JPanel;
-import java.awt.GridLayout;
 import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JPanel;
 
 
 public class InterfazLaberinto {

@@ -16,8 +16,6 @@ public class Disposicion {
 		this.idLaberinto = idLaberinto;
 		this.mapa = mapa;
 		this.modelo = modelo;
-		
-		modelo.insertarDisposicion(this);
 	}
 
 
@@ -40,27 +38,39 @@ public class Disposicion {
 			int yRandom = (int) (Math.random() * mapa.length);
 			
 			// Validar que la casilla sea valida
-			if ((xRandom != 0 && yRandom != 0) && 
-					(xRandom != mapa[0].length - 1 && yRandom != mapa.length - 1) &&
-						mapa[yRandom][xRandom] == 0) {
+			if (!(xRandom == 0 && yRandom == 0)                              // no (0,0)
+					 && !(xRandom == mapa[0].length - 1 && yRandom == mapa.length - 1)               // no (última esquina)
+					 && mapa[yRandom][xRandom] == 0) {  
 				double numero = Math.random();
 				
 				// Meter elemento
 				if (numero <= 0.50 && botiquines < numBotiquines) {
 					mapa[yRandom][xRandom] = 1;
 					botiquines++;
-					modelo.insertarDisposicionMatriz(xRandom, yRandom, this.getId(), mapa[yRandom][xRandom]);
 				 
 				} else if (numero <= 1 && cocodrilos < numCocodrilos) {
 					mapa[yRandom][xRandom] = 2;
 					cocodrilos++;
-					modelo.insertarDisposicionMatriz(xRandom, yRandom, this.getId(), mapa[yRandom][xRandom]);
+					
 				}
 			}
 			
 			// Si se ha completado la matriz termina el bucle
 			if (botiquines == numBotiquines && cocodrilos == numCocodrilos) {
 				matrizCompleta = true;
+			}
+		}
+	}
+	
+	
+	/**
+	 * Método que lee la matriz y guarda las posiciones donde haya una casilla especial
+	 */
+	public void guardarMatriz() {
+		for (int y = 0; y < mapa.length - 1; y++) {
+			for (int x = 0; x < mapa[0].length - 1; x++) {				
+				// Si encuentra algo que no sea una casilla vacia (1: Cocodrilo, 2: Botiquín, 3: Muro)
+				if (mapa[y][x] != 0) modelo.insertarDisposicionMatriz(x, y, this.getId(), mapa[y][x]);									
 			}
 		}
 	}
@@ -79,10 +89,4 @@ public class Disposicion {
 	public int getIdLaberinto() {
 		return idLaberinto;
 	}
-	
-	
-	
-	
-	
-	
 }
