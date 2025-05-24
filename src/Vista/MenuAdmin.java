@@ -19,7 +19,9 @@ public class MenuAdmin extends JFrame {
 
 	private static final long serialVersionUID = 1L;
 	private JPanel contentPane;
-	private CreadorMapa creadorMapa;
+	private CrearLaberinto crearLaberinto;
+	private BorrarLaberinto borrarLaberinto;
+	
 	
 	public MenuAdmin(Login logeo, Modelo modelo) {
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -59,10 +61,10 @@ public class MenuAdmin extends JFrame {
 		// Clic boton añadir laberinto
 		btnAgregarLaberinto.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				if (creadorMapa == null) {
-					creadorMapa = new CreadorMapa(MenuAdmin.this, modelo);
+				if (crearLaberinto == null) {
+					crearLaberinto = new CrearLaberinto(MenuAdmin.this, modelo);
 				}
-				creadorMapa.getFrame().setVisible(true);
+				crearLaberinto.getFrame().setVisible(true);
 				setVisible(false);
 			}
 		});
@@ -70,7 +72,11 @@ public class MenuAdmin extends JFrame {
 		// Clic boton borran laberinto
 		btnBorrarLaberinto.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-			 // pendiente	
+				if (borrarLaberinto == null) {
+					borrarLaberinto = new BorrarLaberinto(MenuAdmin.this, modelo);
+				}
+				borrarLaberinto.setVisible(true);
+				setVisible(false);
 			}
 		});
 	}

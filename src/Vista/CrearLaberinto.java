@@ -19,7 +19,7 @@ import javax.swing.event.ChangeListener;
 import logica.Disposicion;
 import logica.Laberinto;
 import logica.Modelo;
-public class CreadorMapa {
+public class CrearLaberinto {
 
 	private JFrame frame;
 	private JButton btnCrear;
@@ -43,7 +43,7 @@ public class CreadorMapa {
 	 * Create the application.
 	 * @param menuAdmin 
 	 */
-	public CreadorMapa(MenuAdmin menuAdmin, Modelo modelo) {
+	public CrearLaberinto(MenuAdmin menuAdmin, Modelo modelo) {
 		initialize();
 		this.menuAdmin = menuAdmin;
 		this.modelo = modelo;
