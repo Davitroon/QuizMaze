@@ -5,8 +5,8 @@ import java.util.Scanner;
 
 import javax.swing.JFrame;
 
-import Vista.MenuAdmin;
-import Vista.MenuUsuario;
+import vista.MenuAdmin;
+import vista.MenuUsuario;
 
 public class Login {
 
@@ -76,7 +76,7 @@ public class Login {
 								
 							} else {
 								if (interfaz == null) {
-									interfaz = new MenuUsuario(this);
+									interfaz = new MenuUsuario(this, modelo);
 								}							
 							}
 							interfaz.setVisible(true);

@@ -1,10 +1,11 @@
-package Vista;
+package vista;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 
 import logica.Login;
+import logica.Modelo;
 
 import javax.swing.JLabel;
 import java.awt.Font;
@@ -17,8 +18,9 @@ public class MenuUsuario extends JFrame {
 
 	private static final long serialVersionUID = 1L;
 	private JPanel contentPane;
+	private ElegirLaberinto jugar;
 
-	public MenuUsuario(Login logeo) {
+	public MenuUsuario(Login logeo, Modelo modelo) {
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 450, 300);
 		contentPane = new JPanel();
@@ -68,7 +70,12 @@ public class MenuUsuario extends JFrame {
 		// Clic boton jugar
 		btnJugar.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				
+				if (jugar == null) {
+					jugar = new ElegirLaberinto(MenuUsuario.this, modelo);
+				}
+				jugar.cargarLaberintos();
+				jugar.setVisible(true);
+				setVisible(false);
 			}
 		});
 	}

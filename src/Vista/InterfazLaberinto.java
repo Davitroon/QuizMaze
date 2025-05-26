@@ -1,4 +1,4 @@
-package Vista;
+package vista;
 
 import java.awt.EventQueue;
 import java.awt.Font;

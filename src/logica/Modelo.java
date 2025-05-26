@@ -11,11 +11,11 @@ import java.sql.SQLException;
  * @author David Forero
  */
 public class Modelo {
-	private String database = "laberinto25";
-	private String login = "root"; 
+	private static Connection conexion;
+	private String database = "laberinto25"; 
+	private String login = "root";
 	private String pwd = "Coco2006";
 	private String url = "jdbc:mysql://localhost/" + database;
-	private static Connection conexion;
 	
 	public Modelo() throws SQLException, ClassNotFoundException {
 		Class.forName("com.mysql.cj.jdbc.Driver");
@@ -37,6 +37,28 @@ public class Modelo {
 		try {
 			PreparedStatement stmt = conexion.prepareStatement(consulta);
 			stmt.setInt(1, id);
+			rset = stmt.executeQuery();		
+			
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		
+		return rset;
+	}
+	
+	
+	/**
+	 * Método para consultar todos los datos de una tabla de la BD.
+	 * @param tabla Nombre de la tabla a consultar.
+	 * @return Resultado de la consulta SQL.
+	 */
+	public ResultSet consultarDatos(String tabla) {
+		
+		ResultSet rset = null;
+		String consulta = "SELECT * FROM " + tabla + ";";
+		
+		try {
+			PreparedStatement stmt = conexion.prepareStatement(consulta);
 			rset = stmt.executeQuery();		
 			
 		} catch (SQLException e) {
@@ -73,24 +95,55 @@ public class Modelo {
 	
 	
 	/**
-	 * Método para agregar usuario a la base de datos.
-	 * @param usuario Nombre del usuario
-	 * @param contrasena Contraseña del usuario
+	 * Método para agregar una disposicion a la base de datos
+	 * @param idLaberinto
 	 */
-	public void insertarUsuario(String usuario, String contrasena) {
-		String consulta = "INSERT INTO usuarios (nombre, contraseña) VALUES (?, ?)";
+	public void insertarDisposicion(Disposicion disposicion) {
+		String consulta = "INSERT INTO disposiciones (id_laberinto) VALUES (?)";
 		
 		try {
-			PreparedStatement stmt = conexion.prepareStatement(consulta);
-			stmt.setString(1, usuario);
-			stmt.setString(2, contrasena);
-			stmt.executeUpdate();	
-			stmt.close();
+			PreparedStatement stmt = conexion.prepareStatement(consulta, PreparedStatement.RETURN_GENERATED_KEYS);
+			stmt.setInt(1, disposicion.getIdLaberinto());
+			stmt.executeUpdate();
 			
+	        // Obtener la clave generada (id)
+	        var rs = stmt.getGeneratedKeys();
+	        if (rs.next()) {
+	            int idGenerado = rs.getInt(1);
+	            disposicion.setId(idGenerado); // Asignar al objeto
+	        }
+	        stmt.close();
+	        
 		} catch (SQLException e) { 
 			e.printStackTrace();
-		}		
+		}
 	}
+	
+	
+	/**
+	 * Método para agregar la matriz de una disposición a la base de datos
+	 * @param cordX Coordenada X
+	 * @param cordY Coordenada Y
+	 * @param idDisposicion Id de la disposición
+	 * @param elemento Elemento que se encuentra en la casilla
+	 */
+    public void insertarDisposicionMatriz(int cordX, int cordY, int idDisposicion, int elemento) {
+        String consulta = "INSERT INTO disposiciones_matriz (cord_x, cord_y, id_disposicion, elemento) VALUES (?, ?, ?, ?)";
+
+        try {
+        	PreparedStatement stmt = conexion.prepareStatement(consulta);
+
+            stmt.setInt(1, cordX);
+            stmt.setInt(2, cordY);
+            stmt.setInt(3, idDisposicion);
+            stmt.setInt(4, elemento);
+            stmt.executeUpdate();
+            stmt.close();
+            
+        } catch (SQLException e) {
+        	e.printStackTrace();
+        }
+    }
 	
 	
 	/**
@@ -129,57 +182,41 @@ public class Modelo {
 	}
 	
 	
+
 	/**
-	 * Método para agregar una disposicion a la base de datos
-	 * @param idLaberinto
+	 * Método para agregar usuario a la base de datos.
+	 * @param usuario Nombre del usuario
+	 * @param contrasena Contraseña del usuario
 	 */
-	public void insertarDisposicion(Disposicion disposicion) {
-		String consulta = "INSERT INTO disposiciones (id_laberinto) VALUES (?)";
+	public void insertarUsuario(String usuario, String contrasena) {
+		String consulta = "INSERT INTO usuarios (nombre, contraseña) VALUES (?, ?)";
 		
 		try {
-			PreparedStatement stmt = conexion.prepareStatement(consulta, PreparedStatement.RETURN_GENERATED_KEYS);
-			stmt.setInt(1, disposicion.getIdLaberinto());
-			stmt.executeUpdate();
+			PreparedStatement stmt = conexion.prepareStatement(consulta);
+			stmt.setString(1, usuario);
+			stmt.setString(2, contrasena);
+			stmt.executeUpdate();	
+			stmt.close();
 			
-	        // Obtener la clave generada (id)
-	        var rs = stmt.getGeneratedKeys();
-	        if (rs.next()) {
-	            int idGenerado = rs.getInt(1);
-	            disposicion.setId(idGenerado); // Asignar al objeto
-	        }
-	        stmt.close();
-	        
 		} catch (SQLException e) { 
 			e.printStackTrace();
-		}
+		}		
 	}
 	
 	
-
-	/**
-	 * Método para agregar la matriz de una disposición a la base de datos
-	 * @param cordX Coordenada X
-	 * @param cordY Coordenada Y
-	 * @param idDisposicion Id de la disposición
-	 * @param elemento Elemento que se encuentra en la casilla
-	 */
-    public void insertarDisposicionMatriz(int cordX, int cordY, int idDisposicion, int elemento) {
-        String consulta = "INSERT INTO disposiciones_matriz (cord_x, cord_y, id_disposicion, elemento) VALUES (?, ?, ?, ?)";
-
-        try {
-        	PreparedStatement stmt = conexion.prepareStatement(consulta);
-
-            stmt.setInt(1, cordX);
-            stmt.setInt(2, cordY);
-            stmt.setInt(3, idDisposicion);
-            stmt.setInt(4, elemento);
-            stmt.executeUpdate();
-            stmt.close();
-            
-        } catch (SQLException e) {
-        	e.printStackTrace();
-        }
-    }
-	
-	
+	public ResultSet consultarDisposiciones(int idLaberinto) {
+		ResultSet rset = null;
+		String consulta = "SELECT * FROM disposiciones WHERE id_laberinto = ?";
+		
+		try {
+			PreparedStatement stmt = conexion.prepareStatement(consulta);
+			stmt.setInt(1, idLaberinto);
+			rset = stmt.executeQuery();		
+			
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}		
+		
+		return rset;
+	}
 }
