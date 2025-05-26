@@ -1,0 +1,226 @@
+package vista;
+
+import java.awt.EventQueue;
+
+import javax.swing.JFrame;
+import javax.swing.JPanel;
+import javax.swing.border.EmptyBorder;
+import javax.swing.JLabel;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
+import javax.swing.SwingConstants;
+import javax.swing.JButton;
+import javax.swing.table.DefaultTableModel;
+
+import logica.Modelo;
+
+import java.awt.event.ActionListener;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.awt.event.ActionEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+
+public class ElegirLaberinto extends JFrame {
+
+	private static final long serialVersionUID = 1L;
+	private JPanel contentPane;
+	private JTable tableLaberintos;
+	private JTable tableDisposicion;
+	private DefaultTableModel modeloLaberintos;
+	private DefaultTableModel modeloDisposiciones;
+	
+	private Modelo modelo;
+	private JButton btnJugar;
+	private JButton btnJugarNuevaDisp;
+
+	/**
+	 * Create the frame.
+	 * @param menuUsuario 
+	 */
+	public ElegirLaberinto(MenuUsuario menuUsuario, Modelo modelo) {
+		this.modelo = modelo;
+		
+		setResizable(false);
+		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		setBounds(100, 100, 839, 396);
+		contentPane = new JPanel();
+		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
+
+		setContentPane(contentPane);
+		contentPane.setLayout(null);
+		
+		JLabel lblJugar = new JLabel("Jugar");
+		lblJugar.setBounds(10, 31, 803, 27);
+		lblJugar.setHorizontalAlignment(SwingConstants.CENTER);
+		contentPane.add(lblJugar);
+		
+		JScrollPane scrollPane = new JScrollPane();
+		scrollPane.setBounds(25, 80, 557, 188);
+		contentPane.add(scrollPane);
+		
+		modeloLaberintos = new DefaultTableModel(
+			    new Object[][] {
+			        
+			    },
+			    new String[] {
+			        "id", "ancho", "alto", "num_cocodrilos", "num_botiquines","num_preguntas"
+			    }
+			) {
+			    @Override
+			    public boolean isCellEditable(int row, int column) {
+			        return false; // No permitir edición de celdas
+			    }
+			};
+			
+		modeloDisposiciones = new DefaultTableModel(
+			    new Object[][] {
+			        
+			    },
+			    new String[] {
+			        "id_disposicion"
+			    }
+			) {
+			    @Override
+			    public boolean isCellEditable(int row, int column) {
+			        return false; // No permitir edición de celdas
+			    }
+			};
+		
+		tableLaberintos = new JTable();
+		tableLaberintos.setModel(modeloLaberintos);
+		scrollPane.setViewportView(tableLaberintos);
+		
+		JScrollPane scrollPane_1 = new JScrollPane();
+		scrollPane_1.setBounds(600, 80, 171, 188);
+		contentPane.add(scrollPane_1);
+		
+		tableDisposicion = new JTable();
+		tableDisposicion.setModel(modeloDisposiciones);
+		scrollPane_1.setViewportView(tableDisposicion);
+		
+		JButton btnVolver = new JButton("Volver");
+		btnVolver.setBounds(25, 298, 99, 34);
+		contentPane.add(btnVolver);
+		
+		btnJugar = new JButton("Jugar");
+		btnJugar.setEnabled(false);
+		btnJugar.setBounds(672, 298, 99, 34);
+		contentPane.add(btnJugar);
+		
+		btnJugarNuevaDisp = new JButton("Jugar con nueva disposicion");
+		btnJugarNuevaDisp.setBounds(491, 298, 171, 34);
+		contentPane.add(btnJugarNuevaDisp);
+		
+		// Clic boton volver 
+		btnVolver.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				reiniciarVentana();
+				menuUsuario.setVisible(true);
+				setVisible(false);
+			}
+		});
+		
+		// Clic en una celda de tabla laberintos
+		tableLaberintos.addMouseListener(new MouseAdapter() {
+		    @Override
+		    public void mouseClicked(MouseEvent e) {
+		        int fila = tableLaberintos.rowAtPoint(e.getPoint());
+		        int columna = tableLaberintos.columnAtPoint(e.getPoint());
+
+	            // Comprobar si se ha hecho clic en una celda válida
+		        if (fila >= 0 && columna >= 0) {
+		            // Limpiar modeloDisposiciones si tiene datos previos
+		            if (modeloDisposiciones.getRowCount() > 0) {
+		                modeloDisposiciones.setRowCount(0);
+		            }
+		            
+		        	// Consultar las disposiciones mandando el id del laberinto elegido
+		            ResultSet rset = modelo.consultarDisposiciones((int) modeloLaberintos.getValueAt(fila, 0));
+		            
+		            try {
+		            	// Meter las disposiciones nuevas al modelo
+						while (rset.next()) {
+						    Object[] filaDisposicion = new Object[] {
+						        rset.getInt("id"),
+						    };
+						    modeloDisposiciones.addRow(filaDisposicion);
+						}
+						
+					} catch (SQLException e1) {
+						e1.printStackTrace();
+					}
+		        }
+		    }
+		});
+		
+		// Clic en una celda de la tabla de disposiciones
+		tableDisposicion.addMouseListener(new MouseAdapter() {
+		    @Override
+		    public void mouseClicked(MouseEvent e) {
+		        int fila = tableDisposicion.rowAtPoint(e.getPoint());
+		        int columna = tableDisposicion.columnAtPoint(e.getPoint());
+
+		        // Comprobar si se ha hecho clic en una celda válida
+		        if (fila >= 0 && columna >= 0) {
+		            btnJugar.setEnabled(true);
+		        }
+		    }
+		});
+		
+		// Clic boton jugar
+		btnJugar.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				// aqui abririá la pestaña del juego
+			}
+		});
+		
+		// Clic boton jugar nueva disposicion
+		btnJugarNuevaDisp.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				// este boton abriria la pestaña del juego con una disposicion nueva creada
+			}
+		});
+	}
+	
+	
+	/**
+	 * Cargar los laberintos de la BD y meterlos en la tabla
+	 */
+	public void cargarLaberintos() {
+	    ResultSet rset = modelo.consultarDatos("laberintos");
+
+	    try {
+	        while (rset.next()) {
+	            Object[] fila = new Object[] {
+	                rset.getInt("id"),
+	                rset.getInt("ancho"),
+	                rset.getInt("alto"),
+	                rset.getInt("num_cocodrilos"),
+	                rset.getInt("num_botiquines"),
+	                rset.getInt("num_preguntas")
+	            };
+	            modeloLaberintos.addRow(fila);
+	        }
+	    } catch (SQLException e) {
+	        e.printStackTrace();
+	    }
+	}
+	
+	/**
+	 * Reinicia el estado visual de la ventana.
+	 */
+	public void reiniciarVentana() {
+	    btnJugar.setEnabled(false); // Desactivar botón Jugar
+
+	    tableLaberintos.clearSelection(); // Quitar selección
+
+	    if (modeloDisposiciones.getRowCount() > 0) {
+	        modeloDisposiciones.setRowCount(0); // Vaciar la tabla de disposiciones
+	    }
+	    
+	    if (modeloLaberintos.getRowCount() > 0) {
+	    	modeloLaberintos.setRowCount(0); // Vaciar la tabla de disposiciones
+	    }
+	}
+}
