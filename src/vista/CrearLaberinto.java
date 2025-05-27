@@ -39,6 +39,19 @@ public class CrearLaberinto {
 	private Laberinto laberinto;
 	private Modelo modelo;
 	private Disposicion disposicion;
+	
+	
+    // Asignacion variables
+    private int valorMINTiempoPrg = 5;
+	private int valorMAXTiempoPrg = 45;
+	
+	private int valorMAXBotiquines = 10;
+	private int valorMAXCocodrilos = 10;
+	
+	private int valorMINAltura = 4;
+	private int valorMAXAltura = 10;
+	private int valorMINAnchura = 4;
+	private int valorMAXAnchura = 10;
 
 	/**
 	 * Create the application.
@@ -59,18 +72,6 @@ public class CrearLaberinto {
 	 * Initialize the contents of the frame.
 	 */
 	private void initialize() {
-		
-	    // Asignacion variables
-	    int valorMINTiempoPrg = 5;
-		int valorMAXTiempoPrg = 45;
-		
-		int valorMAXBotiquines = 10;
-		int valorMAXCocodrilos = 10;
-		
-		int valorMINAltura = 3;
-		int valorMAXAltura = 10;
-		int valorMINAnchura = 3;
-		int valorMAXAnchura = 10;
 		
 		frame = new JFrame();
 		frame.setBounds(100, 100, 680, 462);
@@ -235,6 +236,12 @@ public class CrearLaberinto {
 		            datosTabla[i][j] = ""; // Celdas vacías inicialmente
 		        }
 		    }
+		    
+		    // Asignar "O" a la esquina superior izquierda (0,0)
+		    datosTabla[0][0] = "O";
+
+		    // Asignar "X" a la esquina inferior derecha
+		    datosTabla[filas - 1][columnas - 1] = "X";
 
 		    tablaLaberinto = new JTable(datosTabla, columnasTabla) {
 		    	
@@ -296,6 +303,7 @@ public class CrearLaberinto {
 	    btnVolver.addActionListener(new ActionListener() {
 	    	public void actionPerformed(ActionEvent e) {
 	    		getFrame().dispose();
+	    		reiniciarVentana();
 	    		gestionLaberinto.setVisible(true);
 	    	}
 	    });
@@ -313,20 +321,85 @@ public class CrearLaberinto {
 	    		int dano_pregunta = sliderDanoPregunta.getValue();
 	    		int num_preguntas = 20;
 	    		
+	    		// Extraer el mapa desde la tabla
+	    		int filas = tablaLaberinto.getRowCount();
+	    		int columnas = tablaLaberinto.getColumnCount();
+
+	    		int[][] mapa = new int[filas][columnas];
+	    		for (int i = 0; i < filas; i++) {
+	    		    for (int j = 0; j < columnas; j++) {
+	    		        Object valor = tablaLaberinto.getValueAt(i, j);
+	    		        if (valor != null && valor.toString().equals("3")) {
+	    		            mapa[i][j] = 3; // Muro
+	    		        }
+	    		    }
+	    		}
+	    		
 	    		laberinto = new Laberinto(ancho, alto, num_cocodrilos, dano_cocodrilos, num_botiquines,
-	    				vida_botiquines, tiempo_pregunta, dano_pregunta, num_preguntas);
-	    		modelo.insertarLaberinto(laberinto);
+	    				vida_botiquines, tiempo_pregunta, dano_pregunta, num_preguntas, mapa);
+	    		disposicion = new Disposicion(laberinto.getMapa(), laberinto.getId(), modelo);	   
 	    		
-	    		disposicion = new Disposicion(laberinto.getMapa(), laberinto.getId(), modelo);	    		
-	    		modelo.insertarDisposicion(disposicion);
+	    		try {
+	    			disposicion.generarMatriz(num_botiquines, num_cocodrilos);
+	    			
+	    		} catch (IllegalArgumentException e1) {
+	    			javax.swing.JOptionPane.showMessageDialog(null, e1.getMessage(), "Error", javax.swing.JOptionPane.ERROR_MESSAGE);
+	    			return;
+	    		}	
+	    		modelo.insertarLaberinto(laberinto);    
+	    		disposicion.setIdLaberinto(laberinto.getId());
+	    		modelo.insertarDisposicion(disposicion);	        		
 	    		
-	    		disposicion.generarMatriz(num_botiquines, num_cocodrilos);
 	    		disposicion.guardarMatriz();
+	    		disposicion.imprimirMatriz();
 	    		
 	    		gestionLaberinto.actualizarLaberintos();
 	    		getFrame().dispose();
 	    		gestionLaberinto.setVisible(true);
 	    	}
 	    });
-	}	
+	}
+	
+	public void reiniciarVentana() {
+	    
+	    // Restablecer spinners
+	    spinnerAltura.setModel(new SpinnerNumberModel(valorMINAltura, valorMINAltura, valorMAXAltura, 1));
+	    spinnerAltura.setValue(valorMINAltura);
+	    
+	    spinnerAnchura.setModel(new SpinnerNumberModel(valorMINAnchura, valorMINAnchura, valorMAXAnchura, 1));
+	    spinnerAnchura.setValue(valorMINAnchura);
+	    
+	    spinnerNumCocodrilos.setModel(new SpinnerNumberModel(2, 0, valorMAXCocodrilos, 1));
+	    spinnerNumCocodrilos.setValue(2);
+	    
+	    spinnerNumBotiquines.setModel(new SpinnerNumberModel(1, 0, valorMAXBotiquines, 1));
+	    spinnerNumBotiquines.setValue(1);
+	    
+	    spinnerTiempoPregunta.setModel(new SpinnerNumberModel(valorMINTiempoPrg, valorMINTiempoPrg, valorMAXTiempoPrg, 5));
+	    spinnerTiempoPregunta.setValue(valorMINTiempoPrg);
+	    
+	    // Restablecer sliders
+	    sliderDanoCocodrilo.setValue(25);
+	    sliderCuraBotiquin.setValue(10);
+	    sliderDanoPregunta.setValue(10);
+	    
+	    // Restablecer etiquetas asociadas a sliders
+	    // Asumiendo que las etiquetas lbl_DanoCocodrilo, lbl_CuraBotiquin y lbl_DanoPregunta están definidas a nivel clase
+	    // Si no, habría que almacenarlas como atributos para poder accederlas desde aquí
+	    // En caso contrario, se puede replicar el texto manualmente
+	    
+	    // Si tienes esas etiquetas como atributos:
+	    // lbl_DanoCocodrilo.setText("Daño Cocodrilo = 25 HP");
+	    // lbl_CuraBotiquin.setText("Cura = 10 HP");
+	    // lbl_DanoPregunta.setText("Daño Pregunta = 10 HP");
+	    
+	    // Limpiar tabla
+	    if (tablaLaberinto != null) {
+	        scrollPaneTABLALABERINTO.setViewportView(null);
+	        tablaLaberinto = null;
+	    }
+	    
+	    // Desactivar botón crear
+	    btnCrear.setEnabled(false);
+	}
 }
