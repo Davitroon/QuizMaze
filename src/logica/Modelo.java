@@ -219,4 +219,20 @@ public class Modelo {
 		
 		return rset;
 	}
+	
+	
+	public void borrarLaberinto(int idLaberinto) {
+	    String sql = "DELETE FROM laberintos WHERE id = ?";
+	    
+	    try {
+	        PreparedStatement stmt = conexion.prepareStatement(sql);
+	        stmt.setInt(1, idLaberinto);	        
+	        stmt.executeUpdate();
+	        
+	        stmt.close();
+	        
+	    } catch (SQLException e) {
+	        System.out.println("Error al borrar: " + e.getMessage());
+	    }
+	}
 }

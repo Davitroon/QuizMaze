@@ -1,20 +1,19 @@
 package logica;
 
-import java.sql.*;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.Scanner;
 
-import javax.swing.JFrame;
-
-import vista.MenuAdmin;
-import vista.MenuUsuario;
+import vista.ElegirLaberinto;
+import vista.GestionLaberinto;
 
 public class Login {
 
-	private JFrame interfaz;
 	private static String nombreUsuario;
 	
 	private Modelo modelo;
-
+	private ElegirLaberinto elegirLaberinto;
+	private GestionLaberinto gestionLaberinto;
 	
 	public String getNombreUsuario() {
 		return nombreUsuario;
@@ -70,16 +69,20 @@ public class Login {
 							String usuario = rs.getString("nombre");					
 							
 							if (usuario.equals("admin")) {
-								if (interfaz == null) {
-									interfaz = new MenuAdmin(this, modelo);
-								}		
+								if (gestionLaberinto == null) {
+									gestionLaberinto = new GestionLaberinto(this, modelo);
+								}
+								gestionLaberinto.actualizarLaberintos();
+								gestionLaberinto.setVisible(true);
 								
 							} else {
-								if (interfaz == null) {
-									interfaz = new MenuUsuario(this, modelo);
-								}							
+								if (elegirLaberinto == null) {
+									elegirLaberinto = new ElegirLaberinto(this, modelo);
+								}						
+								elegirLaberinto.cargarLaberintos();
+								elegirLaberinto.setVisible(true);
 							}
-							interfaz.setVisible(true);
+							
 							accesoConcedido = true;
 							
 						} else {
@@ -94,8 +97,7 @@ public class Login {
 				
 				case 0:
 					System.out.println("Saliendo del prograna...");
-					accesoConcedido = true;
-					break;
+					System.exit(1);
 					
 				// Opción fuera del rango
 				default:

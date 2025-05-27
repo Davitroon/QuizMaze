@@ -12,6 +12,7 @@ import javax.swing.SwingConstants;
 import javax.swing.JButton;
 import javax.swing.table.DefaultTableModel;
 
+import logica.Login;
 import logica.Modelo;
 
 import java.awt.event.ActionListener;
@@ -20,6 +21,8 @@ import java.sql.SQLException;
 import java.awt.event.ActionEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.Color;
+import java.awt.Font;
 
 public class ElegirLaberinto extends JFrame {
 
@@ -38,20 +41,22 @@ public class ElegirLaberinto extends JFrame {
 	 * Create the frame.
 	 * @param menuUsuario 
 	 */
-	public ElegirLaberinto(MenuUsuario menuUsuario, Modelo modelo) {
+	public ElegirLaberinto(Login login, Modelo modelo) {
 		this.modelo = modelo;
 		
 		setResizable(false);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 839, 396);
+		setLocationRelativeTo(null);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 
 		setContentPane(contentPane);
 		contentPane.setLayout(null);
 		
-		JLabel lblJugar = new JLabel("Jugar");
-		lblJugar.setBounds(10, 31, 803, 27);
+		JLabel lblJugar = new JLabel("Bienvenido " + login.getNombreUsuario() + ", elige una laberinto y disposición para jugar.");
+		lblJugar.setFont(new Font("Tahoma", Font.BOLD, 16));
+		lblJugar.setBounds(10, 21, 803, 27);
 		lblJugar.setHorizontalAlignment(SwingConstants.CENTER);
 		contentPane.add(lblJugar);
 		
@@ -100,24 +105,32 @@ public class ElegirLaberinto extends JFrame {
 		scrollPane_1.setViewportView(tableDisposicion);
 		
 		JButton btnVolver = new JButton("Volver");
+		btnVolver.setForeground(new Color(0, 0, 0));
+		btnVolver.setFont(new Font("Tahoma", Font.BOLD, 11));
+		btnVolver.setBackground(new Color(128, 128, 128));
 		btnVolver.setBounds(25, 298, 99, 34);
 		contentPane.add(btnVolver);
 		
 		btnJugar = new JButton("Jugar");
+		btnJugar.setFont(new Font("Tahoma", Font.BOLD, 11));
+		btnJugar.setBackground(new Color(128, 255, 255));
 		btnJugar.setEnabled(false);
 		btnJugar.setBounds(672, 298, 99, 34);
 		contentPane.add(btnJugar);
 		
 		btnJugarNuevaDisp = new JButton("Jugar con nueva disposicion");
-		btnJugarNuevaDisp.setBounds(491, 298, 171, 34);
+		btnJugarNuevaDisp.setFont(new Font("Tahoma", Font.BOLD, 11));
+		btnJugarNuevaDisp.setEnabled(false);
+		btnJugarNuevaDisp.setBackground(new Color(128, 255, 255));
+		btnJugarNuevaDisp.setBounds(469, 298, 193, 34);
 		contentPane.add(btnJugarNuevaDisp);
 		
 		// Clic boton volver 
 		btnVolver.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				reiniciarVentana();
-				menuUsuario.setVisible(true);
-				setVisible(false);
+				dispose();
+				login.logearse();
 			}
 		});
 		
@@ -130,6 +143,7 @@ public class ElegirLaberinto extends JFrame {
 
 	            // Comprobar si se ha hecho clic en una celda válida
 		        if (fila >= 0 && columna >= 0) {
+		        	btnJugarNuevaDisp.setEnabled(true);
 		            // Limpiar modeloDisposiciones si tiene datos previos
 		            if (modeloDisposiciones.getRowCount() > 0) {
 		                modeloDisposiciones.setRowCount(0);
@@ -212,6 +226,7 @@ public class ElegirLaberinto extends JFrame {
 	 */
 	public void reiniciarVentana() {
 	    btnJugar.setEnabled(false); // Desactivar botón Jugar
+	    btnJugarNuevaDisp.setEnabled(false);
 
 	    tableLaberintos.clearSelection(); // Quitar selección
 

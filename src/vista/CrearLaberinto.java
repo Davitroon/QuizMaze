@@ -19,6 +19,7 @@ import javax.swing.event.ChangeListener;
 import logica.Disposicion;
 import logica.Laberinto;
 import logica.Modelo;
+import java.awt.Color;
 public class CrearLaberinto {
 
 	private JFrame frame;
@@ -34,7 +35,7 @@ public class CrearLaberinto {
 	private JSlider sliderDanoPregunta;
 	private JScrollPane scrollPaneTABLALABERINTO;
 	
-	private MenuAdmin menuAdmin;
+	private GestionLaberinto gestionLaberinto;
 	private Laberinto laberinto;
 	private Modelo modelo;
 	private Disposicion disposicion;
@@ -43,9 +44,9 @@ public class CrearLaberinto {
 	 * Create the application.
 	 * @param menuAdmin 
 	 */
-	public CrearLaberinto(MenuAdmin menuAdmin, Modelo modelo) {
+	public CrearLaberinto(GestionLaberinto gestionLaberinto, Modelo modelo) {
 		initialize();
-		this.menuAdmin = menuAdmin;
+		this.gestionLaberinto = gestionLaberinto;
 		this.modelo = modelo;
 	}	
 
@@ -72,13 +73,14 @@ public class CrearLaberinto {
 		int valorMAXAnchura = 10;
 		
 		frame = new JFrame();
-		frame.setBounds(100, 100, 680, 403);
+		frame.setBounds(100, 100, 680, 462);
+		frame.setLocationRelativeTo(null);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.getContentPane().setLayout(null);
 		
-		JLabel lbl_IdLaberinto = new JLabel("LABERINTO Nº");
+		JLabel lbl_IdLaberinto = new JLabel("Crear Laberinto");
 		lbl_IdLaberinto.setFont(new Font("Tahoma", Font.BOLD, 18));
-		lbl_IdLaberinto.setBounds(10, 10, 152, 24);
+		lbl_IdLaberinto.setBounds(10, 11, 636, 24);
 		frame.getContentPane().add(lbl_IdLaberinto);
 		
 		JLabel lbl_AltoLaberinto = new JLabel("Alto =");
@@ -123,7 +125,7 @@ public class CrearLaberinto {
 	    	    
 	    JLabel lbl_TiempoPregunta = new JLabel("Tiempo por Pregunta =");
 	    lbl_TiempoPregunta.setFont(new Font("Tahoma", Font.BOLD, 14));
-	    lbl_TiempoPregunta.setBounds(10, 311, 182, 24);
+	    lbl_TiempoPregunta.setBounds(10, 313, 182, 24);
 	    frame.getContentPane().add(lbl_TiempoPregunta);	 
 		
 		SpinnerNumberModel modeloTiempoPregunta = new SpinnerNumberModel(valorMINTiempoPrg, valorMINTiempoPrg, valorMAXTiempoPrg, 5);
@@ -206,13 +208,13 @@ public class CrearLaberinto {
 		frame.getContentPane().add(spinnerAnchura);
 		
 		scrollPaneTABLALABERINTO = new JScrollPane();
-		scrollPaneTABLALABERINTO.setBounds(327, 47, 163, 163);
+		scrollPaneTABLALABERINTO.setBounds(285, 46, 163, 163);
 		frame.getContentPane().add(scrollPaneTABLALABERINTO);
 		
 		///////////////////// CREACION DE LA TABLA LABERINTO
-		JButton btnActualizar = new JButton("Actualizar");
+		JButton btnActualizar = new JButton("Dimensionar");
 		btnActualizar.setFont(new Font("Tahoma", Font.BOLD, 14));
-		btnActualizar.setBounds(155, 66, 110, 53); 
+		btnActualizar.setBounds(153, 64, 122, 41); 
 		frame.getContentPane().add(btnActualizar);
 		//
 		btnActualizar.addActionListener(e -> {
@@ -269,27 +271,32 @@ public class CrearLaberinto {
 		});////////////////////////////// Boton Actualizar
 		
 		btnCrear = new JButton("CREAR");
+		btnCrear.setForeground(new Color(0, 0, 0));
+		btnCrear.setBackground(new Color(128, 255, 255));
 		btnCrear.setEnabled(false); 
 	    btnCrear.setFont(new Font("Tahoma", Font.BOLD, 14));
-	    btnCrear.setBounds(518, 95, 110, 53);
+	    btnCrear.setBounds(528, 359, 110, 53);
 	    frame.getContentPane().add(btnCrear);
 	    
 	    JButton btnVolver = new JButton("VOLVER");
+	    btnVolver.setBackground(new Color(128, 128, 128));
+	    btnVolver.setForeground(new Color(0, 0, 0));
 	    btnVolver.setFont(new Font("Tahoma", Font.BOLD, 14));
-	    btnVolver.setBounds(546, 311, 100, 33);
+	    btnVolver.setBounds(24, 359, 110, 53);
 	    frame.getContentPane().add(btnVolver);
 	    
 	    JLabel lblAviso = new JLabel("* El \"3\" representa un Muro ");
+	    lblAviso.setForeground(new Color(128, 128, 128));
 	    lblAviso.setToolTipText("");
-	    lblAviso.setFont(new Font("Tahoma", Font.BOLD, 12));
-	    lblAviso.setBounds(327, 8, 182, 32);
+	    lblAviso.setFont(new Font("Sitka Text", Font.BOLD, 12));
+	    lblAviso.setBounds(464, 64, 182, 58);
 	    frame.getContentPane().add(lblAviso);
 
 	    // Clic boton volver
 	    btnVolver.addActionListener(new ActionListener() {
 	    	public void actionPerformed(ActionEvent e) {
-	    		frame.setVisible(false);
-	    		menuAdmin.setVisible(true);
+	    		getFrame().dispose();
+	    		gestionLaberinto.setVisible(true);
 	    	}
 	    });
 	    
@@ -315,6 +322,10 @@ public class CrearLaberinto {
 	    		
 	    		disposicion.generarMatriz(num_botiquines, num_cocodrilos);
 	    		disposicion.guardarMatriz();
+	    		
+	    		gestionLaberinto.actualizarLaberintos();
+	    		getFrame().dispose();
+	    		gestionLaberinto.setVisible(true);
 	    	}
 	    });
 	}	
