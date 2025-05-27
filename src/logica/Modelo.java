@@ -1,3 +1,4 @@
+
 package logica;
 
 import java.sql.Connection;
@@ -235,4 +236,30 @@ public class Modelo {
 	        System.out.println("Error al borrar: " + e.getMessage());
 	    }
 	}
+	
+	////////// Método que carga la matriz de una disposición específica desde la BD.
+	////////// Este método reconstruye la matriz bidimensional que representa una disposición
+	////////// del laberinto, utilizando los datos almacenados en la tabla 'disposiciones_matriz'.
+	 
+	public int[][] cargarMatrizDisposicion(int idDisposicion, int ancho, int alto) {
+	    int[][] matriz = new int[alto][ancho];
+	    String consulta = "SELECT cord_x, cord_y, elemento FROM disposiciones_matriz WHERE id_disposicion = ?"; // Consulta SQL para obtener las coordenadas y el elemento correspondiente a la disposición
+	    try {
+	        PreparedStatement stmt = conexion.prepareStatement(consulta);
+	        stmt.setInt(1, idDisposicion);
+	        ResultSet rs = stmt.executeQuery();
+	        //
+	        while (rs.next()) {	// Se recorre el resultado fila por fila
+	            int x = rs.getInt("cord_x");
+	            int y = rs.getInt("cord_y");
+	            int elemento = rs.getInt("elemento");
+	            matriz[y][x] = elemento;
+	        }
+	        stmt.close();
+	    } catch (SQLException e) {
+	        e.printStackTrace();
+	    }
+	    return matriz;
+	}
+
 }
