@@ -1,3 +1,4 @@
+
 package vista;
 
 import java.awt.EventQueue;
@@ -6,6 +7,7 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.SwingConstants;
@@ -181,15 +183,35 @@ public class ElegirLaberinto extends JFrame {
 		        }
 		    }
 		});
-		
+		//////////////////////////////////////////////////////////////////////////////////* AL JUEGO
 		// Clic boton jugar
 		btnJugar.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				// aqui abririá la pestaña del juego
-			}
+		    public void actionPerformed(ActionEvent e) {
+		        int filaLaberinto = tableLaberintos.getSelectedRow();
+		        int filaDisposicion = tableDisposicion.getSelectedRow();
+		        if (filaLaberinto == -1 || filaDisposicion == -1) {
+		            JOptionPane.showMessageDialog(null, "Selecciona un laberinto y una disposición.");
+		            return;
+		        }
+
+		        // Obtener datos del laberinto y disposición seleccionados
+		        int idDisposicion = (int) modeloDisposiciones.getValueAt(filaDisposicion, 0);
+		        int ancho = (int) modeloLaberintos.getValueAt(filaLaberinto, 1);
+		        int alto = (int) modeloLaberintos.getValueAt(filaLaberinto, 2);
+		        int tiempoPregunta = (int) modeloLaberintos.getValueAt(filaLaberinto, 5);  // tiempo
+		        
+		        int[][] matriz = modelo.cargarMatrizDisposicion(idDisposicion, ancho, alto);// Cargamos la matriz de la disposición
+		        logica.Jugador jugador = new logica.Jugador("Jugador", 100); // Establecemos que la vida siempre será 100
+
+		        // Lanzar la interfaz del laberinto
+		        new InterfazLaberinto(matriz, ancho, alto, jugador, modelo, tiempoPregunta);
+		        
+		        dispose(); // Cerramos la ventana actual
+		        //
+		    }
 		});
-		
-		// Clic boton jugar nueva disposicion
+		//////////////////////////////////////////////////////////////////////////////////* AL JUEGO
+
 		btnJugarNuevaDisp.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				// este boton abriria la pestaña del juego con una disposicion nueva creada
@@ -197,11 +219,11 @@ public class ElegirLaberinto extends JFrame {
 		});
 	}
 	
-	
+	////////////////////////////////////////////////////////////////////////////////////////  MÉTODOS
 	/**
 	 * Cargar los laberintos de la BD y meterlos en la tabla
 	 */
-	public void cargarLaberintos() {
+	public void cargarLaberintos() {			//Cargar los laberintos de la BD y meterlos en la tabla
 	    ResultSet rset = modelo.consultarDatos("laberintos");
 
 	    try {
