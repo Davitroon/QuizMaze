@@ -67,18 +67,14 @@ public class ElegirLaberinto extends JFrame {
 		contentPane.add(scrollPane);
 		
 		modeloLaberintos = new DefaultTableModel(
-			    new Object[][] {
-			        
-			    },
+			    new Object[][] {},
 			    new String[] {
-			        "id", "ancho", "alto", "num_cocodrilos", "num_botiquines","num_preguntas"
+			        "id", "ancho", "alto", "num_cocodrilos", "daño_cocodrilos", "num_botiquines",
+			        "vida_botiquines", "tiempo_pregunta", "daño_pregunta", "num_preguntas"
 			    }
-			) {
-			    @Override
-			    public boolean isCellEditable(int row, int column) {
-			        return false; // No permitir edición de celdas
-			    }
-			};
+			    
+			);
+
 			
 		modeloDisposiciones = new DefaultTableModel(
 			    new Object[][] {
@@ -198,18 +194,23 @@ public class ElegirLaberinto extends JFrame {
 		        int idDisposicion = (int) modeloDisposiciones.getValueAt(filaDisposicion, 0);
 		        int ancho = (int) modeloLaberintos.getValueAt(filaLaberinto, 1);
 		        int alto = (int) modeloLaberintos.getValueAt(filaLaberinto, 2);
-		        int tiempoPregunta = (int) modeloLaberintos.getValueAt(filaLaberinto, 5);  // tiempo
-		        
-		        int[][] matriz = modelo.cargarMatrizDisposicion(idDisposicion, ancho, alto);// Cargamos la matriz de la disposición
-		        logica.Jugador jugador = new logica.Jugador("Jugador", 100); // Establecemos que la vida siempre será 100
 
-		        // Lanzar la interfaz del laberinto
-		        new InterfazLaberinto(matriz, ancho, alto, jugador, modelo, tiempoPregunta);
-		        
-		        dispose(); // Cerramos la ventana actual
-		        //
+		        // Ajustamos los índices de columna según el orden de tu modeloLaberintos
+		        int danoCocodrilo = (int) modeloLaberintos.getValueAt(filaLaberinto, 4);    // daño_cocodrilos
+		        int vidaBotiquin = (int) modeloLaberintos.getValueAt(filaLaberinto, 6);     // vida_botiquines
+		        int tiempoPregunta = (int) modeloLaberintos.getValueAt(filaLaberinto, 7);   // tiempo_pregunta
+		        int danoPregunta = (int) modeloLaberintos.getValueAt(filaLaberinto, 8);     // daño_pregunta
+
+		        int[][] matriz = modelo.cargarMatrizDisposicion(idDisposicion, ancho, alto);
+		        logica.Jugador jugador = new logica.Jugador("Jugador", 100);
+
+		        // Llamamos al constructor ampliado de InterfazLaberinto
+		        new InterfazLaberinto(matriz, ancho, alto, jugador, modelo, tiempoPregunta, vidaBotiquin, danoCocodrilo, danoPregunta);
+
+		        dispose();
 		    }
 		});
+
 		//////////////////////////////////////////////////////////////////////////////////* AL JUEGO
 
 		btnJugarNuevaDisp.addActionListener(new ActionListener() {
@@ -228,14 +229,20 @@ public class ElegirLaberinto extends JFrame {
 
 	    try {
 	        while (rset.next()) {
-	            Object[] fila = new Object[] {
-	                rset.getInt("id"),
-	                rset.getInt("ancho"),
-	                rset.getInt("alto"),
-	                rset.getInt("num_cocodrilos"),
-	                rset.getInt("num_botiquines"),
-	                rset.getInt("num_preguntas")
-	            };
+	        	Object[] fila = new Object[] {
+	        		    rset.getInt("id"),
+	        		    rset.getInt("ancho"),
+	        		    rset.getInt("alto"),
+	        		    rset.getInt("num_cocodrilos"),
+	        		    rset.getInt("daño_cocodrilos"),
+	        		    rset.getInt("num_botiquines"),
+	        		    rset.getInt("vida_botiquines"),
+	        		    rset.getInt("tiempo_pregunta"),
+	        		    rset.getInt("daño_pregunta"),
+	        		    rset.getInt("num_preguntas")
+	        		};
+	        		modeloLaberintos.addRow(fila);
+
 	            modeloLaberintos.addRow(fila);
 	        }
 	    } catch (SQLException e) {
