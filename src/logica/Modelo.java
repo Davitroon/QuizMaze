@@ -15,7 +15,7 @@ public class Modelo {
 	private static Connection conexion;
 	private String database = "laberinto25"; 
 	private String login = "root";
-	private String pwd = "Coco2006";
+	private String pwd = "";
 	private String url = "jdbc:mysql://localhost/" + database;
 	
 	public Modelo() throws SQLException, ClassNotFoundException {
