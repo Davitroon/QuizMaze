@@ -6,6 +6,9 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Clase para conectar con la base de datos y gestionarla.
@@ -260,6 +263,29 @@ public class Modelo {
 	        e.printStackTrace();
 	    }
 	    return matriz;
+	}
+	
+	
+
+	public List<Pregunta> obtenerPreguntas() {
+	    List<Pregunta> preguntas = new ArrayList<>();
+	    String sql = "SELECT pregunta, respuesta, pista FROM preguntas";
+	    try (
+	        Connection conn = DriverManager.getConnection(url, login, pwd);
+	        PreparedStatement ps = conn.prepareStatement(sql);
+	        ResultSet rs = ps.executeQuery()
+	    ) {
+	        while (rs.next()) {
+	            preguntas.add(new Pregunta(
+	                rs.getString("pregunta"),
+	                rs.getString("respuesta"),
+	                rs.getString("pista")
+	            ));
+	        }
+	    } catch (SQLException e) {
+	        e.printStackTrace();
+	    }
+	    return preguntas;
 	}
 
 }
