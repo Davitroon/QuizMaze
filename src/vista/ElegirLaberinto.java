@@ -202,7 +202,7 @@ public class ElegirLaberinto extends JFrame {
 		        int danoPregunta = (int) modeloLaberintos.getValueAt(filaLaberinto, 8);     // daño_pregunta
 
 		        int[][] matriz = modelo.cargarMatrizDisposicion(idDisposicion, ancho, alto);
-		        logica.Jugador jugador = new logica.Jugador("Jugador", 100);
+		        logica.Jugador jugador = new logica.Jugador("Jugador");
 
 		        // Llamamos al constructor ampliado de InterfazLaberinto
 		        new InterfazLaberinto(matriz, ancho, alto, jugador, modelo, tiempoPregunta, vidaBotiquin, danoCocodrilo, danoPregunta);
