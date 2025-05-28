@@ -5,6 +5,7 @@ import java.awt.Font;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.Collections;
 import java.util.List;
 
 import javax.swing.BorderFactory; //Para crear bordes alrededor de componentes
@@ -60,7 +61,9 @@ public class InterfazLaberinto {
     	    this.vidaBotiquin = vidaBotiquin;
     	    this.danoCocodrilo = danoCocodrilo;
     	    this.danoPregunta = danoPregunta;
-    	    this.preguntas = modelo.obtenerPreguntas();
+    	    this.preguntas = modelo.obtenerPreguntas(); //!!!
+    	    Collections.shuffle(this.preguntas); // Con esto las preguntas saldrán de forma deosrdenada 
+    	    // shuffle es un metodo de Collection (de donde herada nuestro List) que mezcla aleatoriamente los elementos de una lista
     	    initialize();
     	    actualizarVista();
     	    iniciarCronometro();
@@ -312,8 +315,6 @@ public class InterfazLaberinto {
 
         Timer timer = new Timer(1000, null);
         final int[] tiempoRestante = {tiempoPregunta};
-	//////////////////////////////////////////////////
-        //// Añadimos la acción que se ejecuta cada segundo:
         timer.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 tiempoRestante[0]--;
@@ -325,8 +326,8 @@ public class InterfazLaberinto {
             }
         });
 
-        timer.start();// Empezamos la cuenta atrás
-	/////////////////////////////
+        timer.start();
+
         // Acción para el botón
         botonResponder.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
@@ -372,6 +373,10 @@ public class InterfazLaberinto {
 
         return resultado[0];
     }
+
+
+    
+    
     private void mostrarResumen() {
         String tiempo = labelCronometro.getText().replace("Tiempo: ", "");
         JOptionPane.showMessageDialog(frame,
@@ -382,6 +387,7 @@ public class InterfazLaberinto {
             "\nTiempo: " + tiempo
         );
     }
+
 
 
 }
