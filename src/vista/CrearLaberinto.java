@@ -1,5 +1,6 @@
 package vista;
 
+import java.awt.Color;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -20,7 +21,6 @@ import javax.swing.event.ChangeListener;
 import logica.Disposicion;
 import logica.Laberinto;
 import logica.Modelo;
-import java.awt.Color;
 public class CrearLaberinto {
 
 	private JFrame frame;
@@ -353,7 +353,6 @@ public class CrearLaberinto {
 	    		modelo.insertarDisposicion(disposicion);	        		
 	    		
 	    		disposicion.guardarMatriz();
-	    		disposicion.imprimirMatriz();
 	    		
 	    		gestionLaberinto.actualizarLaberintos();
 	    		getFrame().dispose();
@@ -362,6 +361,9 @@ public class CrearLaberinto {
 	    });
 	}
 	
+	/**
+	 * Restablece todos los controles de la ventana a sus valores iniciales.
+	 */
 	public void reiniciarVentana() {
 	    
 	    // Restablecer spinners

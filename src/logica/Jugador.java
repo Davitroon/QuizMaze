@@ -1,6 +1,8 @@
 package logica;
 
 public class Jugador {
+	
+	private int id;
     private String nombre;
     private int x, y;
     private int vida;
@@ -78,6 +80,17 @@ public class Jugador {
     public void sumarPuntos(int cantidad) {
         this.puntos += cantidad;
     }
+    
+	public int getId() {
+		return id;
+	}
+	
+	public void setId(int id) {
+		this.id = id;
+	}
+    
+    
+    
 
     
 }

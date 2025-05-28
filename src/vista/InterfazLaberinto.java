@@ -30,6 +30,8 @@ public class InterfazLaberinto {
     private int ancho, alto;
     private Jugador jugador;
     private Modelo modelo;
+    private final int idLaberinto;
+    private final int idDisposicion;
     //
     
     private JLabel labelVida;
@@ -50,8 +52,12 @@ public class InterfazLaberinto {
     private int incorrectas = 0;
     private JLabel labelPuntos;
     
+    private ElegirLaberinto elegirLaberinto;
+    
     //// COnstructor añadido ya que debe recibir parametroint, haciendo que cada vista sea diferente
-    public InterfazLaberinto(int[][] matriz, int ancho, int alto, Jugador jugador, Modelo modelo, int tiempoPregunta, int vidaBotiquin, int danoCocodrilo, int danoPregunta){
+    public InterfazLaberinto(int[][] matriz, int ancho, int alto, Jugador jugador, Modelo modelo, int tiempoPregunta, int vidaBotiquin, 
+    							int danoCocodrilo, int danoPregunta, int idLaberinto, int idDisposicion, ElegirLaberinto elegirLaberinto){
+    		this.elegirLaberinto = elegirLaberinto;
     	    this.matriz = matriz;
     	    this.ancho = ancho;
     	    this.alto = alto;
@@ -62,6 +68,8 @@ public class InterfazLaberinto {
     	    this.danoCocodrilo = danoCocodrilo;
     	    this.danoPregunta = danoPregunta;
     	    this.preguntas = modelo.obtenerPreguntas(); //!!!
+    	    this.idLaberinto   = idLaberinto;
+			this.idDisposicion = idDisposicion;
     	    Collections.shuffle(this.preguntas); // Con esto las preguntas saldrán de forma deosrdenada 
     	    // shuffle es un metodo de Collection (de donde herada nuestro List) que mezcla aleatoriamente los elementos de una lista
     	    initialize();
@@ -379,13 +387,41 @@ public class InterfazLaberinto {
     
     private void mostrarResumen() {
         String tiempo = labelCronometro.getText().replace("Tiempo: ", "");
-        JOptionPane.showMessageDialog(frame,
-            "Preguntas correctas: " + correctas +
-            "\nPreguntas incorrectas: " + incorrectas +
-            "\nVida final: " + jugador.getVida() +
-            "\nPuntos: " + jugador.getPuntos() +
-            "\nTiempo: " + tiempo
+        boolean victoria = jugador.getVida() > 0;
+
+        // Inserta la partida en la base de datos
+        modelo.insertarPartida(
+            jugador.getId(),
+            this.idLaberinto,
+            this.idDisposicion,
+            victoria,
+            jugador.getVida(),
+            correctas,
+            incorrectas,
+            jugador.getPuntos(),
+            tiempo
         );
+
+        // Abre la ventana de resultados
+        ResultadosLaberinto ventanaResultados = new ResultadosLaberinto(
+    	    jugador.getNombre(),    // nombreUsuario
+    	    correctas,              // preguntasCorrectas
+    	    incorrectas,            // preguntasIncorrectas
+    	    jugador.getVida(),      // vidaFinal
+    	    jugador.getPuntos(),    // puntos
+    	    tiempo,                 // tiempo en MM:SS
+    	    victoria,               // boolean victoria
+    	    modelo,                 // tu objeto Modelo
+    	    idLaberinto,            // el int que recibiste al crear la vista
+    	    idDisposicion,           // idem para disposición
+    	    elegirLaberinto,
+    	    matriz
+        );
+        ventanaResultados.setLocationRelativeTo(frame);  // Centrar sobre la ventana actual
+        ventanaResultados.setVisible(true);
+
+        // Cierra la ventana del laberinto
+        frame.dispose();
     }
 
 

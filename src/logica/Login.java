@@ -14,12 +14,18 @@ public class Login {
 	private Modelo modelo;
 	private ElegirLaberinto elegirLaberinto;
 	private GestionLaberinto gestionLaberinto;
+	private Jugador jugador;
 	
-	public String getNombreUsuario() {
-		return nombreUsuario;
+	public Login(Modelo modelo) {
+		this.modelo = modelo;
 	}
 	
 
+	public String getNombreUsuario() {
+		return nombreUsuario;
+	}
+
+	
 	public void logearse() {
 		Scanner scn = new Scanner(System.in);
 		boolean accesoConcedido = false;
@@ -38,62 +44,103 @@ public class Login {
 					System.out.print("Nombre de usuario nuevo: ");
 					String usuarioNuevo = scn.nextLine();
 
+					if (!validarNombreUsuario(usuarioNuevo)) {
+					    break; 
+					}
+					
 					System.out.print("Contraseña: ");
 					String contraseñaNueva = scn.nextLine();
+					
+					if (!validarContraseña(contraseñaNueva)) {
+					    break; 
+					}
 
 					System.out.print("Repite la contraseña: ");
 					String contraseñaRepetida = scn.nextLine();
-
+					
+					if (!validarContraseña(contraseñaRepetida)) {
+					    break; 
+					}
+					
 					if (!contraseñaRepetida.equals(contraseñaNueva)) {
 						System.out.println("Las contraseñas no son iguales");
 						
 					} else {
-						modelo.insertarUsuario(usuarioNuevo, contraseñaRepetida);
-						System.out.println("Usuario " + usuarioNuevo + " creado.");
+						int idJugador = modelo.insertarUsuario(usuarioNuevo, contraseñaRepetida);
+
+						if (idJugador != -1) {
+						    jugador = new Jugador(usuarioNuevo); // Constructor existente
+						    jugador.setId(idJugador);            // Asegúrate de tener este setter
+
+						    System.out.println("Usuario " + usuarioNuevo + " creado con ID: " + idJugador);
+
+						    if (elegirLaberinto == null) {
+						        elegirLaberinto = new ElegirLaberinto(this, modelo, jugador);
+						    }
+						    elegirLaberinto.cargarLaberintos();
+						    elegirLaberinto.setVisible(true);
+
+						    accesoConcedido = true;
+						} else {
+						    System.out.println("Error al crear el usuario.");
+						}
 					}
 				break;
 
 				// Iniciar sesion
 				case 2:
-					System.out.print("Usuario: ");
-					nombreUsuario = scn.nextLine();
-
-					System.out.print("Contraseña: ");
-					String contraseña = scn.nextLine();
-					
-					
-					ResultSet rs = modelo.consultarUsuario(nombreUsuario, contraseña);
-					
-					try {
-						if (rs.next()) {
-							String usuario = rs.getString("nombre");					
-							
-							if (usuario.equals("admin")) {
-								if (gestionLaberinto == null) {
-									gestionLaberinto = new GestionLaberinto(this, modelo);
-								}
-								gestionLaberinto.actualizarLaberintos();
-								gestionLaberinto.setVisible(true);
-								
-							} else {
-								if (elegirLaberinto == null) {
-									elegirLaberinto = new ElegirLaberinto(this, modelo);
-								}						
-								elegirLaberinto.cargarLaberintos();
-								elegirLaberinto.setVisible(true);
-							}
-							
-							accesoConcedido = true;
-							
-						} else {
-							System.out.println("Usuario o contraseña incorrectos");
-						}
-						
-					} catch (SQLException e) {
-						System.out.println("Error al iniciar sesión");
-						e.printStackTrace();
+				    System.out.print("Usuario: ");
+				    nombreUsuario = scn.nextLine();
+				    
+					if (!validarNombreUsuario(nombreUsuario)) {
+					    break; 
 					}
-				break;
+
+				    System.out.print("Contraseña: ");
+				    String contraseña = scn.nextLine();
+				    
+					if (!validarContraseña(contraseña)) {
+					    break; 
+					}
+
+				    ResultSet rs = modelo.consultarUsuario(nombreUsuario, contraseña);
+
+				    try {
+				        if (rs.next()) {
+				            // Obtener id y nombre del usuario desde la consulta
+				            int idUsuario = rs.getInt("id");
+				            String usuario = rs.getString("nombre");
+
+				            // Crear el objeto Jugador con nombre e id
+				            jugador = new Jugador(usuario);
+				            jugador.setId(idUsuario);  // Asegúrate de que Jugador tiene setId(int)
+
+				            if (usuario.equals("admin")) {
+				                if (gestionLaberinto == null) {
+				                    gestionLaberinto = new GestionLaberinto(this, modelo);
+				                }
+				                gestionLaberinto.actualizarLaberintos();
+				                gestionLaberinto.setVisible(true);
+
+				            } else {
+				                if (elegirLaberinto == null) {
+				                    elegirLaberinto = new ElegirLaberinto(this, modelo, jugador);
+				                }
+				                elegirLaberinto.cargarLaberintos();
+				                elegirLaberinto.setVisible(true);
+				            }
+
+				            accesoConcedido = true;
+
+				        } else {
+				            System.out.println("Usuario o contraseña incorrectos");
+				        }
+
+				    } catch (SQLException e) {
+				        System.out.println("Error al iniciar sesión");
+				        e.printStackTrace();
+				    }
+				    break;
 				
 				case 0:
 					System.out.println("Saliendo del prograna...");
@@ -111,9 +158,34 @@ public class Login {
 			}
 		}
 	}
-
 	
-	public Login(Modelo modelo) {
-		this.modelo = modelo;
+	/**
+	 * Valida la contraseña.
+	 * @param contraseña contraseña a validar
+	 * @return true si la contraseña es válida, false en caso contrario
+	 */
+	private boolean validarContraseña(String contraseña) {
+	    if (contraseña == null || contraseña.length() < 4) {
+	        System.out.println("La contraseña debe tener al menos 4 caracteres.");
+	        return false;
+	    }
+	    return true;
+	}
+
+	/**
+	 * Valida el nombre de usuario.
+	 * @param nombre nombre de usuario a validar
+	 * @return true si el nombre es válido, false en caso contrario
+	 */
+	private boolean validarNombreUsuario(String nombre) {
+	    if (nombre == null || nombre.trim().isEmpty()) {
+	        System.out.println("El nombre de usuario no puede estar vacío.");
+	        return false;
+	    }
+	    if (!nombre.matches("^[a-zA-Z0-9_]{3,20}$")) {
+	        System.out.println("El nombre de usuario debe tener entre 3 y 20 caracteres y solo puede contener letras, números y guiones bajos.");
+	        return false;
+	    }
+	    return true;
 	}
 }

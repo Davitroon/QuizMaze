@@ -14,6 +14,9 @@ import javax.swing.SwingConstants;
 import javax.swing.JButton;
 import javax.swing.table.DefaultTableModel;
 
+import logica.Disposicion;
+import logica.Jugador;
+import logica.Laberinto;
 import logica.Login;
 import logica.Modelo;
 
@@ -43,7 +46,7 @@ public class ElegirLaberinto extends JFrame {
 	 * Create the frame.
 	 * @param menuUsuario 
 	 */
-	public ElegirLaberinto(Login login, Modelo modelo) {
+	public ElegirLaberinto(Login login, Modelo modelo, Jugador jugador) {
 		this.modelo = modelo;
 		
 		setResizable(false);
@@ -136,6 +139,7 @@ public class ElegirLaberinto extends JFrame {
 		tableLaberintos.addMouseListener(new MouseAdapter() {
 		    @Override
 		    public void mouseClicked(MouseEvent e) {
+		    	btnJugar.setEnabled(false);
 		        int fila = tableLaberintos.rowAtPoint(e.getPoint());
 		        int columna = tableLaberintos.columnAtPoint(e.getPoint());
 
@@ -202,10 +206,13 @@ public class ElegirLaberinto extends JFrame {
 		        int danoPregunta = (int) modeloLaberintos.getValueAt(filaLaberinto, 8);     // daño_pregunta
 
 		        int[][] matriz = modelo.cargarMatrizDisposicion(idDisposicion, ancho, alto);
-		        logica.Jugador jugador = new logica.Jugador("Jugador");
+		        int fila = tableLaberintos.getSelectedRow();
+		        int idLab  = (int) modeloLaberintos.getValueAt(fila, 0);
+		        fila = tableDisposicion.getSelectedRow();
+		        int idDisp = (int) modeloDisposiciones.getValueAt(fila, 0);
 
 		        // Llamamos al constructor ampliado de InterfazLaberinto
-		        new InterfazLaberinto(matriz, ancho, alto, jugador, modelo, tiempoPregunta, vidaBotiquin, danoCocodrilo, danoPregunta);
+		        new InterfazLaberinto(matriz, ancho, alto, jugador, modelo, tiempoPregunta, vidaBotiquin, danoCocodrilo, danoPregunta, idLab, idDisp, ElegirLaberinto.this);
 
 		        dispose();
 		    }
@@ -214,9 +221,48 @@ public class ElegirLaberinto extends JFrame {
 		//////////////////////////////////////////////////////////////////////////////////* AL JUEGO
 
 		btnJugarNuevaDisp.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				// este boton abriria la pestaña del juego con una disposicion nueva creada
-			}
+		    public void actionPerformed(ActionEvent e) {
+		        int filaLab = tableLaberintos.getSelectedRow();
+		        if (filaLab == -1) {
+		            JOptionPane.showMessageDialog(null,
+		                "Selecciona primero un laberinto.",
+		                "Atención", JOptionPane.WARNING_MESSAGE);
+		            return;
+		        }
+
+		        // Extraer datos del laberinto
+		        int idLab           = (int) modeloLaberintos.getValueAt(filaLab, 0);
+		        int ancho           = (int) modeloLaberintos.getValueAt(filaLab, 1);
+		        int alto            = (int) modeloLaberintos.getValueAt(filaLab, 2);
+		        int numCocodrilos   = (int) modeloLaberintos.getValueAt(filaLab, 3);
+		        int dañoCocodrilos  = (int) modeloLaberintos.getValueAt(filaLab, 4);
+		        int numBotiquines   = (int) modeloLaberintos.getValueAt(filaLab, 5);
+		        int vidaBotiquines  = (int) modeloLaberintos.getValueAt(filaLab, 6);
+		        int tiempoPregunta  = (int) modeloLaberintos.getValueAt(filaLab, 7);
+		        int dañoPregunta    = (int) modeloLaberintos.getValueAt(filaLab, 8);
+		        int numPreguntas    = (int) modeloLaberintos.getValueAt(filaLab, 9);
+
+		        // Carga la matriz base (ceros+muros) y crea la Disposicion
+		        int[][] base = modelo.cargarMatrizDisposicion(idLab, ancho, alto);
+		        Disposicion nuevaDisp = new Disposicion(base, idLab, modelo);
+
+		        // Genera elementos y guarda sus posiciones
+		        try {
+		            nuevaDisp.generarMatriz(numBotiquines, numCocodrilos);
+		        } catch (IllegalArgumentException ex) {
+		            JOptionPane.showMessageDialog(null,
+		                ex.getMessage(),
+		                "Error al generar matriz",
+		                JOptionPane.ERROR_MESSAGE);
+		            return;
+		        }
+		        modelo.insertarDisposicion(nuevaDisp);      // persiste Disposicion y asigna ID
+		        nuevaDisp.guardarMatriz();                  // guarda cada casilla
+
+		        new InterfazLaberinto(nuevaDisp.getMapa(), ancho, alto, jugador, modelo, tiempoPregunta, vidaBotiquines, dañoCocodrilos, dañoPregunta, idLab, idLab, ElegirLaberinto.this);
+
+		        dispose();
+		    }
 		});
 	}
 	
@@ -241,9 +287,7 @@ public class ElegirLaberinto extends JFrame {
 	        		    rset.getInt("daño_pregunta"),
 	        		    rset.getInt("num_preguntas")
 	        		};
-	        		modeloLaberintos.addRow(fila);
-
-	            modeloLaberintos.addRow(fila);
+        		modeloLaberintos.addRow(fila);
 	        }
 	    } catch (SQLException e) {
 	        e.printStackTrace();
@@ -256,6 +300,7 @@ public class ElegirLaberinto extends JFrame {
 	public void reiniciarVentana() {
 	    btnJugar.setEnabled(false); // Desactivar botón Jugar
 	    btnJugarNuevaDisp.setEnabled(false);
+	    tableLaberintos.clearSelection();
 
 	    tableLaberintos.clearSelection(); // Quitar selección
 
