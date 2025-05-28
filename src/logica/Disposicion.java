@@ -82,6 +82,26 @@ public class Disposicion {
 	}
 	
 	
+	public int[][] getMapa() {
+		return mapa;
+	}
+
+
+	public void setMapa(int[][] mapa) {
+		this.mapa = mapa;
+	}
+
+
+	public Modelo getModelo() {
+		return modelo;
+	}
+
+
+	public void setModelo(Modelo modelo) {
+		this.modelo = modelo;
+	}
+
+
 	/**
 	 * Método que lee la matriz y guarda las posiciones donde haya una casilla especial
 	 */
@@ -109,43 +129,5 @@ public class Disposicion {
 	
 	public int getIdLaberinto() {
 		return idLaberinto;
-	}
-	
-	public void imprimirMatriz() {
-	    int filas = mapa.length;
-	    int columnas = mapa[0].length;
-	    
-	    for (int y = 0; y < filas + 2; y++) {
-	        for (int x = 0; x < columnas + 2; x++) {
-	            // Bordes exteriores
-	            if (y == 0 || y == filas + 1 || x == 0 || x == columnas + 1) {
-	                System.out.print("#");  // muro borde
-	            } else {
-	                // Dentro del borde: mapa real
-	                int mapaY = y - 1;
-	                int mapaX = x - 1;
-	                
-	                // Si es la esquina superior izquierda del mapa (inicio)
-	                if (mapaY == 0 && mapaX == 0) {
-	                    System.out.print("O");
-	                } 
-	                // Si es la esquina inferior derecha del mapa (salida)
-	                else if (mapaY == filas - 1 && mapaX == columnas - 1) {
-	                    System.out.print("X");
-	                } 
-	                else {
-	                    // Resto de celdas según mapa
-	                    switch (mapa[mapaY][mapaX]) {
-	                        case 0: System.out.print(" "); break;    // vacío
-	                        case 1: System.out.print("B"); break;    // botiquín
-	                        case 2: System.out.print("C"); break;    // cocodrilo
-	                        case 3: System.out.print("#"); break;    // muro
-	                        default: System.out.print("?"); break;   // otro
-	                    }
-	                }
-	            }
-	        }
-	        System.out.println();
-	    }
 	}
 }
