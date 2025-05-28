@@ -301,7 +301,7 @@ public class InterfazLaberinto {
         if (indicePregunta >= preguntas.size()) {
             indicePregunta = 0;
         }
-        Pregunta p = preguntas.get(indicePregunta++);
+        Pregunta pregunta = preguntas.get(indicePregunta++);
 
         JTextField respuesta = new JTextField();
         JButton botonResponder = new JButton("Responder");
@@ -311,10 +311,10 @@ public class InterfazLaberinto {
         dialogPregunta = new JDialog(frame, "Pregunta", true);
 
         JPanel panel = new JPanel(new GridLayout(0, 1));
-        panel.add(new JLabel(p.getEnunciado()));
+        panel.add(new JLabel(pregunta.getEnunciado()));
         JLabel labelTiempo = new JLabel("Tiempo: " + tiempoPregunta + " segundos");
         panel.add(labelTiempo);
-        panel.add(new JLabel("Pista: " + p.getPista()));
+        panel.add(new JLabel("Pista: " + pregunta.getPista()));
         panel.add(new JLabel("Respuesta:"));
         panel.add(respuesta);
         panel.add(botonResponder);
@@ -335,14 +335,15 @@ public class InterfazLaberinto {
                 }
             }
         });
-
-        timer.start();
+        
+        timer.start();// Empezamos la cuenta atrás
 
         // Acción para el botón
         botonResponder.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                String respuestaUsuario = respuesta.getText().trim();
-                if (respuestaUsuario.equalsIgnoreCase(p.getRespuestaCorrecta())) {
+                String respuestaUsuario = respuesta.getText().trim(); // "purgamos" la respuesta de posibles espacios en blanco
+                if (respuestaUsuario.equalsIgnoreCase(pregunta.getRespuestaCorrecta())) { // Admite respuestas que no empiezen por mayúscula
+                	//! Lo que no admite son respuestas sin acentos
                     resultadoPregunta = true;
                     timer.stop();
                     dialogPregunta.dispose();
@@ -383,10 +384,6 @@ public class InterfazLaberinto {
 
         return resultadoPregunta;
     }
-
-
-    
-    
     private void mostrarResumen() {
         String tiempo = labelCronometro.getText().replace("Tiempo: ", "");
         JOptionPane.showMessageDialog(frame,
@@ -397,7 +394,4 @@ public class InterfazLaberinto {
             "\nTiempo: " + tiempo
         );
     }
-
-
-
-}
+}//Fin
