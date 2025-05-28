@@ -60,6 +60,7 @@ public class InterfazLaberinto {
 	 */
     private void initialize() {
         frame = new JFrame("Laberinto");
+        frame.setResizable(false);
         frame.setBounds(100, 100, 452, 700);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.getContentPane().setLayout(null);

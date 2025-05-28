@@ -13,6 +13,7 @@ import javax.swing.JSpinner;
 import javax.swing.JTable;
 import javax.swing.SpinnerModel;
 import javax.swing.SpinnerNumberModel;
+import javax.swing.SwingConstants;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
@@ -80,6 +81,7 @@ public class CrearLaberinto {
 		frame.getContentPane().setLayout(null);
 		
 		JLabel lbl_IdLaberinto = new JLabel("Crear Laberinto");
+		lbl_IdLaberinto.setHorizontalAlignment(SwingConstants.CENTER);
 		lbl_IdLaberinto.setFont(new Font("Tahoma", Font.BOLD, 18));
 		lbl_IdLaberinto.setBounds(10, 11, 636, 24);
 		frame.getContentPane().add(lbl_IdLaberinto);
@@ -282,14 +284,14 @@ public class CrearLaberinto {
 		btnCrear.setBackground(new Color(128, 255, 255));
 		btnCrear.setEnabled(false); 
 	    btnCrear.setFont(new Font("Tahoma", Font.BOLD, 14));
-	    btnCrear.setBounds(528, 359, 110, 53);
+	    btnCrear.setBounds(528, 371, 110, 41);
 	    frame.getContentPane().add(btnCrear);
 	    
 	    JButton btnVolver = new JButton("VOLVER");
 	    btnVolver.setBackground(new Color(128, 128, 128));
 	    btnVolver.setForeground(new Color(0, 0, 0));
 	    btnVolver.setFont(new Font("Tahoma", Font.BOLD, 14));
-	    btnVolver.setBounds(24, 359, 110, 53);
+	    btnVolver.setBounds(24, 371, 110, 41);
 	    frame.getContentPane().add(btnVolver);
 	    
 	    JLabel lblAviso = new JLabel("* El \"3\" representa un Muro ");
