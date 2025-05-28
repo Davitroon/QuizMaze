@@ -47,12 +47,15 @@ public class InterfazLaberinto {
     private List<Pregunta> preguntas;	// Le pasamos una lista de objetos Pregunta
     private int indicePregunta = 0;
     
-    private int intentosFallidos = 0;
     private int correctas = 0;
     private int incorrectas = 0;
     private JLabel labelPuntos;
     
     private ElegirLaberinto elegirLaberinto;
+    //Varibles que se usan en mostrarPreguntaConTiempo()
+    private boolean resultadoPregunta = false;
+    private int intentosPregunta = 0;
+    private JDialog dialogPregunta;
     
     //// COnstructor añadido ya que debe recibir parametroint, haciendo que cada vista sea diferente
     public InterfazLaberinto(int[][] matriz, int ancho, int alto, Jugador jugador, Modelo modelo, int tiempoPregunta, int vidaBotiquin, 
@@ -240,12 +243,17 @@ public class InterfazLaberinto {
                 JPanel celda = celdasGrid[indiceEnArray];
                 if (x >= 0 && x < ancho && y >= 0 && y < alto) {
                     int elemento = matriz[y][x];
-                    switch (elemento) {
-                        case 0: celda.setBackground(Color.WHITE); break;     // Vacío
-                        case 1: celda.setBackground(Color.GREEN); break;     // Botiquín
-                        case 2: celda.setBackground(Color.RED); break;       // Cocodrilo
-                        case 3: celda.setBackground(Color.GRAY); break;      // Muro
-                        default: celda.setBackground(Color.LIGHT_GRAY); break;
+                    // Si es la meta (esquina inferior derecha)
+                    if (x == ancho - 1 && y == alto - 1) {
+                        celda.setBackground(new Color(255, 215, 0)); // Color dorado para la meta
+                    } else {
+	                    switch (elemento) {
+	                        case 0: celda.setBackground(Color.WHITE); break;     // Vacío
+	                        case 1: celda.setBackground(Color.GREEN); break;     // Botiquín
+	                        case 2: celda.setBackground(Color.RED); break;       // Cocodrilo
+	                        case 3: celda.setBackground(Color.GRAY); break;      // Muro
+	                        default: celda.setBackground(Color.LIGHT_GRAY); break;
+	                    }
                     }
                 } else {
                     celda.setBackground(Color.BLACK); // Fuera de los límites
@@ -300,26 +308,27 @@ public class InterfazLaberinto {
         if (indicePregunta >= preguntas.size()) {
             indicePregunta = 0;
         }
-        Pregunta p = preguntas.get(indicePregunta++);
+        Pregunta pregunta = preguntas.get(indicePregunta++);
 
         JTextField respuesta = new JTextField();
         JButton botonResponder = new JButton("Responder");
-        final boolean[] resultado = {false};
-        final int[] intentos = {0}; // Contador de intentos
-        final JDialog dialog = new JDialog(frame, "Pregunta", true);
+        // Usamos variables de instancia en vez de arrays o final
+        resultadoPregunta = false; // Debe estar como atributo de clase para poder modificarlo desde el listener
+        intentosPregunta = 0;      // Contador de intentos, también como atributo
+        dialogPregunta = new JDialog(frame, "Pregunta", true);
 
         JPanel panel = new JPanel(new GridLayout(0, 1));
-        panel.add(new JLabel(p.getEnunciado()));
+        panel.add(new JLabel(pregunta.getEnunciado()));
         JLabel labelTiempo = new JLabel("Tiempo: " + tiempoPregunta + " segundos");
         panel.add(labelTiempo);
-        panel.add(new JLabel("Pista: " + p.getPista()));
+        panel.add(new JLabel("Pista: " + pregunta.getPista()));
         panel.add(new JLabel("Respuesta:"));
         panel.add(respuesta);
         panel.add(botonResponder);
 
-        dialog.getContentPane().add(panel);
-        dialog.pack();
-        dialog.setLocationRelativeTo(frame);
+        dialogPregunta.getContentPane().add(panel);
+        dialogPregunta.pack();
+        dialogPregunta.setLocationRelativeTo(frame);
 
         Timer timer = new Timer(1000, null);
         final int[] tiempoRestante = {tiempoPregunta};
@@ -329,29 +338,30 @@ public class InterfazLaberinto {
                 labelTiempo.setText("Tiempo: " + tiempoRestante[0] + " segundos");
                 if (tiempoRestante[0] <= 0) {
                     timer.stop();
-                    dialog.dispose();
+                    dialogPregunta.dispose();
                 }
             }
         });
-
-        timer.start();
+        
+        timer.start();// Empezamos la cuenta atrás
 
         // Acción para el botón
         botonResponder.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                String respuestaUsuario = respuesta.getText().trim();
-                if (respuestaUsuario.equalsIgnoreCase(p.getRespuestaCorrecta())) {
-                    resultado[0] = true;
+                String respuestaUsuario = respuesta.getText().trim(); // "purgamos" la respuesta de posibles espacios en blanco
+                if (respuestaUsuario.equalsIgnoreCase(pregunta.getRespuestaCorrecta())) { // Admite respuestas que no empiezen por mayúscula
+                	//! Lo que no admite son respuestas sin acentos
+                    resultadoPregunta = true;
                     timer.stop();
-                    dialog.dispose();
+                    dialogPregunta.dispose();
                 } else {
-                    intentos[0]++;
-                    if (intentos[0] >= 3) {
-                        JOptionPane.showMessageDialog(dialog, "Has fallado 3 veces.");
+                    intentosPregunta++;
+                    if (intentosPregunta >= 3) {
+                        JOptionPane.showMessageDialog(dialogPregunta, "Has fallado 3 veces.");
                         timer.stop();
-                        dialog.dispose();
+                        dialogPregunta.dispose();
                     } else {
-                        JOptionPane.showMessageDialog(dialog, "Respuesta incorrecta. Intento " + intentos[0] + " de 3.");
+                        JOptionPane.showMessageDialog(dialogPregunta, "Respuesta incorrecta. Intento " + intentosPregunta + " de 3.");
                     }
                 }
             }
@@ -364,10 +374,10 @@ public class InterfazLaberinto {
             }
         });
 
-        dialog.setVisible(true);
+        dialogPregunta.setVisible(true);
         timer.stop();
 
-        if (resultado[0]) {
+        if (resultadoPregunta) {
             correctas++;
             jugador.sumarPuntos(10);
             labelPuntos.setText("Puntuación = " + jugador.getPuntos());
@@ -379,12 +389,8 @@ public class InterfazLaberinto {
             actualizarVista();
         }
 
-        return resultado[0];
+        return resultadoPregunta;
     }
-
-
-    
-    
     private void mostrarResumen() {
         String tiempo = labelCronometro.getText().replace("Tiempo: ", "");
         boolean victoria = jugador.getVida() > 0;
@@ -423,7 +429,4 @@ public class InterfazLaberinto {
         // Cierra la ventana del laberinto
         frame.dispose();
     }
-
-
-
-}
+}//Fin
