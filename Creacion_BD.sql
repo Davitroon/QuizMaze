@@ -29,7 +29,7 @@ CREATE TABLE laberintos (
 CREATE TABLE disposiciones (
 	id INT PRIMARY KEY AUTO_INCREMENT,
     id_laberinto INT,
-    FOREIGN KEY (id_laberinto) REFERENCES laberintos(id)
+    FOREIGN KEY (id_laberinto) REFERENCES laberintos(id) ON DELETE CASCADE
 );
 
 CREATE TABLE preguntas (
@@ -145,9 +145,9 @@ CREATE TABLE partidas(
     id_disposicion INT,
     victoria BOOLEAN,
     vida INT,
-    FOREIGN KEY (id_usuario) REFERENCES usuarios(id),
-    FOREIGN KEY (id_laberinto) REFERENCES laberintos(id),
-	FOREIGN KEY (id_disposicion) REFERENCES disposiciones(id)
+    FOREIGN KEY (id_usuario) REFERENCES usuarios(id) ON DELETE CASCADE,
+    FOREIGN KEY (id_laberinto) REFERENCES laberintos(id) ON DELETE CASCADE,
+	FOREIGN KEY (id_disposicion) REFERENCES disposiciones(id) ON DELETE CASCADE
 );
 
 CREATE TABLE disposiciones_matriz (
@@ -157,7 +157,7 @@ CREATE TABLE disposiciones_matriz (
     -- 1: Cocodrilo, 2: Botiquín, 3: Muro
     elemento INT NOT NULL,
 	PRIMARY KEY (cord_x, cord_y, id_disposicion),
-    FOREIGN KEY (id_disposicion) REFERENCES disposiciones(id)
+    FOREIGN KEY (id_disposicion) REFERENCES disposiciones(id) ON DELETE CASCADE
 );
 
 select * from usuarios;
