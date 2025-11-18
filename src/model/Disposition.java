@@ -1,4 +1,6 @@
-package logic;
+package model;
+
+import dao.DBConnector;
 
 /**
  * Disposition class that generates random matrices.
@@ -9,9 +11,9 @@ public class Disposition {
 	private int MazeId;
 	private int[][] map;
 
-	private Model model;
+	private DBConnector model;
 
-	public Disposition(int[][] map2, int MazeId, Model model) {
+	public Disposition(int[][] map2, int MazeId, DBConnector model) {
 		this.MazeId = MazeId;
 		this.map = map2;
 		this.model = model;
@@ -82,11 +84,11 @@ public class Disposition {
 		this.map = map;
 	}
 
-	public Model getModel() {
+	public DBConnector getModel() {
 		return model;
 	}
 
-	public void setModel(Model model) {
+	public void setModel(DBConnector model) {
 		this.model = model;
 	}
 

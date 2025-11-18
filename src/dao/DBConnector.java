@@ -1,17 +1,21 @@
-package logic;
+package dao;
 
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Model {
+import model.Disposition;
+import model.Maze;
+import model.Question;
+
+public class DBConnector {
 	private static Connection connection;
 	private String database = "maze";
 	private String login = "root";
 	private String pwd = "Coco2006";
 	private String url = "jdbc:mysql://localhost/" + database;
 
-	public Model() throws SQLException, ClassNotFoundException {
+	public DBConnector() throws SQLException, ClassNotFoundException {
 		Class.forName("com.mysql.cj.jdbc.Driver");
 		connection = DriverManager.getConnection(url, login, pwd);
 		System.out.println(" - Database connection established -");

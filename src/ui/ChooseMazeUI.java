@@ -20,9 +20,9 @@ import javax.swing.SwingConstants;
 import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableModel;
 
-import logic.Disposition;
-import logic.Model;
-import logic.Player;
+import dao.DBConnector;
+import model.Disposition;
+import model.Player;
 
 public class ChooseMazeUI extends JFrame {
 
@@ -33,7 +33,7 @@ public class ChooseMazeUI extends JFrame {
 	private DefaultTableModel mazeModel;
 	private DefaultTableModel dispositionModel;
 
-	private Model model;
+	private DBConnector model;
 	private JButton btnPlay;
 	private JButton btnPlayRandomDisposition;
 
@@ -43,7 +43,7 @@ public class ChooseMazeUI extends JFrame {
 	 * @param userMenu
 	 */
 	@SuppressWarnings("serial")
-	public ChooseMazeUI(LoginUI login, Model model, Player player) {
+	public ChooseMazeUI(DBConnector model, Player player) {
 		this.model = model;
 
 		setResizable(false);

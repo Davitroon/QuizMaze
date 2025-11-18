@@ -19,7 +19,7 @@ import javax.swing.SwingConstants;
 import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableModel;
 
-import logic.Model;
+import dao.DBConnector;
 
 public class MazeManagementUI extends JFrame {
 
@@ -28,12 +28,12 @@ public class MazeManagementUI extends JFrame {
 	private JTable mazeTable;
 	private DefaultTableModel mazeTableModel;
 
-	private Model model;
+	private DBConnector model;
 	private CreateMazeUI createMaze;
 	private JButton btnDelete;
 
 	@SuppressWarnings("serial")
-	public MazeManagementUI(LoginUI login, Model model) {
+	public MazeManagementUI(LoginUI login, DBConnector model) {
 		this.model = model;
 
 		setResizable(false);

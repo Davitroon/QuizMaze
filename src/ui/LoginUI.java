@@ -17,8 +17,8 @@ import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
 
-import logic.Model;
-import logic.Player;
+import dao.DBConnector;
+import model.Player;
 
 public class LoginUI extends JFrame {
 	private JTextField txtUsername;
@@ -26,12 +26,12 @@ public class LoginUI extends JFrame {
 	private JButton btnLogin;
 	private JButton btnCreateUser;
 
-	private Model model;
+	private DBConnector model;
 	private Player player;
 	private ChooseMazeUI chooseMaze;
 	private MazeManagementUI mazeManagement;
 
-	public LoginUI(Model model) {
+	public LoginUI(DBConnector model) {
 		this.model = model;
 		setTitle("Login");
 		setSize(400, 200);
@@ -183,7 +183,7 @@ public class LoginUI extends JFrame {
 	}
 
 	public static void main(String[] args) throws Exception {
-		Model model = new Model();
+		DBConnector model = new DBConnector();
 		SwingUtilities.invokeLater(() -> {
 			new LoginUI(model).setVisible(true);
 		});

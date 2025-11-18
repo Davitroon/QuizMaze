@@ -2,6 +2,7 @@ package logic;
 
 import java.sql.SQLException;
 
+import dao.DBConnector;
 import ui.LoginUI;
 
 /**
@@ -10,13 +11,13 @@ import ui.LoginUI;
  */
 public class Launcher {
 
-	private static Model model;
+	private static DBConnector model;
 	private static LoginUI loginUi;
 
 	public static void main(String[] args) {
 
 		try {
-			model = new Model();
+			model = new DBConnector();
 
 		} catch (ClassNotFoundException e) {
 			e.printStackTrace();

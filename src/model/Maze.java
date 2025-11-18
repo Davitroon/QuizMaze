@@ -1,4 +1,6 @@
-package logic;
+package model;
+
+import dao.DBConnector;
 
 /**
  * Maze class that the user will create.
@@ -18,7 +20,7 @@ public class Maze {
 	
 	private int[][] map;
 	
-	private Model model;
+	private DBConnector model;
 
 	public Maze(int width, int height, int num_crocodiles, int crocodile_damage, int num_medkits,
 			int medkit_health, int question_time, int question_damage, int num_questions, int[][] map) {

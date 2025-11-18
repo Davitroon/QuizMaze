@@ -18,9 +18,9 @@ import javax.swing.SwingConstants;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
-import logic.Disposition;
-import logic.Maze;
-import logic.Model;
+import dao.DBConnector;
+import model.Disposition;
+import model.Maze;
 
 public class CreateMazeUI {
 
@@ -39,7 +39,7 @@ public class CreateMazeUI {
 
 	private MazeManagementUI mazeManagement;
 	private Maze maze;
-	private Model model;
+	private DBConnector model;
 	private Disposition disposition;
 
 	private int minQuestionTime = 5;
@@ -53,7 +53,7 @@ public class CreateMazeUI {
 	private int minWidth = 4;
 	private int maxWidth = 10;
 
-	public CreateMazeUI(MazeManagementUI mazeManagement, Model model) {
+	public CreateMazeUI(MazeManagementUI mazeManagement, DBConnector model) {
 		initialize();
 		this.mazeManagement = mazeManagement;
 		this.model = model;

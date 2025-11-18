@@ -20,7 +20,7 @@ import javax.swing.JTextField;
 import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableModel;
 
-import logic.Model;
+import dao.DBConnector;
 
 public class ResultsMazeUI extends JFrame {
 
@@ -31,7 +31,7 @@ public class ResultsMazeUI extends JFrame {
 	private DefaultTableModel statsModel;
 	private JTable statsTable;
 
-	private Model logicModel;
+	private DBConnector logicModel;
 	private int mazeId, layoutId;
 
 	// Dynamic labels
@@ -43,7 +43,7 @@ public class ResultsMazeUI extends JFrame {
 	private int[][] matrix;
 
 	public ResultsMazeUI(String username, int correctAnswers, int incorrectAnswers, int finalLife, int points,
-			String time, boolean victory, Model model, int mazeId, int layoutId, ChooseMazeUI chooseMazeUI,
+			String time, boolean victory, DBConnector model, int mazeId, int layoutId, ChooseMazeUI chooseMazeUI,
 			int[][] matrix) {
 		this.logicModel = model;
 		this.mazeId = mazeId;

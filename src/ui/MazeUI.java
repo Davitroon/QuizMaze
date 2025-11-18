@@ -18,9 +18,9 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.Timer;
 
-import logic.Model;
-import logic.Player;
-import logic.Question;
+import dao.DBConnector;
+import model.Player;
+import model.Question;
 
 public class MazeUI {
 	private JFrame frame;
@@ -28,7 +28,7 @@ public class MazeUI {
 	private int[][] matrix;
 	private int width, height;
 	private Player player;
-	private Model model;
+	private DBConnector model;
 	private final int mazeId;
 	private final int layoutId;
 
@@ -57,7 +57,7 @@ public class MazeUI {
 	private JDialog questionDialog;
 
 	// Constructor receives parameters to create a unique view
-	public MazeUI(int[][] matrix, int width, int height, Player player, Model model, int questionTime, int medkitLife,
+	public MazeUI(int[][] matrix, int width, int height, Player player, DBConnector model, int questionTime, int medkitLife,
 			int crocodileDamage, int questionDamage, int mazeId, int layoutId, ChooseMazeUI chooseMazeUI) {
 		this.chooseMazeUI = chooseMazeUI;
 		this.matrix = matrix;
