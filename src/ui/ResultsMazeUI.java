@@ -1,16 +1,18 @@
-package vista;
+package ui;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableModel;
+
+import logic.Model;
+
 import java.awt.*;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import logica.Modelo;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 
-public class ResultadosLaberinto extends JFrame {
+public class ResultsMazeUI extends JFrame {
 
     private static final long serialVersionUID = 1L;
     private JPanel contentPane;
@@ -19,7 +21,7 @@ public class ResultadosLaberinto extends JFrame {
     private DefaultTableModel modeloEstadisticas;
     private JTable tablaEstadisticas;
 
-    private Modelo modeloLogica;
+    private Model modeloLogica;
     private int idLaberinto, idDisposicion;
 
     // Labels dinámicos
@@ -30,10 +32,10 @@ public class ResultadosLaberinto extends JFrame {
     
     private int[][] matriz;
 
-    public ResultadosLaberinto(String nombreUsuario, int preguntasCorrectas, int preguntasIncorrectas,
+    public ResultsMazeUI(String nombreUsuario, int preguntasCorrectas, int preguntasIncorrectas,
                                int vidaFinal, int puntos, String tiempo,
-                               boolean victoria, Modelo modelo, int idLaberinto,
-                               int idDisposicion, ElegirLaberinto elegirLaberinto, int[][] matriz) {
+                               boolean victoria, Model modelo, int idLaberinto,
+                               int idDisposicion, ChooseMazeUI elegirLaberinto, int[][] matriz) {
         this.modeloLogica   = modelo;
         this.idLaberinto    = idLaberinto;
         this.idDisposicion  = idDisposicion;

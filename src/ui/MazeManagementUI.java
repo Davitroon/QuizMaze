@@ -1,4 +1,4 @@
-package vista;
+package ui;
 
 import java.awt.EventQueue;
 
@@ -7,8 +7,8 @@ import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableModel;
 
-import logica.Login;
-import logica.Modelo;
+import logic.Login;
+import logic.Model;
 
 import javax.swing.JButton;
 import java.awt.Color;
@@ -25,15 +25,15 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.Font;
 
-public class GestionLaberinto extends JFrame {
+public class MazeManagementUI extends JFrame {
 
 	private static final long serialVersionUID = 1L;
 	private JPanel contentPane;
 	private JTable tableLaberintos;
 	private DefaultTableModel modeloLaberintos;
 	
-	private Modelo modelo;
-	private CrearLaberinto crearLaberinto;
+	private Model modelo;
+	private CreateMazeUI crearLaberinto;
 	private JButton btnBorrar;
 	
 
@@ -42,7 +42,7 @@ public class GestionLaberinto extends JFrame {
 	 * @param modelo 
 	 * @param login 
 	 */
-	public GestionLaberinto(Login login, Modelo modelo) {
+	public MazeManagementUI(Login login, Model modelo) {
 		this.modelo = modelo;
 		
 		setResizable(false);
@@ -111,7 +111,7 @@ public class GestionLaberinto extends JFrame {
 		btnCrearLaberinto.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				if (crearLaberinto == null) {
-					crearLaberinto = new CrearLaberinto(GestionLaberinto.this, modelo);
+					crearLaberinto = new CreateMazeUI(MazeManagementUI.this, modelo);
 				}	
 				crearLaberinto.getFrame().setVisible(true);
 				btnBorrar.setEnabled(false);

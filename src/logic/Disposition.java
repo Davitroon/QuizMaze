@@ -1,18 +1,18 @@
-package logica;
+package logic;
 
 /**
  * Clase de disposicion que genera matrizes al azar.
  */
-public class Disposicion {
+public class Disposition {
 
 	private int id;
 	private int idLaberinto;
 	private int [][] mapa;
 	
-	private Modelo modelo;
+	private Model modelo;
 	
 	
-	public Disposicion(int[][] mapa2, int idLaberinto, Modelo modelo) {
+	public Disposition(int[][] mapa2, int idLaberinto, Model modelo) {
 		this.idLaberinto = idLaberinto;
 		this.mapa = mapa2;
 		this.modelo = modelo;
@@ -92,12 +92,12 @@ public class Disposicion {
 	}
 
 
-	public Modelo getModelo() {
+	public Model getModelo() {
 		return modelo;
 	}
 
 
-	public void setModelo(Modelo modelo) {
+	public void setModelo(Model modelo) {
 		this.modelo = modelo;
 	}
 

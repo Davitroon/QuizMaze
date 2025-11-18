@@ -1,4 +1,4 @@
-package vista;
+package ui;
 
 import java.awt.Color;
 import java.awt.Font;
@@ -18,10 +18,10 @@ import javax.swing.SwingConstants;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
-import logica.Disposicion;
-import logica.Laberinto;
-import logica.Modelo;
-public class CrearLaberinto {
+import logic.Disposition;
+import logic.Maze;
+import logic.Model;
+public class CreateMazeUI {
 
 	private JFrame frame;
 	private JButton btnCrear;
@@ -36,10 +36,10 @@ public class CrearLaberinto {
 	private JSlider sliderDanoPregunta;
 	private JScrollPane scrollPaneTABLALABERINTO;
 	
-	private GestionLaberinto gestionLaberinto;
-	private Laberinto laberinto;
-	private Modelo modelo;
-	private Disposicion disposicion;
+	private MazeManagementUI gestionLaberinto;
+	private Maze laberinto;
+	private Model modelo;
+	private Disposition disposicion;
 	
 	
     // Asignacion variables
@@ -58,7 +58,7 @@ public class CrearLaberinto {
 	 * Create the application.
 	 * @param menuAdmin 
 	 */
-	public CrearLaberinto(GestionLaberinto gestionLaberinto, Modelo modelo) {
+	public CreateMazeUI(MazeManagementUI gestionLaberinto, Model modelo) {
 		initialize();
 		this.gestionLaberinto = gestionLaberinto;
 		this.modelo = modelo;
@@ -337,9 +337,9 @@ public class CrearLaberinto {
 	    		    }
 	    		}
 	    		
-	    		laberinto = new Laberinto(ancho, alto, num_cocodrilos, dano_cocodrilos, num_botiquines,
+	    		laberinto = new Maze(ancho, alto, num_cocodrilos, dano_cocodrilos, num_botiquines,
 	    				vida_botiquines, tiempo_pregunta, dano_pregunta, num_preguntas, mapa);
-	    		disposicion = new Disposicion(laberinto.getMapa(), laberinto.getId(), modelo);	   
+	    		disposicion = new Disposition(laberinto.getMapa(), laberinto.getId(), modelo);	   
 	    		
 	    		try {
 	    			disposicion.generarMatriz(num_botiquines, num_cocodrilos);

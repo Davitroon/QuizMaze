@@ -1,6 +1,6 @@
-package logica;
+package logic;
 
-public class Jugador {
+public class Player {
 	
 	private int id;
     private String nombre;
@@ -8,7 +8,7 @@ public class Jugador {
     private int vida;
     private int puntos; // Se ganan +10pts por respuesta correcta  y +Xpts por el sobrante de los botiquines
     
-    public Jugador(String nombre) {
+    public Player(String nombre) {
         this.nombre = nombre;
         this.vida=100; 
         this.puntos = 0;

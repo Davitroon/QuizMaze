@@ -1,9 +1,9 @@
-package logica;
+package logic;
 
 /**
  * Clase laberinto que creará el usuario.
  */
-public class Laberinto {
+public class Maze {
 	
 	private int id;
 	private int ancho;
@@ -18,9 +18,9 @@ public class Laberinto {
 	
 	private int[][] mapa;
 	
-	private Modelo modelo;
+	private Model modelo;
 
-	public Laberinto(int ancho, int alto, int num_cocodrilos, int dano_cocodrilos, int num_botiquines,
+	public Maze(int ancho, int alto, int num_cocodrilos, int dano_cocodrilos, int num_botiquines,
 			int vida_botiquines, int tiempo_pregunta, int daño_pregunta, int num_perguntas, int[][] mapa) {
 		this.ancho = ancho;
 		this.alto = alto;
@@ -41,7 +41,7 @@ public class Laberinto {
 	 */
 	public void generarDisposicion() {
 	
-		Disposicion disposicion = new Disposicion(mapa, this.getId(), modelo);
+		Disposition disposicion = new Disposition(mapa, this.getId(), modelo);
 		disposicion.generarMatriz(numBotiquines, numCocodrilos);	
 	}
 

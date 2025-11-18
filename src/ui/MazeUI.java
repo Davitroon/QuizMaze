@@ -1,4 +1,4 @@
-package vista;
+package ui;
 
 import java.awt.Color;	// Permitirá definir colores (ej: Color.WHITE, Color.RED)
 import java.awt.Font;
@@ -18,18 +18,18 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.Timer;
 
-import logica.Jugador;
-import logica.Modelo;
-import logica.Pregunta;
+import logic.Player;
+import logic.Model;
+import logic.Question;
 
 
-public class InterfazLaberinto {
+public class MazeUI {
     private JFrame frame;
     private JPanel[] celdasGrid = new JPanel[9]; //Array de JPanels para representar la visión del jugador
     private int[][] matriz;
     private int ancho, alto;
-    private Jugador jugador;
-    private Modelo modelo;
+    private Player jugador;
+    private Model modelo;
     private final int idLaberinto;
     private final int idDisposicion;
     //
@@ -44,22 +44,22 @@ public class InterfazLaberinto {
     private int danoCocodrilo;
     private int danoPregunta;
     
-    private List<Pregunta> preguntas;	// Le pasamos una lista de objetos Pregunta
+    private List<Question> preguntas;	// Le pasamos una lista de objetos Pregunta
     private int indicePregunta = 0;
     
     private int correctas = 0;
     private int incorrectas = 0;
     private JLabel labelPuntos;
     
-    private ElegirLaberinto elegirLaberinto;
+    private ChooseMazeUI elegirLaberinto;
     //Varibles que se usan en mostrarPreguntaConTiempo()
     private boolean resultadoPregunta = false;
     private int intentosPregunta = 0;
     private JDialog dialogPregunta;
     
     //// COnstructor añadido ya que debe recibir parametroint, haciendo que cada vista sea diferente
-    public InterfazLaberinto(int[][] matriz, int ancho, int alto, Jugador jugador, Modelo modelo, int tiempoPregunta, int vidaBotiquin, 
-    							int danoCocodrilo, int danoPregunta, int idLaberinto, int idDisposicion, ElegirLaberinto elegirLaberinto){
+    public MazeUI(int[][] matriz, int ancho, int alto, Player jugador, Model modelo, int tiempoPregunta, int vidaBotiquin, 
+    							int danoCocodrilo, int danoPregunta, int idLaberinto, int idDisposicion, ChooseMazeUI elegirLaberinto){
     		this.elegirLaberinto = elegirLaberinto;
     	    this.matriz = matriz;
     	    this.ancho = ancho;
@@ -308,7 +308,7 @@ public class InterfazLaberinto {
         if (indicePregunta >= preguntas.size()) {
             indicePregunta = 0;
         }
-        Pregunta pregunta = preguntas.get(indicePregunta++);
+        Question pregunta = preguntas.get(indicePregunta++);
 
         JTextField respuesta = new JTextField();
         JButton botonResponder = new JButton("Responder");
@@ -409,7 +409,7 @@ public class InterfazLaberinto {
         );
 
         // Abre la ventana de resultados
-        ResultadosLaberinto ventanaResultados = new ResultadosLaberinto(
+        ResultsMazeUI ventanaResultados = new ResultsMazeUI(
     	    jugador.getNombre(),    // nombreUsuario
     	    correctas,              // preguntasCorrectas
     	    incorrectas,            // preguntasIncorrectas

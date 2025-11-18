@@ -1,19 +1,19 @@
-package logica;
+package logic;
 
 import java.sql.SQLException;
 
 /**
  * Clase que instancia y crea el resto de las clases, funciona como lanzador de la aplicación.
  */
-public class Lanzador {
+public class Launcher {
 	
-	private static Modelo modelo;
+	private static Model modelo;
 	private static Login login;
 	
 	public static void main(String[] args) {
 		
 		try {
-			modelo = new Modelo ();
+			modelo = new Model ();
 			
 		} catch (ClassNotFoundException e) {
 			e.printStackTrace();

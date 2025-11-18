@@ -1,5 +1,5 @@
 
-package vista;
+package ui;
 
 import java.awt.EventQueue;
 
@@ -14,11 +14,11 @@ import javax.swing.SwingConstants;
 import javax.swing.JButton;
 import javax.swing.table.DefaultTableModel;
 
-import logica.Disposicion;
-import logica.Jugador;
-import logica.Laberinto;
-import logica.Login;
-import logica.Modelo;
+import logic.Disposition;
+import logic.Player;
+import logic.Maze;
+import logic.Login;
+import logic.Model;
 
 import java.awt.event.ActionListener;
 import java.sql.ResultSet;
@@ -29,7 +29,7 @@ import java.awt.event.MouseEvent;
 import java.awt.Color;
 import java.awt.Font;
 
-public class ElegirLaberinto extends JFrame {
+public class ChooseMazeUI extends JFrame {
 
 	private static final long serialVersionUID = 1L;
 	private JPanel contentPane;
@@ -38,7 +38,7 @@ public class ElegirLaberinto extends JFrame {
 	private DefaultTableModel modeloLaberintos;
 	private DefaultTableModel modeloDisposiciones;
 	
-	private Modelo modelo;
+	private Model modelo;
 	private JButton btnJugar;
 	private JButton btnJugarNuevaDisp;
 
@@ -46,7 +46,7 @@ public class ElegirLaberinto extends JFrame {
 	 * Create the frame.
 	 * @param menuUsuario 
 	 */
-	public ElegirLaberinto(Login login, Modelo modelo, Jugador jugador) {
+	public ChooseMazeUI(Login login, Model modelo, Player jugador) {
 		this.modelo = modelo;
 		
 		setResizable(false);
@@ -212,7 +212,7 @@ public class ElegirLaberinto extends JFrame {
 		        int idDisp = (int) modeloDisposiciones.getValueAt(fila, 0);
 
 		        // Llamamos al constructor ampliado de InterfazLaberinto
-		        new InterfazLaberinto(matriz, ancho, alto, jugador, modelo, tiempoPregunta, vidaBotiquin, danoCocodrilo, danoPregunta, idLab, idDisp, ElegirLaberinto.this);
+		        new MazeUI(matriz, ancho, alto, jugador, modelo, tiempoPregunta, vidaBotiquin, danoCocodrilo, danoPregunta, idLab, idDisp, ChooseMazeUI.this);
 
 		        dispose();
 		    }
@@ -244,7 +244,7 @@ public class ElegirLaberinto extends JFrame {
 
 		        // Carga la matriz base (ceros+muros) y crea la Disposicion
 		        int[][] base = modelo.cargarMatrizDisposicion(idLab, ancho, alto);
-		        Disposicion nuevaDisp = new Disposicion(base, idLab, modelo);
+		        Disposition nuevaDisp = new Disposition(base, idLab, modelo);
 
 		        // Genera elementos y guarda sus posiciones
 		        try {
@@ -259,7 +259,7 @@ public class ElegirLaberinto extends JFrame {
 		        modelo.insertarDisposicion(nuevaDisp);      // persiste Disposicion y asigna ID
 		        nuevaDisp.guardarMatriz();                  // guarda cada casilla
 
-		        new InterfazLaberinto(nuevaDisp.getMapa(), ancho, alto, jugador, modelo, tiempoPregunta, vidaBotiquines, dañoCocodrilos, dañoPregunta, idLab, idLab, ElegirLaberinto.this);
+		        new MazeUI(nuevaDisp.getMapa(), ancho, alto, jugador, modelo, tiempoPregunta, vidaBotiquines, dañoCocodrilos, dañoPregunta, idLab, idLab, ChooseMazeUI.this);
 
 		        dispose();
 		    }

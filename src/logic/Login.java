@@ -1,22 +1,22 @@
-package logica;
+package logic;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Scanner;
 
-import vista.ElegirLaberinto;
-import vista.GestionLaberinto;
+import ui.ChooseMazeUI;
+import ui.MazeManagementUI;
 
 public class Login {
 
 	private static String nombreUsuario;
 	
-	private Modelo modelo;
-	private ElegirLaberinto elegirLaberinto;
-	private GestionLaberinto gestionLaberinto;
-	private Jugador jugador;
+	private Model modelo;
+	private ChooseMazeUI elegirLaberinto;
+	private MazeManagementUI gestionLaberinto;
+	private Player jugador;
 	
-	public Login(Modelo modelo) {
+	public Login(Model modelo) {
 		this.modelo = modelo;
 	}
 	
@@ -69,13 +69,13 @@ public class Login {
 						int idJugador = modelo.insertarUsuario(usuarioNuevo, contraseñaRepetida);
 
 						if (idJugador != -1) {
-						    jugador = new Jugador(usuarioNuevo); // Constructor existente
+						    jugador = new Player(usuarioNuevo); // Constructor existente
 						    jugador.setId(idJugador);            // Asegúrate de tener este setter
 
 						    System.out.println("Usuario " + usuarioNuevo + " creado con ID: " + idJugador);
 
 						    if (elegirLaberinto == null) {
-						        elegirLaberinto = new ElegirLaberinto(this, modelo, jugador);
+						        elegirLaberinto = new ChooseMazeUI(this, modelo, jugador);
 						    }
 						    elegirLaberinto.cargarLaberintos();
 						    elegirLaberinto.setVisible(true);
@@ -112,19 +112,19 @@ public class Login {
 				            String usuario = rs.getString("nombre");
 
 				            // Crear el objeto Jugador con nombre e id
-				            jugador = new Jugador(usuario);
+				            jugador = new Player(usuario);
 				            jugador.setId(idUsuario);  // Asegúrate de que Jugador tiene setId(int)
 
 				            if (usuario.equals("admin")) {
 				                if (gestionLaberinto == null) {
-				                    gestionLaberinto = new GestionLaberinto(this, modelo);
+				                    gestionLaberinto = new MazeManagementUI(this, modelo);
 				                }
 				                gestionLaberinto.actualizarLaberintos();
 				                gestionLaberinto.setVisible(true);
 
 				            } else {
 				                if (elegirLaberinto == null) {
-				                    elegirLaberinto = new ElegirLaberinto(this, modelo, jugador);
+				                    elegirLaberinto = new ChooseMazeUI(this, modelo, jugador);
 				                }
 				                elegirLaberinto.cargarLaberintos();
 				                elegirLaberinto.setVisible(true);

@@ -1,5 +1,5 @@
 
-package logica;
+package logic;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -14,14 +14,14 @@ import java.util.List;
  * Clase para conectar con la base de datos y gestionarla.
  * @author David Forero
  */
-public class Modelo {
+public class Model {
 	private static Connection conexion;
 	private String database = "laberinto25"; 
 	private String login = "root";
 	private String pwd = "Coco2006";
 	private String url = "jdbc:mysql://localhost/" + database;
 	
-	public Modelo() throws SQLException, ClassNotFoundException {
+	public Model() throws SQLException, ClassNotFoundException {
 		Class.forName("com.mysql.cj.jdbc.Driver");
 		conexion=DriverManager.getConnection(url,login,pwd);
 		System.out.println (" - Conexión con BD establecida -");
@@ -178,7 +178,7 @@ public class Modelo {
 	 * Método para agregar una disposicion a la base de datos
 	 * @param idLaberinto
 	 */
-	public void insertarDisposicion(Disposicion disposicion) {
+	public void insertarDisposicion(Disposition disposicion) {
 		String consulta = "INSERT INTO disposiciones (id_laberinto) VALUES (?)";
 		
 		try {
@@ -231,7 +231,7 @@ public class Modelo {
 	 * @param usuario Nombre del usuario
 	 * @param contrasena Contraseña del usuario
 	 */
-	public void insertarLaberinto(Laberinto laberinto) {
+	public void insertarLaberinto(Maze laberinto) {
 		String consulta = "INSERT INTO laberintos (ancho, alto, num_cocodrilos, daño_cocodrilos, num_botiquines, vida_botiquines, tiempo_pregunta, daño_pregunta, num_preguntas) "
 				+ "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
 		
@@ -334,8 +334,8 @@ public class Modelo {
 	 * 
 	 * @return una lista de objetos Pregunta con la información de la tabla 'preguntas'
 	 */
-	public List<Pregunta> obtenerPreguntas() {
-	    List<Pregunta> preguntas = new ArrayList<>();
+	public List<Question> obtenerPreguntas() {
+	    List<Question> preguntas = new ArrayList<>();
 	    String sql = "SELECT pregunta, respuesta, pista FROM preguntas";
 	    try (
 	        Connection conn = DriverManager.getConnection(url, login, pwd);
@@ -343,7 +343,7 @@ public class Modelo {
 	        ResultSet rs = ps.executeQuery()
 	    ) {
 	        while (rs.next()) {
-	            preguntas.add(new Pregunta(
+	            preguntas.add(new Question(
 	                rs.getString("pregunta"),
 	                rs.getString("respuesta"),
 	                rs.getString("pista")

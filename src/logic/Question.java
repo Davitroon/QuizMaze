@@ -1,11 +1,11 @@
-package logica;
+package logic;
 
-public class Pregunta {
+public class Question {
     private String enunciado;
     private String respuestaCorrecta;
     private String pista;
 
-    public Pregunta(String enunciado, String respuestaCorrecta, String pista) {
+    public Question(String enunciado, String respuestaCorrecta, String pista) {
         this.enunciado = enunciado;
         this.respuestaCorrecta = respuestaCorrecta;
         this.pista = pista;
