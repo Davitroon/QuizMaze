@@ -1,40 +1,37 @@
 package logic;
 
 public class Question {
-    private String enunciado;
-    private String respuestaCorrecta;
-    private String pista;
+    private String statement;
+    private String correctAnswer;
+    private String hint;
 
-    public Question(String enunciado, String respuestaCorrecta, String pista) {
-        this.enunciado = enunciado;
-        this.respuestaCorrecta = respuestaCorrecta;
-        this.pista = pista;
+    public Question(String statement, String correctAnswer, String hint) {
+        this.statement = statement;
+        this.correctAnswer = correctAnswer;
+        this.hint = hint;
     }
 
-    ////////////GETTERS Y SETTERS
-	public String getEnunciado() {
-		return enunciado;
+	public String getStatement() {
+		return statement;
 	}
 
-	public void setEnunciado(String enunciado) {
-		this.enunciado = enunciado;
+	public void setStatement(String statement) {
+		this.statement = statement;
 	}
 
-	public String getRespuestaCorrecta() {
-		return respuestaCorrecta;
+	public String getCorrectAnswer() {
+		return correctAnswer;
 	}
 
-	public void setRespuestaCorrecta(String respuestaCorrecta) {
-		this.respuestaCorrecta = respuestaCorrecta;
+	public void setCorrectAnswer(String correctAnswer) {
+		this.correctAnswer = correctAnswer;
 	}
 
-	public String getPista() {
-		return pista;
+	public String getHint() {
+		return hint;
 	}
 
-	public void setPista(String pista) {
-		this.pista = pista;
+	public void setHint(String hint) {
+		this.hint = hint;
 	}
-	///////////////////////////////////
-    
 }

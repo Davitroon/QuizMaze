@@ -29,21 +29,15 @@ public class MazeManagementUI extends JFrame {
 
 	private static final long serialVersionUID = 1L;
 	private JPanel contentPane;
-	private JTable tableLaberintos;
-	private DefaultTableModel modeloLaberintos;
+	private JTable mazeTable;
+	private DefaultTableModel mazeTableModel;
 	
-	private Model modelo;
-	private CreateMazeUI crearLaberinto;
-	private JButton btnBorrar;
+	private Model model;
+	private CreateMazeUI createMaze;
+	private JButton btnDelete;
 	
-
-	/**
-	 * Create the frame.
-	 * @param modelo 
-	 * @param login 
-	 */
-	public MazeManagementUI(Login login, Model modelo) {
-		this.modelo = modelo;
+	public MazeManagementUI(Login login, Model model) {
+		this.model = model;
 		
 		setResizable(false);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -55,134 +49,123 @@ public class MazeManagementUI extends JFrame {
 		setContentPane(contentPane);
 		contentPane.setLayout(null);
 		
-		JButton btnSalir = new JButton("Salir");
-		btnSalir.setFont(new Font("Tahoma", Font.BOLD, 11));
-		btnSalir.setBackground(new Color(128, 128, 128));
-		btnSalir.setBounds(31, 321, 94, 33);
-		contentPane.add(btnSalir);
+		JButton btnExit = new JButton("Exit");
+		btnExit.setFont(new Font("Tahoma", Font.BOLD, 11));
+		btnExit.setBackground(new Color(128, 128, 128));
+		btnExit.setBounds(31, 321, 94, 33);
+		contentPane.add(btnExit);
 		
 		JScrollPane scrollPane = new JScrollPane();
 		scrollPane.setBounds(31, 102, 806, 208);
 		contentPane.add(scrollPane);
 		
-		modeloLaberintos = new DefaultTableModel(
+		mazeTableModel = new DefaultTableModel(
 			    new Object[][] {},
-			    new String[] { "id", "ancho", "alto", "cocodrilos", "daño_cocodrilos", "botiquines", "vida_botiquines", "tiempo_pregunta", "daño_pregunta", "preguntas" }
+			    new String[] { "id", "width", "height", "crocodiles", "crocodile_damage", "medkits", "medkit_heal", "question_time", "question_damage", "questions" }
 			) {
 			    @Override
 			    public boolean isCellEditable(int row, int column) {
-			        return false; // No permitir edición de celdas
+			        return false;
 			    }
 			};
 		
-		tableLaberintos = new JTable();
-		tableLaberintos.setModel(modeloLaberintos);
-		scrollPane.setViewportView(tableLaberintos);
+		mazeTable = new JTable();
+		mazeTable.setModel(mazeTableModel);
+		scrollPane.setViewportView(mazeTable);
 		
-		JLabel lblGestionLaberintos = new JLabel("Gestión de laberintos");
-		lblGestionLaberintos.setHorizontalAlignment(SwingConstants.CENTER);
-		lblGestionLaberintos.setFont(new Font("Tahoma", Font.BOLD, 16));
-		lblGestionLaberintos.setBounds(31, 11, 806, 36);
-		contentPane.add(lblGestionLaberintos);
+		JLabel lblMazeManagement = new JLabel("Maze Management");
+		lblMazeManagement.setHorizontalAlignment(SwingConstants.CENTER);
+		lblMazeManagement.setFont(new Font("Tahoma", Font.BOLD, 16));
+		lblMazeManagement.setBounds(31, 11, 806, 36);
+		contentPane.add(lblMazeManagement);
 		
-		JButton btnCrearLaberinto = new JButton("Crear laberinto");
-		btnCrearLaberinto.setFont(new Font("Tahoma", Font.BOLD, 11));
-		btnCrearLaberinto.setBackground(new Color(128, 255, 255));
-		btnCrearLaberinto.setBounds(569, 58, 129, 33);
-		contentPane.add(btnCrearLaberinto);
+		JButton btnCreateMaze = new JButton("Create Maze");
+		btnCreateMaze.setFont(new Font("Tahoma", Font.BOLD, 11));
+		btnCreateMaze.setBackground(new Color(128, 255, 255));
+		btnCreateMaze.setBounds(569, 58, 129, 33);
+		contentPane.add(btnCreateMaze);
 		
-		btnBorrar = new JButton("Borrar laberinto");
-		btnBorrar.setFont(new Font("Tahoma", Font.BOLD, 11));
-		btnBorrar.setBackground(new Color(255, 128, 128));
-		btnBorrar.setEnabled(false);
-		btnBorrar.setBounds(708, 58, 129, 33);
-		contentPane.add(btnBorrar);
+		btnDelete = new JButton("Delete Maze");
+		btnDelete.setFont(new Font("Tahoma", Font.BOLD, 11));
+		btnDelete.setBackground(new Color(255, 128, 128));
+		btnDelete.setEnabled(false);
+		btnDelete.setBounds(708, 58, 129, 33);
+		contentPane.add(btnDelete);
 		
-		// Clic boton volver
-		btnSalir.addActionListener(new ActionListener() {
+		btnExit.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				reiniciarVentana();
+				resetWindow();
 				dispose();
-				login.logearse();
+				login.logIn();
 			}
 		});
 		
-		// Clic boton crear laberinto
-		btnCrearLaberinto.addActionListener(new ActionListener() {
+		btnCreateMaze.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				if (crearLaberinto == null) {
-					crearLaberinto = new CreateMazeUI(MazeManagementUI.this, modelo);
+				if (createMaze == null) {
+					createMaze = new CreateMazeUI(MazeManagementUI.this, model);
 				}	
-				crearLaberinto.getFrame().setVisible(true);
-				btnBorrar.setEnabled(false);
+				createMaze.getFrame().setVisible(true);
+				btnDelete.setEnabled(false);
 				setVisible(false);
 			}
 		});
 		
-		// Clic boton borrar laberinto
-		btnBorrar.addActionListener(new ActionListener() {
+		btnDelete.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-		        int filaSeleccionada = tableLaberintos.getSelectedRow();
-	            int idLaberinto = (int) tableLaberintos.getValueAt(filaSeleccionada, 0); // Columna 0 = id
-	            modelo.borrarLaberinto(idLaberinto);
-	            btnBorrar.setEnabled(false);
-		        actualizarLaberintos();
+		        int selectedRow = mazeTable.getSelectedRow();
+	            int mazeId = (int) mazeTable.getValueAt(selectedRow, 0);
+	            model.deleteMaze(mazeId);
+	            btnDelete.setEnabled(false);
+		        updateMazes();
 			}
 		});
 		
-		// Clic en la tabla laberintos
-		tableLaberintos.addMouseListener(new MouseAdapter() {
+		mazeTable.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
-		        int filaSeleccionada = tableLaberintos.getSelectedRow();
-		        if (filaSeleccionada != -1) { // -1 significa que no hay fila seleccionada
-		            btnBorrar.setEnabled(true);
+		        int selectedRow = mazeTable.getSelectedRow();
+		        if (selectedRow != -1) {
+		            btnDelete.setEnabled(true);
 		        }
 			}
 		});
 	}
 	
-	/**
-	 * Cargar los laberintos de la BD y meterlos en la tabla
-	 */
-	public void actualizarLaberintos() {
-	    ResultSet rset = modelo.consultarDatos("laberintos");
+	public void updateMazes() {
+	    ResultSet rset = model.queryData("mazes");
 
-	    if (modeloLaberintos.getRowCount() > 0) {
-	    	modeloLaberintos.setRowCount(0); // Vaciar la tabla de disposiciones
+	    if (mazeTableModel.getRowCount() > 0) {
+	    	mazeTableModel.setRowCount(0);
 	    }
 	    
 	    try {
 	        while (rset.next()) {
-	            Object[] fila = new Object[] {
+	            Object[] row = new Object[] {
 	                    rset.getInt("id"),
-	                    rset.getInt("ancho"),
-	                    rset.getInt("alto"),
-	                    rset.getInt("num_cocodrilos"),
-	                    rset.getInt("daño_cocodrilos"),
-	                    rset.getInt("num_botiquines"),
-	                    rset.getInt("vida_botiquines"),
-	                    rset.getInt("tiempo_pregunta"),
-	                    rset.getInt("daño_pregunta"),
-	                    rset.getInt("num_preguntas")
+	                    rset.getInt("width"),
+	                    rset.getInt("height"),
+	                    rset.getInt("num_crocodiles"),
+	                    rset.getInt("crocodile_damage"),
+	                    rset.getInt("num_medkits"),
+	                    rset.getInt("medkit_heal"),
+	                    rset.getInt("question_time"),
+	                    rset.getInt("question_damage"),
+	                    rset.getInt("num_questions")
                 };
-	            modeloLaberintos.addRow(fila);
+	            mazeTableModel.addRow(row);
 	        }
 	    } catch (SQLException e) {
 	        e.printStackTrace();
 	    }
 	}
 	
-	/**
-	 * Reinicia el estado visual de la ventana.
-	 */
-	public void reiniciarVentana() {
-	    btnBorrar.setEnabled(false); // Desactivar botón Jugar
-
-	    tableLaberintos.clearSelection(); // Quitar selección
+	public void resetWindow() {
+	    btnDelete.setEnabled(false);
+	    mazeTable.clearSelection();
 	    
-	    if (modeloLaberintos.getRowCount() > 0) {
-	    	modeloLaberintos.setRowCount(0); // Vaciar la tabla de disposiciones
+	    if (mazeTableModel.getRowCount() > 0) {
+	    	mazeTableModel.setRowCount(0);
 	    }
 	}
 }

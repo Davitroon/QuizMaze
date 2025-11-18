@@ -3,17 +3,17 @@ package logic;
 import java.sql.SQLException;
 
 /**
- * Clase que instancia y crea el resto de las clases, funciona como lanzador de la aplicación.
+ * Class that instantiates and creates the rest of the classes, works as the application launcher.
  */
 public class Launcher {
 	
-	private static Model modelo;
+	private static Model model;
 	private static Login login;
 	
 	public static void main(String[] args) {
 		
 		try {
-			modelo = new Model ();
+			model = new Model();
 			
 		} catch (ClassNotFoundException e) {
 			e.printStackTrace();
@@ -22,8 +22,8 @@ public class Launcher {
 			e.printStackTrace();
 		}
 		
-		// Aqui habria que crear el resto de las clases
-		login = new Login (modelo);
-		login.logearse();
+		// Here the rest of the classes should be created
+		login = new Login(model);
+		login.logIn();
 	}
 }

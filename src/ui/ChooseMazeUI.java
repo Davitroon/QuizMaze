@@ -1,4 +1,3 @@
-
 package ui;
 
 import java.awt.EventQueue;
@@ -33,21 +32,21 @@ public class ChooseMazeUI extends JFrame {
 
 	private static final long serialVersionUID = 1L;
 	private JPanel contentPane;
-	private JTable tableLaberintos;
-	private JTable tableDisposicion;
-	private DefaultTableModel modeloLaberintos;
-	private DefaultTableModel modeloDisposiciones;
+	private JTable tableMazes;
+	private JTable tableDisposition;
+	private DefaultTableModel mazeModel;
+	private DefaultTableModel dispositionModel;
 	
-	private Model modelo;
-	private JButton btnJugar;
-	private JButton btnJugarNuevaDisp;
+	private Model model;
+	private JButton btnPlay;
+	private JButton btnPlayRandomDisposition;
 
 	/**
 	 * Create the frame.
-	 * @param menuUsuario 
+	 * @param userMenu 
 	 */
-	public ChooseMazeUI(Login login, Model modelo, Player jugador) {
-		this.modelo = modelo;
+	public ChooseMazeUI(Login login, Model model, Player player) {
+		this.model = model;
 		
 		setResizable(false);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -59,108 +58,101 @@ public class ChooseMazeUI extends JFrame {
 		setContentPane(contentPane);
 		contentPane.setLayout(null);
 		
-		JLabel lblJugar = new JLabel("Bienvenido " + login.getNombreUsuario() + ", elige una laberinto y disposición para jugar.");
-		lblJugar.setFont(new Font("Tahoma", Font.BOLD, 16));
-		lblJugar.setBounds(10, 21, 803, 27);
-		lblJugar.setHorizontalAlignment(SwingConstants.CENTER);
-		contentPane.add(lblJugar);
+		JLabel lblPlay = new JLabel("Welcome " + login.getUserName() + ", choose a maze and a disposition to play.");
+		lblPlay.setFont(new Font("Tahoma", Font.BOLD, 16));
+		lblPlay.setBounds(10, 21, 803, 27);
+		lblPlay.setHorizontalAlignment(SwingConstants.CENTER);
+		contentPane.add(lblPlay);
 		
 		JScrollPane scrollPane = new JScrollPane();
 		scrollPane.setBounds(25, 80, 557, 188);
 		contentPane.add(scrollPane);
 		
-		modeloLaberintos = new DefaultTableModel(
+		mazeModel = new DefaultTableModel(
 			    new Object[][] {},
 			    new String[] {
-			        "id", "ancho", "alto", "num_cocodrilos", "daño_cocodrilos", "num_botiquines",
-			        "vida_botiquines", "tiempo_pregunta", "daño_pregunta", "num_preguntas"
+			        "id", "xCoord", "yCoord", "num_crocodiles", "crocodile_damage", "num_medkits",
+			        "medkit_life", "question_time", "question_damage", "num_questions"
 			    }
-			    
 			);
 
 			
-		modeloDisposiciones = new DefaultTableModel(
+		dispositionModel = new DefaultTableModel(
 			    new Object[][] {
 			        
 			    },
 			    new String[] {
-			        "id_disposicion"
+			        "id_disposition"
 			    }
 			) {
 			    @Override
 			    public boolean isCellEditable(int row, int column) {
-			        return false; // No permitir edición de celdas
+			        return false;
 			    }
 			};
 		
-		tableLaberintos = new JTable();
-		tableLaberintos.setModel(modeloLaberintos);
-		scrollPane.setViewportView(tableLaberintos);
+		tableMazes = new JTable();
+		tableMazes.setModel(mazeModel);
+		scrollPane.setViewportView(tableMazes);
 		
 		JScrollPane scrollPane_1 = new JScrollPane();
 		scrollPane_1.setBounds(600, 80, 171, 188);
 		contentPane.add(scrollPane_1);
 		
-		tableDisposicion = new JTable();
-		tableDisposicion.setModel(modeloDisposiciones);
-		scrollPane_1.setViewportView(tableDisposicion);
+		tableDisposition = new JTable();
+		tableDisposition.setModel(dispositionModel);
+		scrollPane_1.setViewportView(tableDisposition);
 		
-		JButton btnVolver = new JButton("Volver");
-		btnVolver.setForeground(new Color(0, 0, 0));
-		btnVolver.setFont(new Font("Tahoma", Font.BOLD, 11));
-		btnVolver.setBackground(new Color(128, 128, 128));
-		btnVolver.setBounds(25, 298, 99, 34);
-		contentPane.add(btnVolver);
+		JButton btnBack = new JButton("Go back");
+		btnBack.setForeground(new Color(0, 0, 0));
+		btnBack.setFont(new Font("Tahoma", Font.BOLD, 11));
+		btnBack.setBackground(new Color(128, 128, 128));
+		btnBack.setBounds(25, 298, 99, 34);
+		contentPane.add(btnBack);
 		
-		btnJugar = new JButton("Jugar");
-		btnJugar.setFont(new Font("Tahoma", Font.BOLD, 11));
-		btnJugar.setBackground(new Color(128, 255, 255));
-		btnJugar.setEnabled(false);
-		btnJugar.setBounds(672, 298, 99, 34);
-		contentPane.add(btnJugar);
+		btnPlay = new JButton("Play");
+		btnPlay.setFont(new Font("Tahoma", Font.BOLD, 11));
+		btnPlay.setBackground(new Color(128, 255, 255));
+		btnPlay.setEnabled(false);
+		btnPlay.setBounds(672, 298, 99, 34);
+		contentPane.add(btnPlay);
 		
-		btnJugarNuevaDisp = new JButton("Jugar con nueva disposicion");
-		btnJugarNuevaDisp.setFont(new Font("Tahoma", Font.BOLD, 11));
-		btnJugarNuevaDisp.setEnabled(false);
-		btnJugarNuevaDisp.setBackground(new Color(128, 255, 255));
-		btnJugarNuevaDisp.setBounds(469, 298, 193, 34);
-		contentPane.add(btnJugarNuevaDisp);
+		btnPlayRandomDisposition = new JButton("Play with a random disposition");
+		btnPlayRandomDisposition.setFont(new Font("Tahoma", Font.BOLD, 11));
+		btnPlayRandomDisposition.setEnabled(false);
+		btnPlayRandomDisposition.setBackground(new Color(128, 255, 255));
+		btnPlayRandomDisposition.setBounds(457, 298, 205, 34);
+		contentPane.add(btnPlayRandomDisposition);
 		
-		// Clic boton volver 
-		btnVolver.addActionListener(new ActionListener() {
+		btnBack.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				reiniciarVentana();
+				resetWindow();
 				dispose();
-				login.logearse();
+				login.login();
 			}
 		});
 		
-		// Clic en una celda de tabla laberintos
-		tableLaberintos.addMouseListener(new MouseAdapter() {
+		tableMazes.addMouseListener(new MouseAdapter() {
 		    @Override
 		    public void mouseClicked(MouseEvent e) {
-		    	btnJugar.setEnabled(false);
-		        int fila = tableLaberintos.rowAtPoint(e.getPoint());
-		        int columna = tableLaberintos.columnAtPoint(e.getPoint());
+		    	btnPlay.setEnabled(false);
+		        int row = tableMazes.rowAtPoint(e.getPoint());
+		        int column = tableMazes.columnAtPoint(e.getPoint());
 
-	            // Comprobar si se ha hecho clic en una celda válida
-		        if (fila >= 0 && columna >= 0) {
-		        	btnJugarNuevaDisp.setEnabled(true);
-		            // Limpiar modeloDisposiciones si tiene datos previos
-		            if (modeloDisposiciones.getRowCount() > 0) {
-		                modeloDisposiciones.setRowCount(0);
+		        if (row >= 0 && column >= 0) {
+		        	btnPlayRandomDisposition.setEnabled(true);
+		            if (dispositionModel.getRowCount() > 0) {
+		                dispositionModel.setRowCount(0);
 		            }
 		            
-		        	// Consultar las disposiciones mandando el id del laberinto elegido
-		            ResultSet rset = modelo.consultarDisposiciones((int) modeloLaberintos.getValueAt(fila, 0));
+		            ResultSet rset = model.queryDispositions((int) mazeModel.getValueAt(row, 0));
 		            
 		            try {
-		            	// Meter las disposiciones nuevas al modelo
 						while (rset.next()) {
-						    Object[] filaDisposicion = new Object[] {
+						    Object[] dispositionRow = new Object[] {
 						        rset.getInt("id"),
 						    };
-						    modeloDisposiciones.addRow(filaDisposicion);
+						    dispositionModel.addRow(dispositionRow);
 						}
 						
 					} catch (SQLException e1) {
@@ -170,124 +162,112 @@ public class ChooseMazeUI extends JFrame {
 		    }
 		});
 		
-		// Clic en una celda de la tabla de disposiciones
-		tableDisposicion.addMouseListener(new MouseAdapter() {
+		tableDisposition.addMouseListener(new MouseAdapter() {
 		    @Override
 		    public void mouseClicked(MouseEvent e) {
-		        int fila = tableDisposicion.rowAtPoint(e.getPoint());
-		        int columna = tableDisposicion.columnAtPoint(e.getPoint());
+		        int row = tableDisposition.rowAtPoint(e.getPoint());
+		        int column = tableDisposition.columnAtPoint(e.getPoint());
 
-		        // Comprobar si se ha hecho clic en una celda válida
-		        if (fila >= 0 && columna >= 0) {
-		            btnJugar.setEnabled(true);
+		        if (row >= 0 && column >= 0) {
+		            btnPlay.setEnabled(true);
 		        }
 		    }
 		});
-		//////////////////////////////////////////////////////////////////////////////////* AL JUEGO
-		// Clic boton jugar
-		btnJugar.addActionListener(new ActionListener() {
+
+		btnPlay.addActionListener(new ActionListener() {
 		    public void actionPerformed(ActionEvent e) {
-		        int filaLaberinto = tableLaberintos.getSelectedRow();
-		        int filaDisposicion = tableDisposicion.getSelectedRow();
-		        if (filaLaberinto == -1 || filaDisposicion == -1) {
-		            JOptionPane.showMessageDialog(null, "Selecciona un laberinto y una disposición.");
+		        int rowMaze = tableMazes.getSelectedRow();
+		        int rowDisposition = tableDisposition.getSelectedRow();
+		        if (rowMaze == -1 || rowDisposition == -1) {
+		            JOptionPane.showMessageDialog(null, "Select a maze and a disposition.");
 		            return;
 		        }
 
-		        // Obtener datos del laberinto y disposición seleccionados
-		        int idDisposicion = (int) modeloDisposiciones.getValueAt(filaDisposicion, 0);
-		        int ancho = (int) modeloLaberintos.getValueAt(filaLaberinto, 1);
-		        int alto = (int) modeloLaberintos.getValueAt(filaLaberinto, 2);
+		        int idDisposition = (int) dispositionModel.getValueAt(rowDisposition, 0);
+		        int xCoord = (int) mazeModel.getValueAt(rowMaze, 1);
+		        int yCoord = (int) mazeModel.getValueAt(rowMaze, 2);
 
-		        // Ajustamos los índices de columna según el orden de tu modeloLaberintos
-		        int danoCocodrilo = (int) modeloLaberintos.getValueAt(filaLaberinto, 4);    // daño_cocodrilos
-		        int vidaBotiquin = (int) modeloLaberintos.getValueAt(filaLaberinto, 6);     // vida_botiquines
-		        int tiempoPregunta = (int) modeloLaberintos.getValueAt(filaLaberinto, 7);   // tiempo_pregunta
-		        int danoPregunta = (int) modeloLaberintos.getValueAt(filaLaberinto, 8);     // daño_pregunta
+		        int crocodileDamage = (int) mazeModel.getValueAt(rowMaze, 4);
+		        int medkitLife = (int) mazeModel.getValueAt(rowMaze, 6);
+		        int timeQuestion = (int) mazeModel.getValueAt(rowMaze, 7);
+		        int questionDamage = (int) mazeModel.getValueAt(rowMaze, 8);
 
-		        int[][] matriz = modelo.cargarMatrizDisposicion(idDisposicion, ancho, alto);
-		        int fila = tableLaberintos.getSelectedRow();
-		        int idLab  = (int) modeloLaberintos.getValueAt(fila, 0);
-		        fila = tableDisposicion.getSelectedRow();
-		        int idDisp = (int) modeloDisposiciones.getValueAt(fila, 0);
+		        int[][] matrix = model.loadDispositionMatrix(idDisposition, xCoord, yCoord);
+		        int row = tableMazes.getSelectedRow();
+		        int mazeId = (int) mazeModel.getValueAt(row, 0);
+		        row = tableDisposition.getSelectedRow();
+		        int dispId = (int) dispositionModel.getValueAt(row, 0);
 
-		        // Llamamos al constructor ampliado de InterfazLaberinto
-		        new MazeUI(matriz, ancho, alto, jugador, modelo, tiempoPregunta, vidaBotiquin, danoCocodrilo, danoPregunta, idLab, idDisp, ChooseMazeUI.this);
+		        new MazeUI(matrix, xCoord, yCoord, player, model, timeQuestion, medkitLife, crocodileDamage, questionDamage, mazeId, dispId, ChooseMazeUI.this);
 
 		        dispose();
 		    }
 		});
 
-		//////////////////////////////////////////////////////////////////////////////////* AL JUEGO
-
-		btnJugarNuevaDisp.addActionListener(new ActionListener() {
+		btnPlayRandomDisposition.addActionListener(new ActionListener() {
 		    public void actionPerformed(ActionEvent e) {
-		        int filaLab = tableLaberintos.getSelectedRow();
-		        if (filaLab == -1) {
+		        int rowMaze = tableMazes.getSelectedRow();
+		        if (rowMaze == -1) {
 		            JOptionPane.showMessageDialog(null,
-		                "Selecciona primero un laberinto.",
-		                "Atención", JOptionPane.WARNING_MESSAGE);
+		                "Select a maze first.",
+		                "Attention", JOptionPane.WARNING_MESSAGE);
 		            return;
 		        }
 
-		        // Extraer datos del laberinto
-		        int idLab           = (int) modeloLaberintos.getValueAt(filaLab, 0);
-		        int ancho           = (int) modeloLaberintos.getValueAt(filaLab, 1);
-		        int alto            = (int) modeloLaberintos.getValueAt(filaLab, 2);
-		        int numCocodrilos   = (int) modeloLaberintos.getValueAt(filaLab, 3);
-		        int dañoCocodrilos  = (int) modeloLaberintos.getValueAt(filaLab, 4);
-		        int numBotiquines   = (int) modeloLaberintos.getValueAt(filaLab, 5);
-		        int vidaBotiquines  = (int) modeloLaberintos.getValueAt(filaLab, 6);
-		        int tiempoPregunta  = (int) modeloLaberintos.getValueAt(filaLab, 7);
-		        int dañoPregunta    = (int) modeloLaberintos.getValueAt(filaLab, 8);
-		        int numPreguntas    = (int) modeloLaberintos.getValueAt(filaLab, 9);
+		        int mazeId = (int) mazeModel.getValueAt(rowMaze, 0);
+		        int xCoord = (int) mazeModel.getValueAt(rowMaze, 1);
+		        int yCoord = (int) mazeModel.getValueAt(rowMaze, 2);
+		        int numCrocodiles = (int) mazeModel.getValueAt(rowMaze, 3);
+		        int crocodileDamage = (int) mazeModel.getValueAt(rowMaze, 4);
+		        int numMedkits = (int) mazeModel.getValueAt(rowMaze, 5);
+		        int medkitLife = (int) mazeModel.getValueAt(rowMaze, 6);
+		        int timeQuestion = (int) mazeModel.getValueAt(rowMaze, 7);
+		        int questionDamage = (int) mazeModel.getValueAt(rowMaze, 8);
+		        int numberQuestions = (int) mazeModel.getValueAt(rowMaze, 9);
 
-		        // Carga la matriz base (ceros+muros) y crea la Disposicion
-		        int[][] base = modelo.cargarMatrizDisposicion(idLab, ancho, alto);
-		        Disposition nuevaDisp = new Disposition(base, idLab, modelo);
+		        int[][] base = model.loadDispositionMatrix(mazeId, xCoord, yCoord);
+		        Disposition newDisp = new Disposition(base, mazeId, model);
 
-		        // Genera elementos y guarda sus posiciones
 		        try {
-		            nuevaDisp.generarMatriz(numBotiquines, numCocodrilos);
+		            newDisp.generateMatrix(numMedkits, numCrocodiles);
 		        } catch (IllegalArgumentException ex) {
 		            JOptionPane.showMessageDialog(null,
 		                ex.getMessage(),
-		                "Error al generar matriz",
+		                "Error generating matrix",
 		                JOptionPane.ERROR_MESSAGE);
 		            return;
 		        }
-		        modelo.insertarDisposicion(nuevaDisp);      // persiste Disposicion y asigna ID
-		        nuevaDisp.guardarMatriz();                  // guarda cada casilla
+		        model.insertDisposition(newDisp);
+		        newDisp.saveMatrix();
 
-		        new MazeUI(nuevaDisp.getMapa(), ancho, alto, jugador, modelo, tiempoPregunta, vidaBotiquines, dañoCocodrilos, dañoPregunta, idLab, idLab, ChooseMazeUI.this);
+		        new MazeUI(newDisp.getMap(), xCoord, yCoord, player, model, timeQuestion, medkitLife, crocodileDamage, questionDamage, mazeId, mazeId, ChooseMazeUI.this);
 
 		        dispose();
 		    }
 		});
 	}
 	
-	////////////////////////////////////////////////////////////////////////////////////////  MÉTODOS
 	/**
-	 * Cargar los laberintos de la BD y meterlos en la tabla
+	 * Load mazes from DB and insert into table.
 	 */
-	public void cargarLaberintos() {			//Cargar los laberintos de la BD y meterlos en la tabla
-	    ResultSet rset = modelo.consultarDatos("laberintos");
+	public void loadMazes() {
+	    ResultSet rset = model.queryData("mazes");
 
 	    try {
 	        while (rset.next()) {
-	        	Object[] fila = new Object[] {
+	        	Object[] row = new Object[] {
 	        		    rset.getInt("id"),
-	        		    rset.getInt("ancho"),
-	        		    rset.getInt("alto"),
-	        		    rset.getInt("num_cocodrilos"),
-	        		    rset.getInt("daño_cocodrilos"),
-	        		    rset.getInt("num_botiquines"),
-	        		    rset.getInt("vida_botiquines"),
-	        		    rset.getInt("tiempo_pregunta"),
-	        		    rset.getInt("daño_pregunta"),
-	        		    rset.getInt("num_preguntas")
+	        		    rset.getInt("x_coord"),
+	        		    rset.getInt("y_coord"),
+	        		    rset.getInt("num_crocodiles"),
+	        		    rset.getInt("crocodile_damage"),
+	        		    rset.getInt("num_medkits"),
+	        		    rset.getInt("medkit_life"),
+	        		    rset.getInt("question_time"),
+	        		    rset.getInt("question_damage"),
+	        		    rset.getInt("num_questions")
 	        		};
-        		modeloLaberintos.addRow(fila);
+        		mazeModel.addRow(row);
 	        }
 	    } catch (SQLException e) {
 	        e.printStackTrace();
@@ -295,21 +275,21 @@ public class ChooseMazeUI extends JFrame {
 	}
 	
 	/**
-	 * Reinicia el estado visual de la ventana.
+	 * Reset visual state.
 	 */
-	public void reiniciarVentana() {
-	    btnJugar.setEnabled(false); // Desactivar botón Jugar
-	    btnJugarNuevaDisp.setEnabled(false);
-	    tableLaberintos.clearSelection();
+	public void resetWindow() {
+	    btnPlay.setEnabled(false);
+	    btnPlayRandomDisposition.setEnabled(false);
+	    tableMazes.clearSelection();
 
-	    tableLaberintos.clearSelection(); // Quitar selección
+	    tableMazes.clearSelection();
 
-	    if (modeloDisposiciones.getRowCount() > 0) {
-	        modeloDisposiciones.setRowCount(0); // Vaciar la tabla de disposiciones
+	    if (dispositionModel.getRowCount() > 0) {
+	        dispositionModel.setRowCount(0);
 	    }
 	    
-	    if (modeloLaberintos.getRowCount() > 0) {
-	    	modeloLaberintos.setRowCount(0); // Vaciar la tabla de disposiciones
+	    if (mazeModel.getRowCount() > 0) {
+	    	mazeModel.setRowCount(0);
 	    }
 	}
 }

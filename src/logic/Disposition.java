@@ -1,133 +1,127 @@
 package logic;
 
 /**
- * Clase de disposicion que genera matrizes al azar.
+ * Disposition class that generates random matrices.
  */
 public class Disposition {
 
-	private int id;
-	private int idLaberinto;
-	private int [][] mapa;
-	
-	private Model modelo;
-	
-	
-	public Disposition(int[][] mapa2, int idLaberinto, Model modelo) {
-		this.idLaberinto = idLaberinto;
-		this.mapa = mapa2;
-		this.modelo = modelo;
-	}
+    private int id;
+    private int idLaberinto;
+    private int[][] map;
+
+    private Model model;
 
 
-	public void setIdLaberinto(int idLaberinto) {
-		this.idLaberinto = idLaberinto;
-	}
+    public Disposition(int[][] map2, int idLaberinto, Model model) {
+        this.idLaberinto = idLaberinto;
+        this.map = map2;
+        this.model = model;
+    }
 
 
-	/**
-	 * Método para generar una matriz en la disposición. Genera una casilla al azar y mete un elemento dentro si fuese posible.
-	 * @param botiquinesGenerados Botiquines generados previamente.
-	 * @param cocodrilosGenerados Cocodrilos generados previamente.
-	 * @param numBotiquines Número de botiquines a generar.
-	 * @param numCocodrilos Número de cocodrilos a generar.
-	 */
-	public void generarMatriz(int numBotiquines, int numCocodrilos) {
-		
-		// Comprobar que existan casillas validas para ingresar los datos y no entrar en un bucle infinito
-	    int casillasValidas = 0;
-	    for (int y = 0; y < mapa.length; y++) {
-	        for (int x = 0; x < mapa[0].length; x++) {
-	            if (!(x == 0 && y == 0) && !(x == mapa[0].length - 1 && y == mapa.length - 1) && mapa[y][x] == 0) {
-	                casillasValidas++;
-	            }
-	        }
-	    }
-	    
-	    if (numBotiquines + numCocodrilos > casillasValidas) {
-	        throw new IllegalArgumentException("No hay suficientes casillas libres para colocar todos los elementos");
-	    }
-		
-		int botiquines = 0;
-		int cocodrilos = 0;
-		boolean matrizCompleta = false;
-		
-		// 0 - Vacio. 1 - Botiquin. 2 - Cocodrilo. 3 - Muro.			
-		while (!matrizCompleta) {
-			int xRandom = (int) (Math.random() * mapa[0].length);
-			int yRandom = (int) (Math.random() * mapa.length);
-			
-			// Validar que la casilla sea valida
-			if (!(xRandom == 0 && yRandom == 0)                              // no (0,0)
-					 && !(xRandom == mapa[0].length - 1 && yRandom == mapa.length - 1)               // no (última esquina)
-					 && mapa[yRandom][xRandom] == 0) {  
-				double numero = Math.random();
-				
-				// Meter elemento
-				if (numero <= 0.50 && botiquines < numBotiquines) {
-					mapa[yRandom][xRandom] = 1;
-					botiquines++;
-				 
-				} else if (numero <= 1 && cocodrilos < numCocodrilos) {
-					mapa[yRandom][xRandom] = 2;
-					cocodrilos++;
-					
-				}
-			}
-			
-			// Si se ha completado la matriz termina el bucle
-			if (botiquines == numBotiquines && cocodrilos == numCocodrilos) {
-				matrizCompleta = true;
-			}
-		}
-	}
-	
-	
-	public int[][] getMapa() {
-		return mapa;
-	}
+    public void setIdLaberinto(int idLaberinto) {
+        this.idLaberinto = idLaberinto;
+    }
 
 
-	public void setMapa(int[][] mapa) {
-		this.mapa = mapa;
-	}
+    /**
+     * Method to generate a matrix in the disposition. Generates a random cell and places an element inside if possible.
+     * @param numMedkits Number of medkits to generate.
+     * @param numCrocodiles Number of crocodiles to generate.
+     */
+    public void generateMatrix(int numMedkits, int numCrocodiles) {
+
+        int validCells = 0;
+        for (int y = 0; y < map.length; y++) {
+            for (int x = 0; x < map[0].length; x++) {
+                if (!(x == 0 && y == 0) && !(x == map[0].length - 1 && y == map.length - 1) && map[y][x] == 0) {
+                    validCells++;
+                }
+            }
+        }
+
+        if (numMedkits + numCrocodiles > validCells) {
+            throw new IllegalArgumentException("Not enough free cells to place all elements");
+        }
+
+        int medkits = 0;
+        int crocodiles = 0;
+        boolean matrixComplete = false;
+
+        // 0 - Empty. 1 - Medkit. 2 - Crocodile. 3 - Wall.         
+        while (!matrixComplete) {
+
+            int xRandom = (int) (Math.random() * map[0].length);
+            int yRandom = (int) (Math.random() * map.length);
+
+            if (!(xRandom == 0 && yRandom == 0)
+                    && !(xRandom == map[0].length - 1 && yRandom == map.length - 1)
+                    && map[yRandom][xRandom] == 0) {
+
+                double number = Math.random();
+
+                if (number <= 0.50 && medkits < numMedkits) {
+                    map[yRandom][xRandom] = 1;
+                    medkits++;
+
+                } else if (number <= 1 && crocodiles < numCrocodiles) {
+                    map[yRandom][xRandom] = 2;
+                    crocodiles++;
+                }
+            }
+
+            if (medkits == numMedkits && crocodiles == numCrocodiles) {
+                matrixComplete = true;
+            }
+        }
+    }
 
 
-	public Model getModelo() {
-		return modelo;
-	}
+    public int[][] getMap() {
+        return map;
+    }
 
 
-	public void setModelo(Model modelo) {
-		this.modelo = modelo;
-	}
+    public void setMap(int[][] map) {
+        this.map = map;
+    }
 
 
-	/**
-	 * Método que lee la matriz y guarda las posiciones donde haya una casilla especial
-	 */
-	public void guardarMatriz() {
-		for (int y = 0; y < mapa.length - 1; y++) {
-			for (int x = 0; x < mapa[0].length - 1; x++) {				
-				// Si encuentra algo que no sea una casilla vacia (1: Cocodrilo, 2: Botiquín, 3: Muro)
-				if (mapa[y][x] != 0) {
-					modelo.insertarDisposicionMatriz(x, y, this.getId(), Integer.valueOf(mapa[y][x]) );									
-				}
-			}
-		}
-	}
+    public Model getModel() {
+        return model;
+    }
 
 
-	public int getId() {
-		return id;
-	}
+    public void setModel(Model model) {
+        this.model = model;
+    }
 
 
-	public void setId(int id) {
-		this.id = id;
-	}
-	
-	
-	public int getIdLaberinto() {
-		return idLaberinto;
-	}
+    /**
+     * Method that reads the matrix and saves the positions where there is a special cell.
+     */
+    public void saveMatrix() {
+        for (int y = 0; y < map.length - 1; y++) {
+            for (int x = 0; x < map[0].length - 1; x++) {
+                if (map[y][x] != 0) {
+                    model.insertDispositionMatrix(x, y, this.getId(), Integer.valueOf(map[y][x]));
+                }
+            }
+        }
+    }
+
+
+    public int getId() {
+        return id;
+    }
+
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+
+    public int getIdLaberinto() {
+        return idLaberinto;
+    }
 }

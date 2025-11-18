@@ -3,25 +3,25 @@ package logic;
 public class Player {
 	
 	private int id;
-    private String nombre;
+    private String name;
     private int x, y;
-    private int vida;
-    private int puntos; // Se ganan +10pts por respuesta correcta  y +Xpts por el sobrante de los botiquines
+    private int health;
+    private int points;
     
-    public Player(String nombre) {
-        this.nombre = nombre;
-        this.vida=100; 
-        this.puntos = 0;
+    public Player(String name) {
+        this.name = name;
+        this.health = 100; 
+        this.points = 0;
         this.x = 0;
         this.y = 0;
     }
-    ////////////GETTERS Y SETTERS
-    public String getNombre() {
-		return nombre;
+
+    public String getName() {
+		return name;
 	}
 
-	public void setNombre(String nombre) {
-		this.nombre = nombre;
+	public void setName(String name) {
+		this.name = name;
 	}
 
 	public int getX() {
@@ -40,45 +40,43 @@ public class Player {
 		this.y = y;
 	}
 
-	public int getVida() {
-		return vida;
+	public int getHealth() {
+		return health;
 	}
 
-	public void setVida(int vida) {
-		this.vida = vida;
+	public void setHealth(int health) {
+		this.health = health;
 	}
 
-	public int getPuntos() {
-		return puntos;
+	public int getPoints() {
+		return points;
 	}
 
-	public void setPuntos(int puntos) {
-		this.puntos = puntos;
+	public void setPoints(int points) {
+		this.points = points;
 	}
-    /////////////////////////////
     
-
-    public void moverA(int x, int y) {
+    public void moveTo(int x, int y) {
         this.x = x;
         this.y = y;
     }
 
-	public void reducirVida(int cantidad) {
-        vida -= cantidad;
+	public void reduceHealth(int amount) {
+        health -= amount;
     }
 
-	public int curar(int cantidad) {		// Asignamos la vida sobrante del botiquín como puntos!!
-	    this.vida += cantidad;
-	    if (this.vida > 100) {
-	        int sobrante = this.vida - 100;
-	        this.vida = 100;
-	        return sobrante;
+	public int heal(int amount) {
+	    this.health += amount;
+	    if (this.health > 100) {
+	        int excess = this.health - 100;
+	        this.health = 100;
+	        return excess;
 	    }
 	    return 0;
 	}
 
-    public void sumarPuntos(int cantidad) {
-        this.puntos += cantidad;
+    public void addPoints(int amount) {
+        this.points += amount;
     }
     
 	public int getId() {
@@ -88,9 +86,4 @@ public class Player {
 	public void setId(int id) {
 		this.id = id;
 	}
-    
-    
-    
-
-    
 }

@@ -18,30 +18,30 @@ public class ResultsMazeUI extends JFrame {
     private JPanel contentPane;
 
     // Top 10
-    private DefaultTableModel modeloEstadisticas;
-    private JTable tablaEstadisticas;
+    private DefaultTableModel statsModel;
+    private JTable statsTable;
 
-    private Model modeloLogica;
-    private int idLaberinto, idDisposicion;
+    private Model logicModel;
+    private int mazeId, layoutId;
 
-    // Labels dinámicos
-    private JLabel lblUsuarioValue;
-    private JLabel lblPuntosValue;
-    private JLabel lblVidaValue;
-    private JLabel lblTiempoValue;
+    // Dynamic labels
+    private JLabel lblUserValue;
+    private JLabel lblPointsValue;
+    private JLabel lblLifeValue;
+    private JLabel lblTimeValue;
     
-    private int[][] matriz;
+    private int[][] matrix;
 
-    public ResultsMazeUI(String nombreUsuario, int preguntasCorrectas, int preguntasIncorrectas,
-                               int vidaFinal, int puntos, String tiempo,
-                               boolean victoria, Model modelo, int idLaberinto,
-                               int idDisposicion, ChooseMazeUI elegirLaberinto, int[][] matriz) {
-        this.modeloLogica   = modelo;
-        this.idLaberinto    = idLaberinto;
-        this.idDisposicion  = idDisposicion;
-        this.matriz = matriz;
+    public ResultsMazeUI(String username, int correctAnswers, int incorrectAnswers,
+                               int finalLife, int points, String time,
+                               boolean victory, Model model, int mazeId,
+                               int layoutId, ChooseMazeUI chooseMazeUI, int[][] matrix) {
+        this.logicModel   = model;
+        this.mazeId       = mazeId;
+        this.layoutId     = layoutId;
+        this.matrix       = matrix;
 
-        setTitle("Resumen de la partida");
+        setTitle("Game Summary");
         setResizable(false);
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         setBounds(100, 100, 700, 486);
@@ -50,161 +50,160 @@ public class ResultsMazeUI extends JFrame {
         contentPane.setLayout(null);
         setContentPane(contentPane);
 
-        // ——— Panel resumen partida (izquierda) ———
-        JPanel panelResumen = new JPanel(null);
-        panelResumen.setBounds(10, 58, 300, 300);
-        panelResumen.setBorder(BorderFactory.createTitledBorder("Resumen"));
-        contentPane.add(panelResumen);
+        // ——— Game summary panel (left) ———
+        JPanel summaryPanel = new JPanel(null);
+        summaryPanel.setBounds(10, 58, 300, 300);
+        summaryPanel.setBorder(BorderFactory.createTitledBorder("Summary"));
+        contentPane.add(summaryPanel);
 
-        JLabel lblResultado = new JLabel(victoria ? "¡Has ganado!" : "Has perdido");
-        lblResultado.setFont(new Font("Tahoma", Font.BOLD, 16));
-        lblResultado.setBounds(80, 20, 150, 25);
-        panelResumen.add(lblResultado);
+        JLabel lblResult = new JLabel(victory ? "You won!" : "You lost");
+        lblResult.setFont(new Font("Tahoma", Font.BOLD, 16));
+        lblResult.setBounds(80, 20, 150, 25);
+        summaryPanel.add(lblResult);
         
-        // Etiquetas fijas
-        JLabel lblUsuario = new JLabel("Usuario:");
-        lblUsuario.setBounds(10, 60, 80, 14);
-        panelResumen.add(lblUsuario);
-        lblUsuarioValue = new JLabel(nombreUsuario);
-        lblUsuarioValue.setBounds(100, 60, 180, 14);
-        panelResumen.add(lblUsuarioValue);
+        // Fixed labels
+        JLabel lblUser = new JLabel("User:");
+        lblUser.setBounds(10, 60, 80, 14);
+        summaryPanel.add(lblUser);
+        lblUserValue = new JLabel(username);
+        lblUserValue.setBounds(100, 60, 180, 14);
+        summaryPanel.add(lblUserValue);
 
-        JLabel lblPuntos = new JLabel("Puntos:");
-        lblPuntos.setBounds(10, 90, 80, 14);
-        panelResumen.add(lblPuntos);
-        lblPuntosValue = new JLabel(String.valueOf(puntos));
-        lblPuntosValue.setBounds(100, 90, 180, 14);
-        panelResumen.add(lblPuntosValue);
+        JLabel lblPoints = new JLabel("Points:");
+        lblPoints.setBounds(10, 90, 80, 14);
+        summaryPanel.add(lblPoints);
+        lblPointsValue = new JLabel(String.valueOf(points));
+        lblPointsValue.setBounds(100, 90, 180, 14);
+        summaryPanel.add(lblPointsValue);
 
-        JLabel lblVida = new JLabel("Vida:");
-        lblVida.setBounds(10, 120, 80, 14);
-        panelResumen.add(lblVida);
-        lblVidaValue = new JLabel(String.valueOf(vidaFinal));
-        lblVidaValue.setBounds(100, 120, 180, 14);
-        panelResumen.add(lblVidaValue);
+        JLabel lblLife = new JLabel("Life:");
+        lblLife.setBounds(10, 120, 80, 14);
+        summaryPanel.add(lblLife);
+        lblLifeValue = new JLabel(String.valueOf(finalLife));
+        lblLifeValue.setBounds(100, 120, 180, 14);
+        summaryPanel.add(lblLifeValue);
 
-        JLabel lblTiempo = new JLabel("Tiempo:");
-        lblTiempo.setBounds(10, 150, 80, 14);
-        panelResumen.add(lblTiempo);
-        lblTiempoValue = new JLabel(tiempo);
-        lblTiempoValue.setBounds(100, 150, 180, 14);
-        panelResumen.add(lblTiempoValue);
+        JLabel lblTime = new JLabel("Time:");
+        lblTime.setBounds(10, 150, 80, 14);
+        summaryPanel.add(lblTime);
+        lblTimeValue = new JLabel(time);
+        lblTimeValue.setBounds(100, 150, 180, 14);
+        summaryPanel.add(lblTimeValue);
 
-        // Detalle de preguntas
-        JLabel lblCorrectas = new JLabel("Preguntas correctas:");
-        lblCorrectas.setBounds(10, 180, 150, 14);
-        panelResumen.add(lblCorrectas);
-        JTextField tfCorrectas = new JTextField(String.valueOf(preguntasCorrectas));
-        tfCorrectas.setBounds(160, 180, 50, 20);
-        tfCorrectas.setEditable(false);
-        panelResumen.add(tfCorrectas);
+        // Question details
+        JLabel lblCorrect = new JLabel("Correct answers:");
+        lblCorrect.setBounds(10, 180, 150, 14);
+        summaryPanel.add(lblCorrect);
+        JTextField tfCorrect = new JTextField(String.valueOf(correctAnswers));
+        tfCorrect.setBounds(160, 180, 50, 20);
+        tfCorrect.setEditable(false);
+        summaryPanel.add(tfCorrect);
 
-        JLabel lblIncorrectas = new JLabel("Preguntas incorrectas:");
-        lblIncorrectas.setBounds(10, 210, 150, 14);
-        panelResumen.add(lblIncorrectas);
-        JTextField tfIncorrectas = new JTextField(String.valueOf(preguntasIncorrectas));
-        tfIncorrectas.setBounds(160, 210, 50, 20);
-        tfIncorrectas.setEditable(false);
-        panelResumen.add(tfIncorrectas);
+        JLabel lblIncorrect = new JLabel("Incorrect answers:");
+        lblIncorrect.setBounds(10, 210, 150, 14);
+        summaryPanel.add(lblIncorrect);
+        JTextField tfIncorrect = new JTextField(String.valueOf(incorrectAnswers));
+        tfIncorrect.setBounds(160, 210, 50, 20);
+        tfIncorrect.setEditable(false);
+        summaryPanel.add(tfIncorrect);
 
-        // ——— Panel estadísticas top 10 (derecha) ———
-        JPanel panelStats = new JPanel(new BorderLayout());
-        panelStats.setBounds(330, 10, 350, 370);
-        panelStats.setBorder(BorderFactory.createTitledBorder("Top 10 Jugadores"));
-        contentPane.add(panelStats);
+        // ——— Top 10 stats panel (right) ———
+        JPanel statsPanel = new JPanel(new BorderLayout());
+        statsPanel.setBounds(330, 10, 350, 370);
+        statsPanel.setBorder(BorderFactory.createTitledBorder("Top 10 Players"));
+        contentPane.add(statsPanel);
 
-        modeloEstadisticas = new DefaultTableModel(
-            new Object[] { "Usuario", "Puntos", "Tiempo", "Vida", "Victoria" }, 0
+        statsModel = new DefaultTableModel(
+            new Object[] { "User", "Points", "Time", "Life", "Victory" }, 0
         );
-        tablaEstadisticas = new JTable(modeloEstadisticas);
-        panelStats.add(new JScrollPane(tablaEstadisticas), BorderLayout.CENTER);
+        statsTable = new JTable(statsModel);
+        statsPanel.add(new JScrollPane(statsTable), BorderLayout.CENTER);
         
-        JButton btnVolver = new JButton("Volver");
-        btnVolver.setForeground(Color.BLACK);
-        btnVolver.setFont(new Font("Tahoma", Font.BOLD, 11));
-        btnVolver.setBackground(Color.GRAY);
-        btnVolver.setBounds(10, 402, 99, 34);
-        contentPane.add(btnVolver);
+        JButton btnBack = new JButton("Back");
+        btnBack.setForeground(Color.BLACK);
+        btnBack.setFont(new Font("Tahoma", Font.BOLD, 11));
+        btnBack.setBackground(Color.GRAY);
+        btnBack.setBounds(10, 402, 99, 34);
+        contentPane.add(btnBack);
         
-        JButton btnMostrar = new JButton("Mostrar disposición");
-        btnMostrar.setBounds(119, 402, 147, 34);
-        contentPane.add(btnMostrar);
+        JButton btnShowLayout = new JButton("Show layout");
+        btnShowLayout.setBounds(119, 402, 147, 34);
+        contentPane.add(btnShowLayout);
 
-        cargarEstadisticas();
+        loadStats();
         
-        // Clicb boton volver
-        btnVolver.addActionListener(new ActionListener() {
-        	public void actionPerformed(ActionEvent e) {
-        		dispose();
-        		elegirLaberinto.reiniciarVentana();
-        		elegirLaberinto.setVisible(true);
-        	}
+        // Back button click
+        btnBack.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                dispose();
+                chooseMazeUI.resetWindow();
+                chooseMazeUI.setVisible(true);
+            }
         });
         
-        // Boton mostrar matriz
-        btnMostrar.addActionListener(new ActionListener() {
-        	public void actionPerformed(ActionEvent e) {
-        		imprimirMatriz();
-        	}
+        // Show matrix button
+        btnShowLayout.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                printMatrix();
+            }
         });
     }
 
-    private void cargarEstadisticas() {
-        modeloEstadisticas.setRowCount(0);
-        try (ResultSet rs = modeloLogica.obtenerTop10(idLaberinto, idDisposicion)) {
+    private void loadStats() {
+        statsModel.setRowCount(0);
+        try (ResultSet rs = logicModel.getTop10(mazeId, layoutId)) {
             while (rs != null && rs.next()) {
-                modeloEstadisticas.addRow(new Object[] {
+                statsModel.addRow(new Object[] {
                     rs.getString("usuario"),
                     rs.getInt("puntos"),
                     rs.getString("tiempo"),
                     rs.getInt("vida"),
-                    rs.getBoolean("victoria") ? "Sí" : "No"
+                    rs.getBoolean("victoria") ? "Yes" : "No"
                 });
             }
         } catch (SQLException e) {
             e.printStackTrace();
             JOptionPane.showMessageDialog(this,
-                "Error al cargar estadísticas",
+                "Error loading statistics",
                 "Error", JOptionPane.ERROR_MESSAGE);
         }
     }
     
     
-    public void imprimirMatriz() {
-	    int filas = matriz.length;
-	    int columnas = matriz[0].length;
-	    
-	    for (int y = 0; y < filas + 2; y++) {
-	        for (int x = 0; x < columnas + 2; x++) {
-	            // Bordes exteriores
-	            if (y == 0 || y == filas + 1 || x == 0 || x == columnas + 1) {
-	                System.out.print("#");  // muro borde
-	            } else {
-	                // Dentro del borde: mapa real
-	                int mapaY = y - 1;
-	                int mapaX = x - 1;
-	                
-	                // Si es la esquina superior izquierda del mapa (inicio)
-	                if (mapaY == 0 && mapaX == 0) {
-	                    System.out.print("O");
-	                } 
-	                // Si es la esquina inferior derecha del mapa (salida)
-	                else if (mapaY == filas - 1 && mapaX == columnas - 1) {
-	                    System.out.print("X");
-	                } 
-	                else {
-	                    // Resto de celdas según mapa
-	                    switch (matriz[mapaY][mapaX]) {
-	                        case 0: System.out.print(" "); break;    // vacío
-	                        case 1: System.out.print("B"); break;    // botiquín
-	                        case 2: System.out.print("C"); break;    // cocodrilo
-	                        case 3: System.out.print("#"); break;    // muro
-	                        default: System.out.print("?"); break;   // otro
-	                    }
-	                }
-	            }
-	        }
-	        System.out.println();
-	    }
-	}
+    public void printMatrix() {
+        int rows = matrix.length;
+        int columns = matrix[0].length;
+        
+        for (int y = 0; y < rows + 2; y++) {
+            for (int x = 0; x < columns + 2; x++) {
+                // Outer borders
+                if (y == 0 || y == rows + 1 || x == 0 || x == columns + 1) {
+                    System.out.print("#");  // border wall
+                } else {
+                    int mapY = y - 1;
+                    int mapX = x - 1;
+                    
+                    // Top-left corner (start)
+                    if (mapY == 0 && mapX == 0) {
+                        System.out.print("O");
+                    } 
+                    // Bottom-right corner (exit)
+                    else if (mapY == rows - 1 && mapX == columns - 1) {
+                        System.out.print("X");
+                    } 
+                    else {
+                        // Other cells according to map
+                        switch (matrix[mapY][mapX]) {
+                            case 0: System.out.print(" "); break;    // empty
+                            case 1: System.out.print("M"); break;    // medkit
+                            case 2: System.out.print("C"); break;    // crocodile
+                            case 3: System.out.print("#"); break;    // wall
+                            default: System.out.print("?"); break;   // other
+                        }
+                    }
+                }
+            }
+            System.out.println();
+        }
+    }
 }

@@ -1,159 +1,130 @@
 package logic;
 
 /**
- * Clase laberinto que creará el usuario.
+ * Maze class that the user will create.
  */
 public class Maze {
 	
 	private int id;
-	private int ancho;
-	private int alto;
-	private int numCocodrilos;
-	private int danoCocodrilos;
-	private int numBotiquines;
-	private int vidaBotiquines;
-	private int tiempoPregunta;
-	private int dañoPregunta;
-	private int numPreguntas;
+	private int width;
+	private int height;
+	private int numCrocodiles;
+	private int crocodileDamage;
+	private int numMedkits;
+	private int medkitHealth;
+	private int questionTime;
+	private int questionDamage;
+	private int numQuestions;
 	
-	private int[][] mapa;
+	private int[][] map;
 	
-	private Model modelo;
+	private Model model;
 
-	public Maze(int ancho, int alto, int num_cocodrilos, int dano_cocodrilos, int num_botiquines,
-			int vida_botiquines, int tiempo_pregunta, int daño_pregunta, int num_perguntas, int[][] mapa) {
-		this.ancho = ancho;
-		this.alto = alto;
-		this.numCocodrilos = num_cocodrilos;
-		this.danoCocodrilos = dano_cocodrilos;
-		this.numBotiquines = num_botiquines;
-		this.vidaBotiquines = vida_botiquines;
-		this.tiempoPregunta = tiempo_pregunta;
-		this.dañoPregunta = daño_pregunta;
-		this.numPreguntas = num_perguntas;
-		this.mapa = mapa;
-		
+	public Maze(int width, int height, int num_crocodiles, int crocodile_damage, int num_medkits,
+			int medkit_health, int question_time, int question_damage, int num_questions, int[][] map) {
+		this.width = width;
+		this.height = height;
+		this.numCrocodiles = num_crocodiles;
+		this.crocodileDamage = crocodile_damage;
+		this.numMedkits = num_medkits;
+		this.medkitHealth = medkit_health;
+		this.questionTime = question_time;
+		this.questionDamage = question_damage;
+		this.numQuestions = num_questions;
+		this.map = map;
 	}
 	
 	
 	/**
-	 * Generar una nueva disposición al azar.
+	 * Generate a new random disposition.
 	 */
-	public void generarDisposicion() {
+	public void generateDisposition() {
 	
-		Disposition disposicion = new Disposition(mapa, this.getId(), modelo);
-		disposicion.generarMatriz(numBotiquines, numCocodrilos);	
+		Disposition disposition = new Disposition(map, this.getId(), model);
+		disposition.generateMatrix(numMedkits, numCrocodiles);	
 	}
 
-
-	public int getAncho() {
-		return ancho;
+	public int getWidth() {
+		return width;
 	}
 
-
-	public void setAncho(int ancho) {
-		this.ancho = ancho;
+	public void setWidth(int width) {
+		this.width = width;
 	}
 
-
-	public int getAlto() {
-		return alto;
+	public int getHeight() {
+		return height;
 	}
 
-
-	public void setAlto(int alto) {
-		this.alto = alto;
+	public void setHeight(int height) {
+		this.height = height;
 	}
 
-
-	public int getNumCocodrilos() {
-		return numCocodrilos;
+	public int getNumCrocodiles() {
+		return numCrocodiles;
 	}
 
-
-	public void setNumCocodrilos(int numCocodrilos) {
-		this.numCocodrilos = numCocodrilos;
+	public void setNumCrocodiles(int numCrocodiles) {
+		this.numCrocodiles = numCrocodiles;
 	}
 
-
-	public int getDanoCocodrilos() {
-		return danoCocodrilos;
+	public int getCrocodileDamage() {
+		return crocodileDamage;
 	}
 
-
-	public void setDanoCocodrilos(int danoCocodrilos) {
-		this.danoCocodrilos = danoCocodrilos;
+	public void setCrocodileDamage(int crocodileDamage) {
+		this.crocodileDamage = crocodileDamage;
 	}
 
-
-	public int getNumBotiquines() {
-		return numBotiquines;
+	public int getNumMedkits() {
+		return numMedkits;
 	}
 
-
-	public void setNumBotiquines(int numBotiquines) {
-		this.numBotiquines = numBotiquines;
+	public void setNumMedkits(int numMedkits) {
+		this.numMedkits = numMedkits;
 	}
 
-
-	public int getVidaBotiquines() {
-		return vidaBotiquines;
+	public int getMedkitHealth() {
+		return medkitHealth;
 	}
 
-
-	public void setVidaBotiquines(int vidaBotiquines) {
-		this.vidaBotiquines = vidaBotiquines;
+	public void setMedkitHealth(int medkitHealth) {
+		this.medkitHealth = medkitHealth;
 	}
 
-
-	public int getTiempoPregunta() {
-		return tiempoPregunta;
+	public int getQuestionTime() {
+		return questionTime;
 	}
 
-
-	public void setTiempoPregunta(int tiempoPregunta) {
-		this.tiempoPregunta = tiempoPregunta;
+	public void setQuestionTime(int questionTime) {
+		this.questionTime = questionTime;
 	}
 
-
-	public int getDañoPregunta() {
-		return dañoPregunta;
+	public int getQuestionDamage() {
+		return questionDamage;
 	}
 
-
-	public void setDañoPregunta(int dañoPregunta) {
-		this.dañoPregunta = dañoPregunta;
+	public void setQuestionDamage(int questionDamage) {
+		this.questionDamage = questionDamage;
 	}
 
-
-	public int getNumPreguntas() {
-		return numPreguntas;
+	public int getNumQuestions() {
+		return numQuestions;
 	}
 
-
-	public void setNumPreguntas(int numPerguntas) {
-		this.numPreguntas = numPerguntas;
+	public void setNumQuestions(int numQuestions) {
+		this.numQuestions = numQuestions;
 	}
-
 
 	public int getId() {
 		return id;
 	}
 
-
 	public void setId(int id) {
 		this.id = id;
 	}
 
-
-	public int[][] getMapa() {
-		return mapa;
+	public int[][] getMap() {
+		return map;
 	}
-
-
-	
-	
-	
-	
-	
 }

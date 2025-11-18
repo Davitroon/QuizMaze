@@ -9,181 +9,164 @@ import ui.MazeManagementUI;
 
 public class Login {
 
-	private static String nombreUsuario;
+	private static String username;
 	
-	private Model modelo;
-	private ChooseMazeUI elegirLaberinto;
-	private MazeManagementUI gestionLaberinto;
-	private Player jugador;
+	private Model model;
+	private ChooseMazeUI chooseMaze;
+	private MazeManagementUI mazeManagement;
+	private Player player;
 	
-	public Login(Model modelo) {
-		this.modelo = modelo;
+	public Login(Model model) {
+		this.model = model;
 	}
 	
 
-	public String getNombreUsuario() {
-		return nombreUsuario;
+	public String getUsername() {
+		return username;
 	}
 
 	
-	public void logearse() {
+	public void login() {
 		Scanner scn = new Scanner(System.in);
-		boolean accesoConcedido = false;
-		int opciones = 0;
+		boolean accessGranted = false;
+		int options = 0;
 		
-		// Menú de opciones
-		while (!accesoConcedido) {
-			System.out.println("Eliga una opción: \n1 - Crear Usuario \n2 - Iniciar Sesión \n0 - Salir");
+		while (!accessGranted) {
+			System.out.println("Choose an option: \n1 - Create User \n2 - Log In \n0 - Exit");
 			if (scn.hasNextInt()) {
-				opciones = scn.nextInt();
+				options = scn.nextInt();
 				scn.nextLine();
 				
-				switch (opciones) {
-				// Crear usuario
+				switch (options) {
 				case 1:
-					System.out.print("Nombre de usuario nuevo: ");
-					String usuarioNuevo = scn.nextLine();
+					System.out.print("New username: ");
+					String newUser = scn.nextLine();
 
-					if (!validarNombreUsuario(usuarioNuevo)) {
+					if (!validateUsername(newUser)) {
 					    break; 
 					}
 					
-					System.out.print("Contraseña: ");
-					String contraseñaNueva = scn.nextLine();
+					System.out.print("Password: ");
+					String newPassword = scn.nextLine();
 					
-					if (!validarContraseña(contraseñaNueva)) {
+					if (!validatePassword(newPassword)) {
 					    break; 
 					}
 
-					System.out.print("Repite la contraseña: ");
-					String contraseñaRepetida = scn.nextLine();
+					System.out.print("Repeat password: ");
+					String repeatedPassword = scn.nextLine();
 					
-					if (!validarContraseña(contraseñaRepetida)) {
+					if (!validatePassword(repeatedPassword)) {
 					    break; 
 					}
 					
-					if (!contraseñaRepetida.equals(contraseñaNueva)) {
-						System.out.println("Las contraseñas no son iguales");
+					if (!repeatedPassword.equals(newPassword)) {
+						System.out.println("Passwords do not match.");
 						
 					} else {
-						int idJugador = modelo.insertarUsuario(usuarioNuevo, contraseñaRepetida);
+						int playerId = model.insertUser(newUser, repeatedPassword);
 
-						if (idJugador != -1) {
-						    jugador = new Player(usuarioNuevo); // Constructor existente
-						    jugador.setId(idJugador);            // Asegúrate de tener este setter
+						if (playerId != -1) {
+						    player = new Player(newUser);
+						    player.setId(playerId);
 
-						    System.out.println("Usuario " + usuarioNuevo + " creado con ID: " + idJugador);
+						    System.out.println("User " + newUser + " created with ID: " + playerId);
 
-						    if (elegirLaberinto == null) {
-						        elegirLaberinto = new ChooseMazeUI(this, modelo, jugador);
+						    if (chooseMaze == null) {
+						        chooseMaze = new ChooseMazeUI(this, model, player);
 						    }
-						    elegirLaberinto.cargarLaberintos();
-						    elegirLaberinto.setVisible(true);
+						    chooseMaze.loadMazes();
+						    chooseMaze.setVisible(true);
 
-						    accesoConcedido = true;
+						    accessGranted = true;
 						} else {
-						    System.out.println("Error al crear el usuario.");
+						    System.out.println("Error creating user.");
 						}
 					}
 				break;
 
-				// Iniciar sesion
 				case 2:
-				    System.out.print("Usuario: ");
-				    nombreUsuario = scn.nextLine();
+				    System.out.print("Username: ");
+				    username = scn.nextLine();
 				    
-					if (!validarNombreUsuario(nombreUsuario)) {
+					if (!validateUsername(username)) {
 					    break; 
 					}
 
-				    System.out.print("Contraseña: ");
-				    String contraseña = scn.nextLine();
+				    System.out.print("Password: ");
+				    String password = scn.nextLine();
 				    
-					if (!validarContraseña(contraseña)) {
+					if (!validatePassword(password)) {
 					    break; 
 					}
 
-				    ResultSet rs = modelo.consultarUsuario(nombreUsuario, contraseña);
+				    ResultSet rs = model.queryUser(username, password);
 
 				    try {
 				        if (rs.next()) {
-				            // Obtener id y nombre del usuario desde la consulta
-				            int idUsuario = rs.getInt("id");
-				            String usuario = rs.getString("nombre");
+				            int userId = rs.getInt("id");
+				            String user = rs.getString("name");
 
-				            // Crear el objeto Jugador con nombre e id
-				            jugador = new Player(usuario);
-				            jugador.setId(idUsuario);  // Asegúrate de que Jugador tiene setId(int)
+				            player = new Player(user);
+				            player.setId(userId);
 
-				            if (usuario.equals("admin")) {
-				                if (gestionLaberinto == null) {
-				                    gestionLaberinto = new MazeManagementUI(this, modelo);
+				            if (user.equals("admin")) {
+				                if (mazeManagement == null) {
+				                    mazeManagement = new MazeManagementUI(this, model);
 				                }
-				                gestionLaberinto.actualizarLaberintos();
-				                gestionLaberinto.setVisible(true);
+				                mazeManagement.updateMazes();
+				                mazeManagement.setVisible(true);
 
 				            } else {
-				                if (elegirLaberinto == null) {
-				                    elegirLaberinto = new ChooseMazeUI(this, modelo, jugador);
+				                if (chooseMaze == null) {
+				                    chooseMaze = new ChooseMazeUI(this, model, player);
 				                }
-				                elegirLaberinto.cargarLaberintos();
-				                elegirLaberinto.setVisible(true);
+				                chooseMaze.loadMazes();
+				                chooseMaze.setVisible(true);
 				            }
 
-				            accesoConcedido = true;
+				            accessGranted = true;
 
 				        } else {
-				            System.out.println("Usuario o contraseña incorrectos");
+				            System.out.println("Incorrect username or password.");
 				        }
 
 				    } catch (SQLException e) {
-				        System.out.println("Error al iniciar sesión");
+				        System.out.println("Error while logging in.");
 				        e.printStackTrace();
 				    }
 				    break;
 				
 				case 0:
-					System.out.println("Saliendo del prograna...");
+					System.out.println("Exiting program...");
 					System.exit(1);
 					
-				// Opción fuera del rango
 				default:
-					System.out.println("Error: Opción no válida.");
+					System.out.println("Error: Invalid option.");
 				}
 				
-			// Si el usuario no ha ingresado un numero en las opciones
 			} else {
-				System.out.println("Error: introduce un valor valido. ");
+				System.out.println("Error: enter a valid value. ");
 				scn.nextLine();
 			}
 		}
 	}
 	
-	/**
-	 * Valida la contraseña.
-	 * @param contraseña contraseña a validar
-	 * @return true si la contraseña es válida, false en caso contrario
-	 */
-	private boolean validarContraseña(String contraseña) {
-	    if (contraseña == null || contraseña.length() < 4) {
-	        System.out.println("La contraseña debe tener al menos 4 caracteres.");
+	private boolean validatePassword(String password) {
+	    if (password == null || password.length() < 4) {
+	        System.out.println("Password must be at least 4 characters long.");
 	        return false;
 	    }
 	    return true;
 	}
 
-	/**
-	 * Valida el nombre de usuario.
-	 * @param nombre nombre de usuario a validar
-	 * @return true si el nombre es válido, false en caso contrario
-	 */
-	private boolean validarNombreUsuario(String nombre) {
-	    if (nombre == null || nombre.trim().isEmpty()) {
-	        System.out.println("El nombre de usuario no puede estar vacío.");
+	private boolean validateUsername(String name) {
+	    if (name == null || name.trim().isEmpty()) {
+	        System.out.println("Username cannot be empty.");
 	        return false;
 	    }
-	    if (!nombre.matches("^[a-zA-Z0-9_]{3,20}$")) {
-	        System.out.println("El nombre de usuario debe tener entre 3 y 20 caracteres y solo puede contener letras, números y guiones bajos.");
+	    if (!name.matches("^[a-zA-Z0-9_]{3,20}$")) {
+	        System.out.println("Username must be between 3 and 20 characters and can only contain letters, numbers, and underscores.");
 	        return false;
 	    }
 	    return true;
