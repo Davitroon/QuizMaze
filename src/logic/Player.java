@@ -1,22 +1,22 @@
 package logic;
 
 public class Player {
-	
-	private int id;
-    private String name;
-    private int x, y;
-    private int health;
-    private int points;
-    
-    public Player(String name) {
-        this.name = name;
-        this.health = 100; 
-        this.points = 0;
-        this.x = 0;
-        this.y = 0;
-    }
 
-    public String getName() {
+	private int id;
+	private String name;
+	private int x, y;
+	private int health;
+	private int points;
+
+	public Player(String name) {
+		this.name = name;
+		this.health = 100;
+		this.points = 0;
+		this.x = 0;
+		this.y = 0;
+	}
+
+	public String getName() {
 		return name;
 	}
 
@@ -55,34 +55,34 @@ public class Player {
 	public void setPoints(int points) {
 		this.points = points;
 	}
-    
-    public void moveTo(int x, int y) {
-        this.x = x;
-        this.y = y;
-    }
 
-	public void reduceHealth(int amount) {
-        health -= amount;
-    }
-
-	public int heal(int amount) {
-	    this.health += amount;
-	    if (this.health > 100) {
-	        int excess = this.health - 100;
-	        this.health = 100;
-	        return excess;
-	    }
-	    return 0;
+	public void moveTo(int x, int y) {
+		this.x = x;
+		this.y = y;
 	}
 
-    public void addPoints(int amount) {
-        this.points += amount;
-    }
-    
+	public void reduceHealth(int amount) {
+		health -= amount;
+	}
+
+	public int heal(int amount) {
+		this.health += amount;
+		if (this.health > 100) {
+			int excess = this.health - 100;
+			this.health = 100;
+			return excess;
+		}
+		return 0;
+	}
+
+	public void addPoints(int amount) {
+		this.points += amount;
+	}
+
 	public int getId() {
 		return id;
 	}
-	
+
 	public void setId(int id) {
 		this.id = id;
 	}

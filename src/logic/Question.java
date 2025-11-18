@@ -1,15 +1,15 @@
 package logic;
 
 public class Question {
-    private String statement;
-    private String correctAnswer;
-    private String hint;
+	private String statement;
+	private String correctAnswer;
+	private String hint;
 
-    public Question(String statement, String correctAnswer, String hint) {
-        this.statement = statement;
-        this.correctAnswer = correctAnswer;
-        this.hint = hint;
-    }
+	public Question(String statement, String correctAnswer, String hint) {
+		this.statement = statement;
+		this.correctAnswer = correctAnswer;
+		this.hint = hint;
+	}
 
 	public String getStatement() {
 		return statement;

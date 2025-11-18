@@ -1,45 +1,66 @@
-DROP DATABASE IF EXISTS laberinto25;
+DROP DATABASE IF EXISTS maze;
 
-CREATE DATABASE laberinto25;
-USE laberinto25;
+CREATE DATABASE maze;
+USE maze;
 
-CREATE TABLE usuarios (
+CREATE TABLE users (
 	id INT PRIMARY KEY AUTO_INCREMENT,
-	nombre VARCHAR(25) UNIQUE NOT NULL,
-    contraseña VARCHAR(25) NOT NULL
+	name VARCHAR(25) UNIQUE NOT NULL,
+    password VARCHAR(25) NOT NULL
 );
 
-INSERT INTO usuarios (nombre, contraseña) VALUES 
+CREATE TABLE mazes (
+	id INT PRIMARY KEY AUTO_INCREMENT,
+    width INT NOT NULL,
+    height INT NOT NULL,
+    num_crocodiles INT NOT NULL,
+    crocodile_damage INT NOT NULL,
+    num_medkits INT NOT NULL,
+    medkit_heal INT NOT NULL,
+    question_time INT NOT NULL,
+    question_damage INT NOT NULL,
+    num_questions INT NOT NULL
+);
+
+CREATE TABLE dispositions (
+	id INT PRIMARY KEY AUTO_INCREMENT,
+    maze_id INT,
+    FOREIGN KEY (maze_id) REFERENCES mazes(id) ON DELETE CASCADE
+);
+
+CREATE TABLE questions (
+	id INT PRIMARY KEY AUTO_INCREMENT,
+	question VARCHAR(100) NOT NULL,
+	answer VARCHAR(40) NOT NULL,
+	hint VARCHAR(150) NOT NULL
+);
+
+CREATE TABLE matches (
+	user_id INT,
+    maze_id INT,
+    disposition_id INT,
+    victory BOOLEAN,
+    life INT,
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+    FOREIGN KEY (maze_id) REFERENCES mazes(id) ON DELETE CASCADE,
+	FOREIGN KEY (disposition_id) REFERENCES dispositions(id) ON DELETE CASCADE
+);
+
+CREATE TABLE disposition_grid (
+    disposition_id INT NOT NULL,
+    coord_x INT NOT NULL,
+    coord_y INT NOT NULL,
+    -- 1: Crocodile, 2: Medkit, 3: Wall
+    element INT NOT NULL,
+	PRIMARY KEY (coord_x, coord_y, disposition_id),
+    FOREIGN KEY (disposition_id) REFERENCES dispositions(id) ON DELETE CASCADE
+);
+
+INSERT INTO users (name, password) VALUES 
   ('admin', 'root'), 
-  ('usuario1', 'user123');
+  ('user1', 'user123');
 
-CREATE TABLE laberintos (
-	id INT PRIMARY KEY AUTO_INCREMENT,
-    ancho INT NOT NULL,
-    alto INT NOT NULL,
-    num_cocodrilos INT NOT NULL,
-    daño_cocodrilos INT NOT NULL,
-    num_botiquines INT NOT NULL,
-    vida_botiquines INT NOT NULL,
-    tiempo_pregunta INT NOT NULL,
-    daño_pregunta INT NOT NULL,
-    num_preguntas INT NOT NULL
-);
-
-CREATE TABLE disposiciones (
-	id INT PRIMARY KEY AUTO_INCREMENT,
-    id_laberinto INT,
-    FOREIGN KEY (id_laberinto) REFERENCES laberintos(id) ON DELETE CASCADE
-);
-
-CREATE TABLE preguntas (
-	id INT PRIMARY KEY AUTO_INCREMENT,
-	pregunta VARCHAR(100) NOT NULL,
-	respuesta VARCHAR(40) NOT NULL,
-	pista VARCHAR(150) NOT NULL
-);
-
-INSERT INTO preguntas (pregunta, respuesta, pista) VALUES
+INSERT INTO questions (question, answer, hint) VALUES
 ('¿Qué gas respiramos para vivir?', 'Oxígeno', 'No se ve ni se huele, pero sin él no duraríamos ni unos minutos despiertos.'),
 ('¿Qué instrumento tiene teclas blancas y negras?', 'Piano', 'Sus teclas blancas y negras bailan bajo las manos del artista.'),
 ('¿Cuál es el océano más grande del mundo?', 'Océano Pacífico', 'Su nombre promete paz, pero puede ocultar grandes tormentas.'),
@@ -138,26 +159,3 @@ INSERT INTO preguntas (pregunta, respuesta, pista) VALUES
 ('¿Qué océano se encuentra entre América y África?', 'Océano Atlántico', 'Este océano ha sido un puente de comercio y exploración entre dos continentes.'),
 ('¿Cómo se llama el continente que alberga la selva del Amazonas?', 'América del Sur', 'En este continente, la selva tropical más grande del mundo juega un papel crucial en el equilibrio del planeta.'),
 ('¿Cuál es el segundo planeta más cercano al sol?', 'Venus', 'Este planeta es conocido por su atmósfera densa y sus temperaturas extremadamente altas.');
-
-CREATE TABLE partidas(
-	id_usuario INT,
-    id_laberinto INT,
-    id_disposicion INT,
-    victoria BOOLEAN,
-    vida INT,
-    FOREIGN KEY (id_usuario) REFERENCES usuarios(id) ON DELETE CASCADE,
-    FOREIGN KEY (id_laberinto) REFERENCES laberintos(id) ON DELETE CASCADE,
-	FOREIGN KEY (id_disposicion) REFERENCES disposiciones(id) ON DELETE CASCADE
-);
-
-CREATE TABLE disposiciones_matriz (
-    id_disposicion INT NOT NULL,
-	cord_x INT NOT NULL,
-    cord_y INT NOT NULL,
-    -- 1: Cocodrilo, 2: Botiquín, 3: Muro
-    elemento INT NOT NULL,
-	PRIMARY KEY (cord_x, cord_y, id_disposicion),
-    FOREIGN KEY (id_disposicion) REFERENCES disposiciones(id) ON DELETE CASCADE
-);
-
-select * from usuarios;

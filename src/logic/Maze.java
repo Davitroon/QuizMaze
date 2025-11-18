@@ -41,7 +41,7 @@ public class Maze {
 	public void generateDisposition() {
 	
 		Disposition disposition = new Disposition(map, this.getId(), model);
-		disposition.generateMatrix(numMedkits, numCrocodiles);	
+		disposition.generateMatrix(numMedkits, numCrocodiles);
 	}
 
 	public int getWidth() {
