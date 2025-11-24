@@ -18,9 +18,11 @@ import javax.swing.SwingConstants;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
-import logic.Disposition;
-import logic.Maze;
-import logic.Model;
+import logic.Controller;
+import logic.DBController;
+import logic.UIController;
+import model.Disposition;
+import model.Maze;
 
 public class CreateMazeUI {
 
@@ -37,12 +39,13 @@ public class CreateMazeUI {
 	private JSlider sliderQuestionDamage;
 	private JScrollPane scrollPaneMazeTable;
 
-	private MazeManagementUI mazeManagement;
 	private Maze maze;
-	private Model model;
+	private DBController dbController;
 	private Disposition disposition;
+	private UIController uiController;
+	private MazeManagementUI mazeManagement;
 
-	private int minQuestionTime = 5;
+	private int minQuestionTime = 7;
 	private int maxQuestionTime = 45;
 
 	private int maxMedkits = 10;
@@ -53,19 +56,8 @@ public class CreateMazeUI {
 	private int minWidth = 4;
 	private int maxWidth = 10;
 
-	public CreateMazeUI(MazeManagementUI mazeManagement, Model model) {
-		initialize();
-		this.mazeManagement = mazeManagement;
-		this.model = model;
-	}
-
-	public JFrame getFrame() {
-		return frame;
-	}
-
 	@SuppressWarnings("serial")
-	private void initialize() {
-
+	public CreateMazeUI() {
 		frame = new JFrame();
 		frame.setBounds(100, 100, 680, 462);
 		frame.setLocationRelativeTo(null);
@@ -125,7 +117,7 @@ public class CreateMazeUI {
 
 		SpinnerNumberModel questionTimeModel = new SpinnerNumberModel(minQuestionTime, minQuestionTime, maxQuestionTime,
 				5);
-		spinnerQuestionTime = new JSpinner(questionTimeModel);
+		spinnerQuestionTime = new JSpinner(new SpinnerNumberModel(10, 10, 45, 5));
 		spinnerQuestionTime.setBounds(202, 313, 63, 25);
 		frame.getContentPane().add(spinnerQuestionTime);
 
@@ -270,9 +262,10 @@ public class CreateMazeUI {
 
 		btnBack.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				getFrame().dispose();
 				resetWindow();
 				mazeManagement.setVisible(true);
+				uiController.changeView(CreateMazeUI.this.getFrame(), mazeManagement);
+
 			}
 		});
 
@@ -298,25 +291,37 @@ public class CreateMazeUI {
 
 				maze = new Maze(width, height, numCrocodiles, crocodileDamage, numMedkits, medkitHeal, questionTime,
 						questionDamage, numQuestions, map);
-				disposition = new Disposition(maze.getMap(), maze.getId(), model);
+				disposition = new Disposition(maze.getMap(), maze.getId());
 
 				try {
 					disposition.generateMatrix(numMedkits, numCrocodiles);
+					dbController.insertMaze(maze);
+					disposition.setMazeId(maze.getId());
+					dbController.insertDisposition(disposition);
+					disposition.saveMatrix(dbController);
+					mazeManagement.updateMazes();
+
 				} catch (IllegalArgumentException e1) {
 					javax.swing.JOptionPane.showMessageDialog(null, e1.getMessage(), "Error",
 							javax.swing.JOptionPane.ERROR_MESSAGE);
 					return;
 				}
 
-				model.insertMaze(maze);
-				disposition.setMazeId(maze.getId());
-				model.insertDisposition(disposition);
-				disposition.saveMatrix();
-				mazeManagement.updateMazes();
-				getFrame().dispose();
-				mazeManagement.setVisible(true);
+				uiController.changeView(CreateMazeUI.this.getFrame(), mazeManagement);
 			}
 		});
+
+	}
+
+	public JFrame getFrame() {
+		return frame;
+	}
+
+	public void initialize(Controller controller) {
+		this.dbController = controller.getDbController();
+		uiController = controller.getUiController();
+		mazeManagement = uiController.getMazeManagementUI();
+
 	}
 
 	public void resetWindow() {
@@ -346,4 +351,5 @@ public class CreateMazeUI {
 
 		btnCreate.setEnabled(false);
 	}
+
 }

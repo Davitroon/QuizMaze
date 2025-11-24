@@ -15,34 +15,29 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
-import javax.swing.SwingUtilities;
 
-import logic.Model;
-import logic.Player;
+import logic.Controller;
+import logic.DBController;
+import logic.UIController;
+import model.User;
 
 public class LoginUI extends JFrame {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	private JTextField txtUsername;
 	private JPasswordField txtPassword;
 	private JButton btnLogin;
 	private JButton btnCreateUser;
 
-	private Model model;
-	private Player player;
-	private ChooseMazeUI chooseMaze;
-	private MazeManagementUI mazeManagement;
+	private User user;
+	private DBController dbController;
+	private UIController uiController;
+	private Controller controller;
 
-	public LoginUI(Model model) {
-		this.model = model;
-		setTitle("Login");
-		setSize(400, 200);
-		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setLocationRelativeTo(null);
-		setResizable(false);
+	public LoginUI() {
 
-		initComponents();
-	}
-
-	private void initComponents() {
 		JPanel panel = new JPanel();
 		panel.setLayout(new GridBagLayout());
 		GridBagConstraints gbc = new GridBagConstraints();
@@ -94,6 +89,19 @@ public class LoginUI extends JFrame {
 				createUser();
 			}
 		});
+
+		setTitle("Login");
+		setSize(400, 200);
+		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		setLocationRelativeTo(null);
+		setResizable(false);
+
+	}
+
+	public void initialize(Controller controller) {
+		this.controller = controller;
+		dbController = controller.getDbController();
+		uiController = controller.getUiController();
 	}
 
 	public void login() {
@@ -103,38 +111,34 @@ public class LoginUI extends JFrame {
 		if (!validateUsername(username) || !validatePassword(password))
 			return;
 
-		try {
-			ResultSet rs = model.queryUser(username, password);
-			if (rs.next()) {
-				int userId = rs.getInt("id");
-				String user = rs.getString("name");
+		if (username.equals("admin") && password.equals("admin")) {
+			MazeManagementUI mazeManagement = uiController.getMazeManagementUI();
+			mazeManagement.updateMazes();
+			uiController.changeView(LoginUI.this, mazeManagement);
 
-				player = new Player(user);
-				player.setId(userId);
+		} else {
+			try {
+				ResultSet rs = dbController.queryUser(username, password);
+				if (rs.next()) {
+					int userId = rs.getInt("id");
+					username = rs.getString("name");
 
-				JOptionPane.showMessageDialog(this, "Welcome " + user + "!");
+					user = new User(username, userId);
+					controller.setUser(user);
 
-				if (user.equals("admin")) {
-					if (mazeManagement == null) {
-						mazeManagement = new MazeManagementUI(null, model);
-					}
-					mazeManagement.updateMazes();
-					mazeManagement.setVisible(true);
+					JOptionPane.showMessageDialog(this, "Welcome " + user.getName() + "!");
+
+					ChooseMazeUI chooseMaze = uiController.getChooseMazeUI();
+					chooseMaze.loadWindow(dbController);
+					uiController.changeView(LoginUI.this, chooseMaze);
+
 				} else {
-					if (chooseMaze == null) {
-						chooseMaze = new ChooseMazeUI(null, model, player);
-					}
-					chooseMaze.loadMazes();
-					chooseMaze.setVisible(true);
+					JOptionPane.showMessageDialog(this, "Incorrect username or password.");
 				}
-
-				dispose();
-			} else {
-				JOptionPane.showMessageDialog(this, "Incorrect username or password.");
+			} catch (SQLException e) {
+				JOptionPane.showMessageDialog(this, "Error while logging in.");
+				e.printStackTrace();
 			}
-		} catch (SQLException e) {
-			JOptionPane.showMessageDialog(this, "Error while logging in.");
-			e.printStackTrace();
 		}
 	}
 
@@ -156,11 +160,10 @@ public class LoginUI extends JFrame {
 			return;
 		}
 
-		int playerId = model.insertUser(newUser, newPassword);
-		if (playerId != -1) {
-			player = new Player(newUser);
-			player.setId(playerId);
-			JOptionPane.showMessageDialog(this, "User " + newUser + " created with ID: " + playerId);
+		User user = dbController.insertUser(newUser, newPassword);
+		if (user != null) {
+			JOptionPane.showMessageDialog(this, "User " + user.getName() + " created with ID: " + user.getId());
+
 		} else {
 			JOptionPane.showMessageDialog(this, "Error creating user.");
 		}
@@ -180,13 +183,6 @@ public class LoginUI extends JFrame {
 			return false;
 		}
 		return true;
-	}
-
-	public static void main(String[] args) throws Exception {
-		Model model = new Model();
-		SwingUtilities.invokeLater(() -> {
-			new LoginUI(model).setVisible(true);
-		});
 	}
 
 	public String getUsername() {

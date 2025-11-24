@@ -18,19 +18,20 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.Timer;
 
-import logic.Model;
-import logic.Player;
-import logic.Question;
+import logic.Controller;
+import logic.DBController;
+import logic.UIController;
+import model.User;
+import model.Question;
 
 public class MazeUI {
 	private JFrame frame;
-	private JPanel[] gridCells = new JPanel[9]; // Array of JPanels representing the player's view
+	private JPanel[] gridCells = new JPanel[9]; // Array of JPanels representing the user's view
 	private int[][] matrix;
 	private int width, height;
-	private Player player;
-	private Model model;
-	private final int mazeId;
-	private final int layoutId;
+	private User user;
+	private int mazeId;
+	private int layoutId;
 
 	private JLabel lifeLabel;
 	private JLabel timerLabel;
@@ -48,8 +49,10 @@ public class MazeUI {
 	private int correctAnswers = 0;
 	private int incorrectAnswers = 0;
 	private JLabel scoreLabel;
+	JPanel userViewPanel;
 
-	private ChooseMazeUI chooseMazeUI;
+	private DBController dbController;
+	private UIController uiController;
 
 	// Variables used in showTimedQuestion()
 	private boolean questionResult = false;
@@ -57,32 +60,7 @@ public class MazeUI {
 	private JDialog questionDialog;
 
 	// Constructor receives parameters to create a unique view
-	public MazeUI(int[][] matrix, int width, int height, Player player, Model model, int questionTime, int medkitLife,
-			int crocodileDamage, int questionDamage, int mazeId, int layoutId, ChooseMazeUI chooseMazeUI) {
-		this.chooseMazeUI = chooseMazeUI;
-		this.matrix = matrix;
-		this.width = width;
-		this.height = height;
-		this.player = player;
-		this.model = model;
-		this.questionTime = questionTime;
-		this.medkitLife = medkitLife;
-		this.crocodileDamage = crocodileDamage;
-		this.questionDamage = questionDamage;
-		this.questions = model.getQuestions();
-		this.mazeId = mazeId;
-		this.layoutId = layoutId;
-		Collections.shuffle(this.questions); // Randomize questions
-		initialize();
-		updateView();
-		startTimer();
-		frame.setVisible(true);
-	}
-
-	/**
-	 * Initialize the application.
-	 */
-	private void initialize() {
+	public MazeUI() {
 		frame = new JFrame("Maze");
 		frame.setResizable(false);
 		frame.setBounds(100, 100, 452, 700);
@@ -90,7 +68,7 @@ public class MazeUI {
 		frame.getContentPane().setLayout(null);
 
 		// Life label
-		lifeLabel = new JLabel("Life: " + player.getHealth());
+		lifeLabel = new JLabel();
 		lifeLabel.setFont(new Font("Tahoma", Font.BOLD, 18));
 		lifeLabel.setBounds(50, 10, 200, 30);
 		frame.getContentPane().add(lifeLabel);
@@ -101,17 +79,10 @@ public class MazeUI {
 		timerLabel.setBounds(250, 10, 150, 30);
 		frame.getContentPane().add(timerLabel);
 
-		JPanel playerViewPanel = new JPanel();
-		playerViewPanel.setBounds(50, 50, 350, 350);
-		frame.getContentPane().add(playerViewPanel);
-		playerViewPanel.setLayout(new GridLayout(3, 3, 5, 5));
-
-		for (int i = 0; i < 9; i++) { // Create 9 cells and store them in the array
-			JPanel cell = new JPanel();
-			cell.setBorder(BorderFactory.createLineBorder(Color.ORANGE));
-			playerViewPanel.add(cell);
-			gridCells[i] = cell;
-		}
+		userViewPanel = new JPanel();
+		userViewPanel.setBounds(50, 50, 350, 350);
+		frame.getContentPane().add(userViewPanel);
+		userViewPanel.setLayout(new GridLayout(3, 3, 5, 5));
 
 		JButton btnUP = new JButton("↑");
 		btnUP.setFont(new Font("Tahoma", Font.BOLD, 40));
@@ -159,11 +130,22 @@ public class MazeUI {
 				tryMove(1, 0);
 			}
 		});
+
+	}
+
+	/**
+	 * Initialize the application.
+	 */
+	public void initialize(Controller controller) {
+		dbController = controller.getDbController();
+		uiController = controller.getUiController();
+		questions = dbController.getQuestions();
+		Collections.shuffle(this.questions);
 	}
 
 	private void tryMove(int offsetX, int offsetY) {
-		int targetX = player.getX() + offsetX;
-		int targetY = player.getY() + offsetY;
+		int targetX = user.getX() + offsetX;
+		int targetY = user.getY() + offsetY;
 		if (targetX < 0 || targetX >= width || targetY < 0 || targetY >= height) {
 			JOptionPane.showMessageDialog(frame, "You cannot leave the maze.");
 			return;
@@ -175,22 +157,22 @@ public class MazeUI {
 
 		// Timed question
 		if (showTimedQuestion()) {
-			player.moveTo(targetX, targetY);
+			user.moveTo(targetX, targetY);
 
 			// Cell effects
 			if (matrix[targetY][targetX] == 1) { // Medkit
-				int leftover = player.heal(medkitLife); // Returns leftover life as points
+				int leftover = user.heal(medkitLife); // Returns leftover life as points
 				if (leftover > 0) {
-					player.addPoints(leftover);
+					user.addPoints(leftover);
 					JOptionPane.showMessageDialog(frame,
 							"You found a medkit! +" + (medkitLife - leftover) + " life, +" + leftover + " points");
 				} else {
 					JOptionPane.showMessageDialog(frame, "You found a medkit! +" + medkitLife + " life");
 				}
-				scoreLabel.setText("Score = " + player.getPoints());
+				scoreLabel.setText("Score = " + user.getPoints());
 				matrix[targetY][targetX] = 0; // Remove medkit
 			} else if (matrix[targetY][targetX] == 2) { // Crocodile
-				player.reduceHealth(crocodileDamage);
+				user.reduceHealth(crocodileDamage);
 				JOptionPane.showMessageDialog(frame, "A crocodile bit you! -" + crocodileDamage + " life");
 				matrix[targetY][targetX] = 0; // Remove crocodile
 			}
@@ -205,29 +187,29 @@ public class MazeUI {
 				showSummary();
 				frame.dispose();
 			}
-		} else { // If player loses life after failing the question
-			if (player.getHealth() <= 0) {
+		} else { // If user loses life after failing the question
+			if (user.getHealth() <= 0) {
 				timer.stop();
 				JOptionPane.showMessageDialog(frame, "You lost! You ran out of life.");
 				showSummary();
 				frame.dispose();
 			}
-			// Otherwise, player does not move
+			// Otherwise, user does not move
 		}
 	}
 
 	/*
-	 * This method is essential. Renders a 3x3 window centered on the player with
+	 * This method is essential. Renders a 3x3 window centered on the user with
 	 * colors based on maze content.
 	 */
 	private void updateView() {
-		int playerX = player.getX();
-		int playerY = player.getY();
+		int userX = user.getX();
+		int userY = user.getY();
 
 		for (int offsetY = -1; offsetY <= 1; offsetY++) {
 			for (int offsetX = -1; offsetX <= 1; offsetX++) {
-				int x = playerX + offsetX;
-				int y = playerY + offsetY;
+				int x = userX + offsetX;
+				int y = userY + offsetY;
 				int index = (offsetY + 1) * 3 + (offsetX + 1); // Map 2D (-1 to 1) to 1D 0-8
 				JPanel cell = gridCells[index];
 				if (x >= 0 && x < width && y >= 0 && y < height) {
@@ -259,9 +241,9 @@ public class MazeUI {
 			}
 		}
 
-		// Central cell is the player
+		// Central cell is the user
 		gridCells[4].setBackground(Color.YELLOW);
-		lifeLabel.setText("Life: " + player.getHealth());
+		lifeLabel.setText("Life: " + user.getHealth());
 	}
 
 	/** Starts the timer */
@@ -371,12 +353,12 @@ public class MazeUI {
 
 		if (questionResult) {
 			correctAnswers++;
-			player.addPoints(10);
-			scoreLabel.setText("Score = " + player.getPoints());
+			user.addPoints(10);
+			scoreLabel.setText("Score = " + user.getPoints());
 			JOptionPane.showMessageDialog(frame, "Correct!");
 		} else {
 			incorrectAnswers++;
-			player.reduceHealth(questionDamage);
+			user.reduceHealth(questionDamage);
 			JOptionPane.showMessageDialog(frame,
 					"Too many wrong answers or time ran out! You lose " + questionDamage + " life.");
 			updateView();
@@ -387,28 +369,49 @@ public class MazeUI {
 
 	private void showSummary() {
 		String time = timerLabel.getText().replace("Time: ", "");
-		boolean victory = player.getHealth() > 0;
+		boolean victory = user.getHealth() > 0;
 
 		// Insert game record into database
-		model.insertGame(player.getId(), this.mazeId, this.layoutId, victory, player.getHealth(), correctAnswers,
-				incorrectAnswers, player.getPoints(), time);
+		dbController.insertGame(user.getId(), this.mazeId, this.layoutId, victory, user.getHealth(), correctAnswers,
+				incorrectAnswers, user.getPoints(), time);
 
 		// Open results window
-		ResultsMazeUI resultsWindow = new ResultsMazeUI(player.getName(), // username
-				correctAnswers, // correctAnswers
-				incorrectAnswers, // incorrectAnswers
-				player.getHealth(), // finalLife
-				player.getPoints(), // points
-				time, // time in MM:SS
-				victory, // victory boolean
-				model, // Model object
-				mazeId, // mazeId
-				layoutId, // layoutId
-				chooseMazeUI, matrix);
+		ResultsMazeUI resultsWindow = uiController.getResultsMazeUI();
+		resultsWindow.loadData(correctAnswers, incorrectAnswers, user, time, victory, mazeId, layoutId, matrix);
 		resultsWindow.setLocationRelativeTo(frame); // Center over current window
 		resultsWindow.setVisible(true);
 
 		// Close the maze window
 		frame.dispose();
 	}
-} // End
+
+	public void startGame(int[][] matrix, int width, int height, User user, int questionTime, int medkitLife,
+			int crocodileDamage, int questionDamage, int mazeId, int layoutId) {
+		this.matrix = matrix;
+		this.width = width;
+		this.height = height;
+		this.user = user;
+		this.questionTime = questionTime;
+		this.medkitLife = medkitLife;
+		this.crocodileDamage = crocodileDamage;
+		this.questionDamage = questionDamage;
+		this.mazeId = mazeId;
+		this.layoutId = layoutId;
+
+		lifeLabel.setText("Life: " + user.getHealth());
+		for (int i = 0; i < 9; i++) { // Create 9 cells and store them in the array
+			JPanel cell = new JPanel();
+			cell.setBorder(BorderFactory.createLineBorder(Color.ORANGE));
+			userViewPanel.add(cell);
+			gridCells[i] = cell;
+		}
+		
+		updateView();
+		startTimer();
+		
+	}
+
+	public JFrame getFrame() {
+		return frame;
+	}
+}

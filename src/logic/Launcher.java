@@ -2,7 +2,7 @@ package logic;
 
 import java.sql.SQLException;
 
-import ui.LoginUI;
+import dao.DBConnector;
 
 /**
  * Class that instantiates and creates the rest of the classes, works as the
@@ -10,13 +10,13 @@ import ui.LoginUI;
  */
 public class Launcher {
 
-	private static Model model;
-	private static LoginUI loginUi;
+	private static DBConnector dbConnector;
+	private static Controller controller;
 
 	public static void main(String[] args) {
 
 		try {
-			model = new Model();
+			dbConnector = new DBConnector();
 
 		} catch (ClassNotFoundException e) {
 			e.printStackTrace();
@@ -25,8 +25,9 @@ public class Launcher {
 			e.printStackTrace();
 		}
 
-		// Here the rest of the classes should be created
-		loginUi = new LoginUI(model);
-		loginUi.login();
+		controller = new Controller();
+		controller.initialize(dbConnector);
+
+		controller.getUiController().getLoginUI().setVisible(true);
 	}
 }

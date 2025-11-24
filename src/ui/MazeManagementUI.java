@@ -19,7 +19,9 @@ import javax.swing.SwingConstants;
 import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableModel;
 
-import logic.Model;
+import logic.Controller;
+import logic.DBController;
+import logic.UIController;
 
 public class MazeManagementUI extends JFrame {
 
@@ -28,13 +30,13 @@ public class MazeManagementUI extends JFrame {
 	private JTable mazeTable;
 	private DefaultTableModel mazeTableModel;
 
-	private Model model;
-	private CreateMazeUI createMaze;
 	private JButton btnDelete;
+	private DBController dbController;
 
 	@SuppressWarnings("serial")
-	public MazeManagementUI(LoginUI login, Model model) {
-		this.model = model;
+	public MazeManagementUI(Controller controller) {
+		dbController = controller.getDbController();
+		UIController uiController = controller.getUiController();
 
 		setResizable(false);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -89,20 +91,15 @@ public class MazeManagementUI extends JFrame {
 
 		btnExit.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				uiController.changeView(MazeManagementUI.this, uiController.getLoginUI());
 				resetWindow();
-				dispose();
-				login.login();
 			}
 		});
 
 		btnCreateMaze.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				if (createMaze == null) {
-					createMaze = new CreateMazeUI(MazeManagementUI.this, model);
-				}
-				createMaze.getFrame().setVisible(true);
 				btnDelete.setEnabled(false);
-				setVisible(false);
+				uiController.changeView(MazeManagementUI.this, uiController.getCreateMazeUI().getFrame());
 			}
 		});
 
@@ -110,7 +107,7 @@ public class MazeManagementUI extends JFrame {
 			public void actionPerformed(ActionEvent e) {
 				int selectedRow = mazeTable.getSelectedRow();
 				int mazeId = (int) mazeTable.getValueAt(selectedRow, 0);
-				model.deleteMaze(mazeId);
+				dbController.deleteMaze(mazeId);
 				btnDelete.setEnabled(false);
 				updateMazes();
 			}
@@ -128,7 +125,7 @@ public class MazeManagementUI extends JFrame {
 	}
 
 	public void updateMazes() {
-		ResultSet rset = model.queryAll("mazes");
+		ResultSet rset = dbController.queryAll("mazes");
 
 		if (mazeTableModel.getRowCount() > 0) {
 			mazeTableModel.setRowCount(0);

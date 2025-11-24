@@ -1,19 +1,16 @@
-package logic;
+package model;
 
-public class Player {
+public class User {
 
 	private int id;
 	private String name;
-	private int x, y;
-	private int health;
-	private int points;
+	private int x, y = 0;
+	private int health  = 100;
+	private int points = 0;
 
-	public Player(String name) {
-		this.name = name;
-		this.health = 100;
-		this.points = 0;
-		this.x = 0;
-		this.y = 0;
+	public User(String userName, int userId) {
+		this.name = userName;
+		this.id = userId;
 	}
 
 	public String getName() {
@@ -63,6 +60,10 @@ public class Player {
 
 	public void reduceHealth(int amount) {
 		health -= amount;
+		
+		if (health < 0) {
+			health = 0;
+		}
 	}
 
 	public int heal(int amount) {
