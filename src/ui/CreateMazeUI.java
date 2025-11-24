@@ -56,23 +56,8 @@ public class CreateMazeUI {
 	private int minWidth = 4;
 	private int maxWidth = 10;
 
-	public CreateMazeUI(Controller controller) {
-		initialize();
-		this.dbController = controller.getDbController();
-		uiController = controller.getUiController();
-		mazeManagement = uiController.getMazeManagementUI();
-		
-	}
-
-	public JFrame getFrame() {
-		return frame;
-	}
-
 	@SuppressWarnings("serial")
-	private void initialize() {
-		
-		
-
+	public CreateMazeUI() {
 		frame = new JFrame();
 		frame.setBounds(100, 100, 680, 462);
 		frame.setLocationRelativeTo(null);
@@ -280,7 +265,7 @@ public class CreateMazeUI {
 				resetWindow();
 				mazeManagement.setVisible(true);
 				uiController.changeView(CreateMazeUI.this.getFrame(), mazeManagement);
-				
+
 			}
 		});
 
@@ -310,21 +295,33 @@ public class CreateMazeUI {
 
 				try {
 					disposition.generateMatrix(numMedkits, numCrocodiles);
+					dbController.insertMaze(maze);
+					disposition.setMazeId(maze.getId());
+					dbController.insertDisposition(disposition);
+					disposition.saveMatrix(dbController);
+					mazeManagement.updateMazes();
+
 				} catch (IllegalArgumentException e1) {
 					javax.swing.JOptionPane.showMessageDialog(null, e1.getMessage(), "Error",
 							javax.swing.JOptionPane.ERROR_MESSAGE);
 					return;
 				}
 
-				dbController.insertMaze(maze);
-				disposition.setMazeId(maze.getId());
-				dbController.insertDisposition(disposition);
-				disposition.saveMatrix(dbController);
-				mazeManagement.updateMazes();
-				getFrame().dispose();
-				mazeManagement.setVisible(true);
+				uiController.changeView(CreateMazeUI.this.getFrame(), mazeManagement);
 			}
 		});
+
+	}
+
+	public JFrame getFrame() {
+		return frame;
+	}
+
+	public void initialize(Controller controller) {
+		this.dbController = controller.getDbController();
+		uiController = controller.getUiController();
+		mazeManagement = uiController.getMazeManagementUI();
+
 	}
 
 	public void resetWindow() {
@@ -354,6 +351,5 @@ public class CreateMazeUI {
 
 		btnCreate.setEnabled(false);
 	}
-	
-	
+
 }

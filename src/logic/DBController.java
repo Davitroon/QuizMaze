@@ -3,7 +3,6 @@ package logic;
 import java.sql.ResultSet;
 import java.util.List;
 
-import dao.DBConnector;
 import model.Disposition;
 import model.Maze;
 import model.Question;
@@ -37,8 +36,7 @@ public class DBController {
 
 	public void insertGame(int id, int mazeId, int layoutId, boolean victory, int health, int correctAnswers,
 			int incorrectAnswers, int points, String time) {
-		dbConnector.insertGame(id, mazeId, layoutId, victory, health, correctAnswers, incorrectAnswers, points,
-				time);
+		dbConnector.insertGame(id, mazeId, layoutId, victory, health, correctAnswers, incorrectAnswers, points, time);
 	}
 
 	public ResultSet queryAll(String string) {
@@ -48,12 +46,12 @@ public class DBController {
 		} catch (Exception e) {
 			throw e;
 		}
-		
+
 	}
 
 	public void insertMaze(Maze maze) {
 		dbConnector.insertMaze(maze);
-		
+
 	}
 
 	public ResultSet queryUser(String username, String password) {
@@ -68,6 +66,6 @@ public class DBController {
 
 	public void deleteMaze(int mazeId) {
 		dbConnector.deleteMaze(mazeId);
-		
+
 	}
 }

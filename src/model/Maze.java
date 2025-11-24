@@ -1,12 +1,10 @@
 package model;
 
-import dao.DBConnector;
-
 /**
  * Maze class that the user will create.
  */
 public class Maze {
-	
+
 	private int id;
 	private int width;
 	private int height;
@@ -17,13 +15,12 @@ public class Maze {
 	private int questionTime;
 	private int questionDamage;
 	private int numQuestions;
-	
-	private int[][] map;
-	
-	private DBConnector model;
 
-	public Maze(int width, int height, int num_crocodiles, int crocodile_damage, int num_medkits,
-			int medkit_health, int question_time, int question_damage, int num_questions, int[][] map) {
+	private int[][] map;
+
+
+	public Maze(int width, int height, int num_crocodiles, int crocodile_damage, int num_medkits, int medkit_health,
+			int question_time, int question_damage, int num_questions, int[][] map) {
 		this.width = width;
 		this.height = height;
 		this.numCrocodiles = num_crocodiles;
@@ -35,13 +32,12 @@ public class Maze {
 		this.numQuestions = num_questions;
 		this.map = map;
 	}
-	
-	
+
 	/**
 	 * Generate a new random disposition.
 	 */
 	public void generateDisposition() {
-	
+
 		Disposition disposition = new Disposition(map, this.getId());
 		disposition.generateMatrix(numMedkits, numCrocodiles);
 	}

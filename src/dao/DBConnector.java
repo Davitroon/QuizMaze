@@ -36,14 +36,14 @@ public class DBConnector {
 
 	public int[][] loadDispositionMatrix(int dispositionId, int width, int height) {
 		int[][] matrix = new int[height][width];
-		String query = "SELECT coord_x, coord_y, element FROM disposition_grid WHERE disposition_id = ?";
+		String query = "SELECT x_coord, y_coord, element FROM disposition_grid WHERE disposition_id = ?";
 		try {
 			PreparedStatement stmt = connection.prepareStatement(query);
 			stmt.setInt(1, dispositionId);
 			ResultSet rs = stmt.executeQuery();
 			while (rs.next()) {
-				int x = rs.getInt("coord_x");
-				int y = rs.getInt("coord_y");
+				int x = rs.getInt("x_coord");
+				int y = rs.getInt("y_coord");
 				int element = rs.getInt("element");
 				matrix[y][x] = element;
 			}
@@ -135,7 +135,7 @@ public class DBConnector {
 	}
 
 	public void insertDispositionMatrix(int coordX, int coordY, int dispositionId, int element) {
-		String query = "INSERT INTO disposition_grid (coord_x, coord_y, disposition_id, element) VALUES (?, ?, ?, ?)";
+		String query = "INSERT INTO disposition_grid (x_coord, y_coord, disposition_id, element) VALUES (?, ?, ?, ?)";
 
 		try {
 			PreparedStatement stmt = connection.prepareStatement(query);

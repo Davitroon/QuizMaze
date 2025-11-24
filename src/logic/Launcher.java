@@ -3,7 +3,6 @@ package logic;
 import java.sql.SQLException;
 
 import dao.DBConnector;
-import ui.LoginUI;
 
 /**
  * Class that instantiates and creates the rest of the classes, works as the
@@ -25,7 +24,7 @@ public class Launcher {
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
-		
+
 		controller = new Controller();
 		controller.initialize(dbConnector);
 

@@ -46,12 +46,11 @@ public class ResultsMazeUI extends JFrame {
 	private JTextField tfCorrect;
 	private JTextField tfIncorrect;
 
+	private ChooseMazeUI chooseMazeUI;
+
 	private int[][] matrix;
 
-	public ResultsMazeUI(Controller controller) {
-
-		this.controller = controller;
-		ChooseMazeUI chooseMazeUI = controller.getUiController().getChooseMazeUI();
+	public ResultsMazeUI() {
 
 		setTitle("Game Summary");
 		setResizable(false);
@@ -157,7 +156,7 @@ public class ResultsMazeUI extends JFrame {
 		});
 	}
 
-	public void initialize(int correctAnswers, int incorrectAnswers, Player player, String time, boolean victory,
+	public void loadData(int correctAnswers, int incorrectAnswers, Player player, String time, boolean victory,
 			int mazeId, int layoutId, int[][] matrix) {
 		this.mazeId = mazeId;
 		this.layoutId = layoutId;
@@ -170,6 +169,11 @@ public class ResultsMazeUI extends JFrame {
 		tfCorrect.setText(String.valueOf(correctAnswers));
 		tfIncorrect.setText(String.valueOf(incorrectAnswers));
 		loadStats();
+	}
+
+	public void intialize(Controller controller) {
+		this.controller = controller;
+		chooseMazeUI = controller.getUiController().getChooseMazeUI();
 	}
 
 	private void loadStats() {

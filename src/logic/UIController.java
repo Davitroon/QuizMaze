@@ -1,7 +1,6 @@
 package logic;
 
 import javax.swing.JFrame;
-import javax.swing.JPanel;
 
 import ui.ChooseMazeUI;
 import ui.CreateMazeUI;
@@ -26,11 +25,18 @@ public class UIController {
 	
 	public void initialize(Controller controller) {
 		chooseMazeUI = new ChooseMazeUI(controller);
-		createMazeUI = new CreateMazeUI(controller);
-		loginUI = new LoginUI(controller);
+		createMazeUI = new CreateMazeUI();
+		loginUI = new LoginUI();
 		mazeManagementUI = new MazeManagementUI(controller);
-		resultsMazeUI = new ResultsMazeUI(controller);
-		mazeUI = new MazeUI(controller);
+		resultsMazeUI = new ResultsMazeUI();
+		mazeUI = new MazeUI();
+		
+		createMazeUI.initialize(controller);
+		loginUI.initialize(controller);
+		resultsMazeUI.intialize(controller);
+		mazeUI.initialize(controller);
+		
+		
 	}
 
 	public ChooseMazeUI getChooseMazeUI() {

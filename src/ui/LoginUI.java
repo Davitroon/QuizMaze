@@ -15,39 +15,28 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
-import javax.swing.SwingUtilities;
 
-import dao.DBConnector;
 import logic.Controller;
 import logic.DBController;
 import logic.UIController;
 import model.Player;
 
 public class LoginUI extends JFrame {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	private JTextField txtUsername;
 	private JPasswordField txtPassword;
 	private JButton btnLogin;
 	private JButton btnCreateUser;
 
 	private Player player;
-	private ChooseMazeUI chooseMaze;
-	private MazeManagementUI mazeManagement;
 	private DBController dbController;
 	private UIController uiController;
 
-	public LoginUI(Controller controller) {
-		dbController = controller.getDbController();
-		uiController = controller.getUiController();
-		setTitle("Login");
-		setSize(400, 200);
-		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setLocationRelativeTo(null);
-		setResizable(false);
+	public LoginUI() {
 
-		initComponents();
-	}
-
-	private void initComponents() {
 		JPanel panel = new JPanel();
 		panel.setLayout(new GridBagLayout());
 		GridBagConstraints gbc = new GridBagConstraints();
@@ -99,6 +88,18 @@ public class LoginUI extends JFrame {
 				createUser();
 			}
 		});
+
+		setTitle("Login");
+		setSize(400, 200);
+		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		setLocationRelativeTo(null);
+		setResizable(false);
+
+	}
+
+	public void initialize(Controller controller) {
+		dbController = controller.getDbController();
+		uiController = controller.getUiController();
 	}
 
 	public void login() {
@@ -120,6 +121,7 @@ public class LoginUI extends JFrame {
 				JOptionPane.showMessageDialog(this, "Welcome " + user + "!");
 
 				if (user.equals("admin")) {
+					MazeManagementUI mazeManagement = uiController.getMazeManagementUI();
 					mazeManagement.updateMazes();
 					uiController.changeView(LoginUI.this, mazeManagement);
 
@@ -128,7 +130,7 @@ public class LoginUI extends JFrame {
 					chooseMaze.loadMazes(dbController);
 					uiController.changeView(LoginUI.this, chooseMaze);
 				}
-				
+
 			} else {
 				JOptionPane.showMessageDialog(this, "Incorrect username or password.");
 			}

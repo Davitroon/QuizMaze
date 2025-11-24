@@ -30,7 +30,6 @@ public class MazeManagementUI extends JFrame {
 	private JTable mazeTable;
 	private DefaultTableModel mazeTableModel;
 
-	private CreateMazeUI createMaze;
 	private JButton btnDelete;
 	private DBController dbController;
 
@@ -92,16 +91,15 @@ public class MazeManagementUI extends JFrame {
 
 		btnExit.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				uiController.changeView(MazeManagementUI.this, uiController.getLoginUI());
 				resetWindow();
-				MazeManagementUI.this.setVisible(false);
-				uiController.getLoginUI().login();
 			}
 		});
 
 		btnCreateMaze.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				btnDelete.setEnabled(false);
-				uiController.changeView(MazeManagementUI.this, createMaze.getFrame());
+				uiController.changeView(MazeManagementUI.this, uiController.getCreateMazeUI().getFrame());
 			}
 		});
 

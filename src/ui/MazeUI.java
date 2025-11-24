@@ -60,18 +60,7 @@ public class MazeUI {
 	private JDialog questionDialog;
 
 	// Constructor receives parameters to create a unique view
-	public MazeUI(Controller controller) {
-		dbController = controller.getDbController();
-		uiController = controller.getUiController();
-		questions = dbController.getQuestions();
-		Collections.shuffle(this.questions); // Randomize questions
-		initialize();
-	}
-
-	/**
-	 * Initialize the application.
-	 */
-	private void initialize() {
+	public MazeUI() {
 		frame = new JFrame("Maze");
 		frame.setResizable(false);
 		frame.setBounds(100, 100, 452, 700);
@@ -94,8 +83,6 @@ public class MazeUI {
 		playerViewPanel.setBounds(50, 50, 350, 350);
 		frame.getContentPane().add(playerViewPanel);
 		playerViewPanel.setLayout(new GridLayout(3, 3, 5, 5));
-
-
 
 		JButton btnUP = new JButton("↑");
 		btnUP.setFont(new Font("Tahoma", Font.BOLD, 40));
@@ -143,6 +130,17 @@ public class MazeUI {
 				tryMove(1, 0);
 			}
 		});
+
+	}
+
+	/**
+	 * Initialize the application.
+	 */
+	public void initialize(Controller controller) {
+		dbController = controller.getDbController();
+		uiController = controller.getUiController();
+		questions = dbController.getQuestions();
+		Collections.shuffle(this.questions);
 	}
 
 	private void tryMove(int offsetX, int offsetY) {
@@ -379,14 +377,14 @@ public class MazeUI {
 
 		// Open results window
 		ResultsMazeUI resultsWindow = uiController.getResultsMazeUI();
-		resultsWindow.initialize(correctAnswers, incorrectAnswers, player, time, victory, mazeId, layoutId, matrix);
+		resultsWindow.loadData(correctAnswers, incorrectAnswers, player, time, victory, mazeId, layoutId, matrix);
 		resultsWindow.setLocationRelativeTo(frame); // Center over current window
 		resultsWindow.setVisible(true);
 
 		// Close the maze window
 		frame.dispose();
 	}
-	
+
 	public void startGame(int[][] matrix, int width, int height, Player player, int questionTime, int medkitLife,
 			int crocodileDamage, int questionDamage, int mazeId, int layoutId) {
 		this.matrix = matrix;
@@ -399,7 +397,7 @@ public class MazeUI {
 		this.questionDamage = questionDamage;
 		this.mazeId = mazeId;
 		this.layoutId = layoutId;
-		
+
 		lifeLabel.setText("Life: " + player.getHealth());
 		for (int i = 0; i < 9; i++) { // Create 9 cells and store them in the array
 			JPanel cell = new JPanel();
@@ -407,7 +405,7 @@ public class MazeUI {
 			playerViewPanel.add(cell);
 			gridCells[i] = cell;
 		}
-		
+
 		updateView();
 		startTimer();
 	}

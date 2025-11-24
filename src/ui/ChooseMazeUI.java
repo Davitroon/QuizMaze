@@ -71,7 +71,7 @@ public class ChooseMazeUI extends JFrame {
 
 		mazeModel = new DefaultTableModel(new Object[][] {},
 				new String[] { "id", "xCoord", "yCoord", "num_crocodiles", "crocodile_damage", "num_medkits",
-						"medkit_life", "question_time", "question_damage", "num_questions" });
+						"medkit_heal", "question_time", "question_damage", "num_questions" });
 
 		dispositionModel = new DefaultTableModel(new Object[][] {
 
@@ -117,9 +117,8 @@ public class ChooseMazeUI extends JFrame {
 
 		btnBack.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				ChooseMazeUI.this.setVisible(false);
 				resetWindow();
-				uiController.getLoginUI().login();
+				uiController.changeView(ChooseMazeUI.this, uiController.getLoginUI());
 			}
 		});
 
@@ -240,9 +239,9 @@ public class ChooseMazeUI extends JFrame {
 		try {
 			rset = dbController.queryAll("mazes");
 			while (rset.next()) {
-				Object[] row = new Object[] { rset.getInt("id"), rset.getInt("x_coord"), rset.getInt("y_coord"),
+				Object[] row = new Object[] { rset.getInt("id"), rset.getInt("width"), rset.getInt("height"),
 						rset.getInt("num_crocodiles"), rset.getInt("crocodile_damage"), rset.getInt("num_medkits"),
-						rset.getInt("medkit_life"), rset.getInt("question_time"), rset.getInt("question_damage"),
+						rset.getInt("medkit_heal"), rset.getInt("question_time"), rset.getInt("question_damage"),
 						rset.getInt("num_questions") };
 				mazeModel.addRow(row);
 			}
