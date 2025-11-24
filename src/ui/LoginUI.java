@@ -21,178 +21,223 @@ import logic.DBController;
 import logic.UIController;
 import model.User;
 
+/**
+ * The LoginUI class represents the login window of the application.
+ * It allows users to log in with their credentials or create a new account.
+ */
 public class LoginUI extends JFrame {
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 1L;
-	private JTextField txtUsername;
-	private JPasswordField txtPassword;
-	private JButton btnLogin;
-	private JButton btnCreateUser;
 
-	private User user;
-	private DBController dbController;
-	private UIController uiController;
-	private Controller controller;
+    private static final long serialVersionUID = 1L;
 
-	public LoginUI() {
+    private JTextField txtUsername;
+    private JPasswordField txtPassword;
+    private JButton btnLogin;
+    private JButton btnCreateUser;
 
-		JPanel panel = new JPanel();
-		panel.setLayout(new GridBagLayout());
-		GridBagConstraints gbc = new GridBagConstraints();
-		gbc.insets = new Insets(5, 5, 5, 5);
-		gbc.fill = GridBagConstraints.HORIZONTAL;
+    private User user;
+    private DBController dbController;
+    private UIController uiController;
+    private Controller controller;
 
-		JLabel lblUsername = new JLabel("Username:");
-		gbc.gridx = 0;
-		gbc.gridy = 0;
-		panel.add(lblUsername, gbc);
+    /**
+     * Constructs the LoginUI window and initializes UI components.
+     * Sets up event listeners and configures the layout.
+     */
+    public LoginUI() {
 
-		txtUsername = new JTextField(20);
-		gbc.gridx = 1;
-		gbc.gridy = 0;
-		panel.add(txtUsername, gbc);
+        JPanel panel = new JPanel();
+        panel.setLayout(new GridBagLayout());
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.insets = new Insets(5, 5, 5, 5);
+        gbc.fill = GridBagConstraints.HORIZONTAL;
 
-		JLabel lblPassword = new JLabel("Password:");
-		gbc.gridx = 0;
-		gbc.gridy = 1;
-		panel.add(lblPassword, gbc);
+        JLabel lblUsername = new JLabel("Username:");
+        gbc.gridx = 0;
+        gbc.gridy = 0;
+        panel.add(lblUsername, gbc);
 
-		txtPassword = new JPasswordField(20);
-		gbc.gridx = 1;
-		gbc.gridy = 1;
-		panel.add(txtPassword, gbc);
+        txtUsername = new JTextField(20);
+        gbc.gridx = 1;
+        gbc.gridy = 0;
+        panel.add(txtUsername, gbc);
 
-		btnLogin = new JButton("Log In");
-		gbc.gridx = 0;
-		gbc.gridy = 2;
-		panel.add(btnLogin, gbc);
+        JLabel lblPassword = new JLabel("Password:");
+        gbc.gridx = 0;
+        gbc.gridy = 1;
+        panel.add(lblPassword, gbc);
 
-		btnCreateUser = new JButton("Create User");
-		gbc.gridx = 1;
-		gbc.gridy = 2;
-		panel.add(btnCreateUser, gbc);
+        txtPassword = new JPasswordField(20);
+        gbc.gridx = 1;
+        gbc.gridy = 1;
+        panel.add(txtPassword, gbc);
 
-		add(panel);
+        btnLogin = new JButton("Log In");
+        gbc.gridx = 0;
+        gbc.gridy = 2;
+        panel.add(btnLogin, gbc);
 
-		btnLogin.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				login();
-			}
-		});
+        btnCreateUser = new JButton("Create User");
+        gbc.gridx = 1;
+        gbc.gridy = 2;
+        panel.add(btnCreateUser, gbc);
 
-		btnCreateUser.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				createUser();
-			}
-		});
+        add(panel);
 
-		setTitle("Login");
-		setSize(400, 200);
-		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setLocationRelativeTo(null);
-		setResizable(false);
+        btnLogin.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                login();
+            }
+        });
 
-	}
+        btnCreateUser.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                createUser();
+            }
+        });
 
-	public void initialize(Controller controller) {
-		this.controller = controller;
-		dbController = controller.getDbController();
-		uiController = controller.getUiController();
-	}
+        setTitle("Login");
+        setSize(400, 200);
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setLocationRelativeTo(null);
+        setResizable(false);
+    }
 
-	public void login() {
-		String username = txtUsername.getText().trim();
-		String password = new String(txtPassword.getPassword());
+    /**
+     * Initializes the UI with the given controller.
+     *
+     * @param controller The main controller of the application.
+     */
+    public void initialize(Controller controller) {
+        this.controller = controller;
+        dbController = controller.getDbController();
+        uiController = controller.getUiController();
+    }
 
-		if (!validateUsername(username) || !validatePassword(password))
-			return;
+    /**
+     * Attempts to log in the user using the provided username and password.
+     * Validates fields, checks for admin login, queries the database,
+     * and performs UI navigation based on the result.
+     */
+    public void login() {
+        String username = txtUsername.getText().trim();
+        String password = new String(txtPassword.getPassword());
 
-		if (username.equals("admin") && password.equals("admin")) {
-			MazeManagementUI mazeManagement = uiController.getMazeManagementUI();
-			mazeManagement.updateMazes();
-			uiController.changeView(LoginUI.this, mazeManagement);
+        if (!validateUsername(username) || !validatePassword(password))
+            return;
 
-		} else {
-			try {
-				ResultSet rs = dbController.queryUser(username, password);
-				if (rs.next()) {
-					int userId = rs.getInt("id");
-					username = rs.getString("name");
+        // Admin login
+        if (username.equals("admin") && password.equals("admin")) {
+            MazeManagementUI mazeManagement = uiController.getMazeManagementUI();
+            mazeManagement.updateMazes();
+            uiController.changeView(LoginUI.this, mazeManagement);
 
-					user = new User(username, userId);
-					controller.setUser(user);
+        } else {
+            try {
+                ResultSet rs = dbController.queryUser(username, password);
 
-					JOptionPane.showMessageDialog(this, "Welcome " + user.getName() + "!");
+                if (rs.next()) {
+                    int userId = rs.getInt("id");
+                    username = rs.getString("name");
 
-					ChooseMazeUI chooseMaze = uiController.getChooseMazeUI();
-					chooseMaze.loadWindow(dbController);
-					uiController.changeView(LoginUI.this, chooseMaze);
+                    user = new User(username, userId);
+                    controller.setUser(user);
 
-				} else {
-					JOptionPane.showMessageDialog(this, "Incorrect username or password.");
-				}
-			} catch (SQLException e) {
-				JOptionPane.showMessageDialog(this, "Error while logging in.");
-				e.printStackTrace();
-			}
-		}
-		
-		clearFields();
-	}
+                    JOptionPane.showMessageDialog(this, "Welcome " + user.getName() + "!");
 
-	private void createUser() {
-		String newUser = JOptionPane.showInputDialog(this, "New username:");
-		if (newUser == null || !validateUsername(newUser))
-			return;
+                    ChooseMazeUI chooseMaze = uiController.getChooseMazeUI();
+                    chooseMaze.loadWindow(dbController);
+                    uiController.changeView(LoginUI.this, chooseMaze);
 
-		String newPassword = JOptionPane.showInputDialog(this, "Password:");
-		if (newPassword == null || !validatePassword(newPassword))
-			return;
+                } else {
+                    JOptionPane.showMessageDialog(this, "Incorrect username or password.");
+                }
 
-		String repeatedPassword = JOptionPane.showInputDialog(this, "Repeat password:");
-		if (repeatedPassword == null || !validatePassword(repeatedPassword))
-			return;
+            } catch (SQLException e) {
+                JOptionPane.showMessageDialog(this, "Error while logging in.");
+                e.printStackTrace();
+            }
+        }
 
-		if (!newPassword.equals(repeatedPassword)) {
-			JOptionPane.showMessageDialog(this, "Passwords do not match.");
-			return;
-		}
+        clearFields();
+    }
 
-		User user = dbController.insertUser(newUser, newPassword);
-		if (user != null) {
-			JOptionPane.showMessageDialog(this, "User " + user.getName() + " created with ID: " + user.getId());
+    /**
+     * Allows the user to create a new account by entering a username
+     * and password through input dialogs.
+     * Validates the input and registers the new user in the database.
+     */
+    private void createUser() {
+        String newUser = JOptionPane.showInputDialog(this, "New username:");
+        if (newUser == null || !validateUsername(newUser))
+            return;
 
-		} else {
-			JOptionPane.showMessageDialog(this, "Error creating user.");
-		}
-	}
+        String newPassword = JOptionPane.showInputDialog(this, "Password:");
+        if (newPassword == null || !validatePassword(newPassword))
+            return;
 
-	private boolean validateUsername(String username) {
-		if (username == null || username.isEmpty()) {
-			JOptionPane.showMessageDialog(this, "Username cannot be empty.");
-			return false;
-		}
-		return true;
-	}
+        String repeatedPassword = JOptionPane.showInputDialog(this, "Repeat password:");
+        if (repeatedPassword == null || !validatePassword(repeatedPassword))
+            return;
 
-	private boolean validatePassword(String password) {
-		if (password == null || password.isEmpty()) {
-			JOptionPane.showMessageDialog(this, "Password cannot be empty.");
-			return false;
-		}
-		return true;
-	}
+        if (!newPassword.equals(repeatedPassword)) {
+            JOptionPane.showMessageDialog(this, "Passwords do not match.");
+            return;
+        }
 
-	public String getUsername() {
-		return txtUsername.getText();
-	}
-	
-	public void clearFields() {
-		txtUsername.setText("");
-		txtPassword.setText("");
-	}
+        User user = dbController.insertUser(newUser, newPassword);
+
+        if (user != null) {
+            JOptionPane.showMessageDialog(this,
+                    "User " + user.getName() + " created with ID: " + user.getId());
+        } else {
+            JOptionPane.showMessageDialog(this, "Error creating user.");
+        }
+    }
+
+    /**
+     * Validates that the username is not null or empty.
+     *
+     * @param username The username to validate.
+     * @return true if valid, false otherwise.
+     */
+    private boolean validateUsername(String username) {
+        if (username == null || username.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Username cannot be empty.");
+            return false;
+        }
+        return true;
+    }
+
+    /**
+     * Validates that the password is not null or empty.
+     *
+     * @param password The password to validate.
+     * @return true if valid, false otherwise.
+     */
+    private boolean validatePassword(String password) {
+        if (password == null || password.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Password cannot be empty.");
+            return false;
+        }
+        return true;
+    }
+
+    /**
+     * Returns the current value inside the username input field.
+     *
+     * @return The username typed by the user.
+     */
+    public String getUsername() {
+        return txtUsername.getText();
+    }
+
+    /**
+     * Clears the username and password input fields.
+     */
+    public void clearFields() {
+        txtUsername.setText("");
+        txtPassword.setText("");
+    }
 }
