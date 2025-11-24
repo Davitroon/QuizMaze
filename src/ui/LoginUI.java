@@ -140,6 +140,8 @@ public class LoginUI extends JFrame {
 				e.printStackTrace();
 			}
 		}
+		
+		clearFields();
 	}
 
 	private void createUser() {
@@ -187,5 +189,10 @@ public class LoginUI extends JFrame {
 
 	public String getUsername() {
 		return txtUsername.getText();
+	}
+	
+	public void clearFields() {
+		txtUsername.setText("");
+		txtPassword.setText("");
 	}
 }
