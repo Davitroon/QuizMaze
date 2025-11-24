@@ -117,7 +117,7 @@ public class CreateMazeUI {
 
 		SpinnerNumberModel questionTimeModel = new SpinnerNumberModel(minQuestionTime, minQuestionTime, maxQuestionTime,
 				5);
-		spinnerQuestionTime = new JSpinner(new SpinnerNumberModel(10, 10, 45, 5));
+		spinnerQuestionTime = new JSpinner(new SpinnerNumberModel(15, 10, 45, 5));
 		spinnerQuestionTime.setBounds(202, 313, 63, 25);
 		frame.getContentPane().add(spinnerQuestionTime);
 
