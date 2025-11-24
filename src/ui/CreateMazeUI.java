@@ -24,8 +24,14 @@ import logic.UIController;
 import model.Disposition;
 import model.Maze;
 
+/**
+ * CreateMazeUI is the graphical interface for creating mazes in the game. It
+ * allows the user to set dimensions, number of crocodiles, number of medkits,
+ * crocodile damage, medkit healing, question time, and question damage.
+ * Additionally, it allows manually placing walls in the maze using a visual
+ * table.
+ */
 public class CreateMazeUI {
-
 	private JFrame frame;
 	private JButton btnCreate;
 	private JTable mazeTable;
@@ -38,24 +44,24 @@ public class CreateMazeUI {
 	private JSpinner spinnerQuestionTime;
 	private JSlider sliderQuestionDamage;
 	private JScrollPane scrollPaneMazeTable;
-
 	private Maze maze;
 	private DBController dbController;
 	private Disposition disposition;
 	private UIController uiController;
 	private MazeManagementUI mazeManagement;
-
 	private int minQuestionTime = 7;
 	private int maxQuestionTime = 45;
-
 	private int maxMedkits = 10;
 	private int maxCrocodiles = 10;
-
 	private int minHeight = 4;
 	private int maxHeight = 10;
 	private int minWidth = 4;
 	private int maxWidth = 10;
 
+	/**
+	 * Constructor that initializes the window and all graphical components of the
+	 * interface.
+	 */
 	@SuppressWarnings("serial")
 	public CreateMazeUI() {
 		frame = new JFrame();
@@ -115,9 +121,7 @@ public class CreateMazeUI {
 		lblQuestionTime.setBounds(10, 313, 182, 24);
 		frame.getContentPane().add(lblQuestionTime);
 
-		SpinnerNumberModel questionTimeModel = new SpinnerNumberModel(minQuestionTime, minQuestionTime, maxQuestionTime,
-				5);
-		spinnerQuestionTime = new JSpinner(new SpinnerNumberModel(15, 10, 45, 5));
+		spinnerQuestionTime = new JSpinner(new SpinnerNumberModel(minQuestionTime, minQuestionTime, maxQuestionTime, 5)); 
 		spinnerQuestionTime.setBounds(202, 313, 63, 25);
 		frame.getContentPane().add(spinnerQuestionTime);
 
@@ -166,8 +170,8 @@ public class CreateMazeUI {
 		spinnerNumMedkits = new JSpinner(medkitValue);
 		spinnerNumMedkits.setFont(new Font("Tahoma", Font.BOLD, 12));
 		spinnerNumMedkits.setBounds(202, 178, 40, 25);
-		frame.getContentPane().add(spinnerNumMedkits);
 
+		frame.getContentPane().add(spinnerNumMedkits);
 		spinnerNumCrocodiles = new JSpinner(crocodileValue);
 		spinnerNumCrocodiles.setFont(new Font("Tahoma", Font.BOLD, 12));
 		spinnerNumCrocodiles.setBounds(202, 147, 40, 25);
@@ -187,31 +191,26 @@ public class CreateMazeUI {
 
 		scrollPaneMazeTable = new JScrollPane();
 		scrollPaneMazeTable.setBounds(285, 46, 163, 163);
+
 		frame.getContentPane().add(scrollPaneMazeTable);
 
 		JButton btnUpdate = new JButton("Resize");
 		btnUpdate.setFont(new Font("Tahoma", Font.BOLD, 14));
 		btnUpdate.setBounds(153, 64, 122, 41);
 		frame.getContentPane().add(btnUpdate);
-
 		btnUpdate.addActionListener(e -> {
 			btnCreate.setEnabled(true);
-
 			int rows = (Integer) spinnerHeight.getValue();
 			int cols = (Integer) spinnerWidth.getValue();
-
 			String[] tableColumns = new String[cols];
 			for (int i = 0; i < cols; i++)
 				tableColumns[i] = "Col " + (i + 1);
-
 			String[][] tableData = new String[rows][cols];
 			for (int i = 0; i < rows; i++)
 				for (int j = 0; j < cols; j++)
 					tableData[i][j] = "";
-
 			tableData[0][0] = "O";
 			tableData[rows - 1][cols - 1] = "X";
-
 			mazeTable = new JTable(tableData, tableColumns) {
 				@Override
 				public boolean isCellEditable(int row, int column) {
@@ -220,7 +219,6 @@ public class CreateMazeUI {
 			};
 			mazeTable.setTableHeader(null);
 			scrollPaneMazeTable.setViewportView(mazeTable);
-
 			mazeTable.addMouseListener(new java.awt.event.MouseAdapter() {
 				public void mouseClicked(java.awt.event.MouseEvent evt) {
 					int row = mazeTable.rowAtPoint(evt.getPoint());
@@ -229,7 +227,6 @@ public class CreateMazeUI {
 					int lastCol = mazeTable.getColumnCount() - 1;
 					if ((row == 0 && col == 0) || (row == lastRow && col == lastCol))
 						return;
-
 					Object value = mazeTable.getValueAt(row, col);
 					if (value == null || value.toString().trim().isEmpty())
 						mazeTable.setValueAt("3", row, col);
@@ -259,13 +256,11 @@ public class CreateMazeUI {
 		lblNotice.setFont(new Font("Sitka Text", Font.BOLD, 12));
 		lblNotice.setBounds(464, 64, 182, 58);
 		frame.getContentPane().add(lblNotice);
-
 		btnBack.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				resetWindow();
 				mazeManagement.setVisible(true);
 				uiController.changeView(CreateMazeUI.this.getFrame(), mazeManagement);
-
 			}
 		});
 
@@ -280,7 +275,6 @@ public class CreateMazeUI {
 				int questionTime = (int) spinnerQuestionTime.getValue();
 				int questionDamage = sliderQuestionDamage.getValue();
 				int numQuestions = 20;
-
 				int rows = mazeTable.getRowCount();
 				int cols = mazeTable.getColumnCount();
 				int[][] map = new int[rows][cols];
@@ -288,11 +282,9 @@ public class CreateMazeUI {
 					for (int j = 0; j < cols; j++)
 						if ("3".equals(mazeTable.getValueAt(i, j)))
 							map[i][j] = 3;
-
 				maze = new Maze(width, height, numCrocodiles, crocodileDamage, numMedkits, medkitHeal, questionTime,
 						questionDamage, numQuestions, map);
 				disposition = new Disposition(maze.getMap(), maze.getId());
-
 				try {
 					disposition.generateMatrix(numMedkits, numCrocodiles);
 					dbController.insertMaze(maze);
@@ -300,56 +292,59 @@ public class CreateMazeUI {
 					dbController.insertDisposition(disposition);
 					disposition.saveMatrix(dbController);
 					mazeManagement.updateMazes();
-
 				} catch (IllegalArgumentException e1) {
 					javax.swing.JOptionPane.showMessageDialog(null, e1.getMessage(), "Error",
 							javax.swing.JOptionPane.ERROR_MESSAGE);
 					return;
 				}
-
 				uiController.changeView(CreateMazeUI.this.getFrame(), mazeManagement);
 			}
 		});
-
 	}
 
+	/**
+	 * Returns the main JFrame of this interface.
+	 * 
+	 * @return The JFrame associated with CreateMazeUI.
+	 */
 	public JFrame getFrame() {
 		return frame;
 	}
 
+	/**
+	 * Initializes the required controllers for this interface.
+	 * 
+	 * @param controller The main game controller containing DBController and
+	 *                   UIController.
+	 */
 	public void initialize(Controller controller) {
 		this.dbController = controller.getDbController();
 		uiController = controller.getUiController();
 		mazeManagement = uiController.getMazeManagementUI();
-
 	}
 
+	/**
+	 * Resets the window to its default values. Resets spinners, sliders, and clears
+	 * the maze table.
+	 */
 	public void resetWindow() {
 		spinnerHeight.setModel(new SpinnerNumberModel(minHeight, minHeight, maxHeight, 1));
 		spinnerHeight.setValue(minHeight);
-
 		spinnerWidth.setModel(new SpinnerNumberModel(minWidth, minWidth, maxWidth, 1));
 		spinnerWidth.setValue(minWidth);
-
 		spinnerNumCrocodiles.setModel(new SpinnerNumberModel(2, 0, maxCrocodiles, 1));
 		spinnerNumCrocodiles.setValue(2);
-
 		spinnerNumMedkits.setModel(new SpinnerNumberModel(1, 0, maxMedkits, 1));
 		spinnerNumMedkits.setValue(1);
-
 		spinnerQuestionTime.setModel(new SpinnerNumberModel(minQuestionTime, minQuestionTime, maxQuestionTime, 5));
 		spinnerQuestionTime.setValue(minQuestionTime);
-
 		sliderCrocodileDamage.setValue(25);
 		sliderMedkitHeal.setValue(10);
 		sliderQuestionDamage.setValue(10);
-
 		if (mazeTable != null) {
 			scrollPaneMazeTable.setViewportView(null);
 			mazeTable = null;
 		}
-
 		btnCreate.setEnabled(false);
 	}
-
 }
