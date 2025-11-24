@@ -3,26 +3,22 @@ package ui;
 import java.awt.Color; // Allows defining colors (e.g., Color.WHITE, Color.RED)
 import java.awt.Font;
 import java.awt.GridLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.util.Collections;
 import java.util.List;
 
 import javax.swing.BorderFactory; // To create borders around components
 import javax.swing.JButton;
-import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import javax.swing.JTextField;
 import javax.swing.Timer;
 
 import logic.Controller;
 import logic.DBController;
 import logic.UIController;
-import model.User;
 import model.Question;
+import model.User;
 
 public class MazeUI {
 	private JFrame frame;
@@ -53,11 +49,6 @@ public class MazeUI {
 
 	private DBController dbController;
 	private UIController uiController;
-
-	// Variables used in showTimedQuestion()
-	private boolean questionResult = false;
-	private int questionAttempts = 0;
-	private JDialog questionDialog;
 
 	// Constructor receives parameters to create a unique view
 	public MazeUI() {
@@ -169,7 +160,7 @@ public class MazeUI {
 				} else {
 					JOptionPane.showMessageDialog(frame, "You found a medkit! +" + medkitLife + " life");
 				}
-				scoreLabel.setText("Score = " + user.getPoints());
+				scoreLabel.setText("Score = 0");
 				matrix[targetY][targetX] = 0; // Remove medkit
 			} else if (matrix[targetY][targetX] == 2) { // Crocodile
 				user.reduceHealth(crocodileDamage);
@@ -282,80 +273,22 @@ public class MazeUI {
 			JOptionPane.showMessageDialog(frame, "No questions available.");
 			return false;
 		}
+
 		if (questionIndex >= questions.size()) {
 			questionIndex = 0;
 		}
+
 		Question question = questions.get(questionIndex++);
 
-		JTextField answerField = new JTextField();
-		JButton answerButton = new JButton("Answer");
-		questionResult = false;
-		questionAttempts = 0;
-		questionDialog = new JDialog(frame, "Question", true);
+		QuestionUI questionDialog = new QuestionUI(frame, question, questionTime);
+		boolean result = questionDialog.isCorrect();
 
-		JPanel panel = new JPanel(new GridLayout(0, 1));
-		panel.add(new JLabel(question.getStatement()));
-		JLabel timeLabel = new JLabel("Time: " + questionTime + " seconds");
-		panel.add(timeLabel);
-		panel.add(new JLabel("Hint: " + question.getHint()));
-		panel.add(new JLabel("Answer:"));
-		panel.add(answerField);
-		panel.add(answerButton);
-
-		questionDialog.getContentPane().add(panel);
-		questionDialog.pack();
-		questionDialog.setLocationRelativeTo(frame);
-
-		Timer countdown = new Timer(1000, null);
-		final int[] remainingTime = { questionTime };
-		countdown.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				remainingTime[0]--;
-				timeLabel.setText("Time: " + remainingTime[0] + " seconds");
-				if (remainingTime[0] <= 0) {
-					countdown.stop();
-					questionDialog.dispose();
-				}
-			}
-		});
-		countdown.start();
-
-		answerButton.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				String userAnswer = answerField.getText().trim();
-				if (userAnswer.equalsIgnoreCase(question.getCorrectAnswer())) {
-					questionResult = true;
-					countdown.stop();
-					questionDialog.dispose();
-				} else {
-					questionAttempts++;
-					if (questionAttempts >= 3) {
-						JOptionPane.showMessageDialog(questionDialog, "You failed 3 times.");
-						countdown.stop();
-						questionDialog.dispose();
-					} else {
-						JOptionPane.showMessageDialog(questionDialog,
-								"Incorrect answer. Attempt " + questionAttempts + " of 3.");
-					}
-				}
-			}
-		});
-
-		// Enter key triggers the button
-		answerField.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				answerButton.doClick();
-			}
-		});
-
-		questionDialog.setVisible(true);
-		countdown.stop();
-
-		if (questionResult) {
+		if (result) {
 			correctAnswers++;
 			user.addPoints(10);
 			scoreLabel.setText("Score = " + user.getPoints());
 			JOptionPane.showMessageDialog(frame, "Correct!");
+
 		} else {
 			incorrectAnswers++;
 			user.reduceHealth(questionDamage);
@@ -364,7 +297,7 @@ public class MazeUI {
 			updateView();
 		}
 
-		return questionResult;
+		return result;
 	}
 
 	private void showSummary() {
@@ -405,10 +338,10 @@ public class MazeUI {
 			userViewPanel.add(cell);
 			gridCells[i] = cell;
 		}
-		
+
 		updateView();
 		startTimer();
-		
+
 	}
 
 	public JFrame getFrame() {

@@ -1,37 +1,31 @@
 package model;
 
+import java.util.List;
+
 public class Question {
-	private String statement;
-	private String correctAnswer;
-	private String hint;
+    private String statement;
+    private List<String> options; // 4 options: a, b, c, d
+    private int correctIndex;     // 0=a, 1=b, 2=c, 3=d
 
-	public Question(String statement, String correctAnswer, String hint) {
-		this.statement = statement;
-		this.correctAnswer = correctAnswer;
-		this.hint = hint;
-	}
+    public Question(String statement, List<String> options, int correctIndex) {
+        this.statement = statement;
+        this.options = options;
+        this.correctIndex = correctIndex;
+    }
 
-	public String getStatement() {
-		return statement;
-	}
+    public String getStatement() {
+        return statement;
+    }
 
-	public void setStatement(String statement) {
-		this.statement = statement;
-	}
+    public List<String> getOptions() {
+        return options;
+    }
 
-	public String getCorrectAnswer() {
-		return correctAnswer;
-	}
+    public int getCorrectIndex() {
+        return correctIndex;
+    }
 
-	public void setCorrectAnswer(String correctAnswer) {
-		this.correctAnswer = correctAnswer;
-	}
-
-	public String getHint() {
-		return hint;
-	}
-
-	public void setHint(String hint) {
-		this.hint = hint;
-	}
+    public String getCorrectAnswer() {
+        return options.get(correctIndex);
+    }
 }

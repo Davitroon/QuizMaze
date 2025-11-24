@@ -186,16 +186,23 @@ public class DBConnector {
 	}
 
 	public List<Question> getQuestions() {
-		List<Question> questions = new ArrayList<>();
-		String sql = "SELECT question, answer, hint FROM questions";
-		try (PreparedStatement ps = connection.prepareStatement(sql); ResultSet rs = ps.executeQuery()) {
-			while (rs.next()) {
-				questions.add(new Question(rs.getString("question"), rs.getString("answer"), rs.getString("hint")));
-			}
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
-		return questions;
+	    List<Question> questions = new ArrayList<>();
+	    String sql = "SELECT question, answer_a, answer_b, answer_c, answer_d, correct_answer FROM questions";
+	    try (PreparedStatement ps = connection.prepareStatement(sql); ResultSet rs = ps.executeQuery()) {
+	        while (rs.next()) {
+	            List<String> options = List.of(
+	                rs.getString("answer_a"),
+	                rs.getString("answer_b"),
+	                rs.getString("answer_c"),
+	                rs.getString("answer_d")
+	            );
+	            int correctIndex = rs.getInt("correct_answer") - 1; // si en la DB va de 1 a 4
+	            questions.add(new Question(rs.getString("question"), options, correctIndex));
+	        }
+	    } catch (SQLException e) {
+	        e.printStackTrace();
+	    }
+	    return questions;
 	}
 
 	public ResultSet getTop10(int mazeId, int dispositionId) {
