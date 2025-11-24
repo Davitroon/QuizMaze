@@ -11,13 +11,13 @@ import ui.LoginUI;
  */
 public class Launcher {
 
-	private static DBConnector model;
-	private static LoginUI loginUi;
+	private static DBConnector dbConnector;
+	private static Controller controller;
 
 	public static void main(String[] args) {
 
 		try {
-			model = new DBConnector();
+			dbConnector = new DBConnector();
 
 		} catch (ClassNotFoundException e) {
 			e.printStackTrace();
@@ -25,9 +25,10 @@ public class Launcher {
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
+		
+		controller = new Controller();
+		controller.initialize(dbConnector);
 
-		// Here the rest of the classes should be created
-		loginUi = new LoginUI(model);
-		loginUi.login();
+		controller.getUiController().getLoginUI().setVisible(true);
 	}
 }

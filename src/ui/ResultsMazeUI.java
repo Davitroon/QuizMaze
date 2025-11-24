@@ -21,6 +21,8 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableModel;
 
 import dao.DBConnector;
+import logic.Controller;
+import model.Player;
 
 public class ResultsMazeUI extends JFrame {
 
@@ -33,22 +35,23 @@ public class ResultsMazeUI extends JFrame {
 
 	private DBConnector logicModel;
 	private int mazeId, layoutId;
+	private Controller controller;
 
 	// Dynamic labels
 	private JLabel lblUserValue;
 	private JLabel lblPointsValue;
 	private JLabel lblLifeValue;
 	private JLabel lblTimeValue;
+	private JLabel lblResult;
+	private JTextField tfCorrect;
+	private JTextField tfIncorrect;
 
 	private int[][] matrix;
 
-	public ResultsMazeUI(String username, int correctAnswers, int incorrectAnswers, int finalLife, int points,
-			String time, boolean victory, DBConnector model, int mazeId, int layoutId, ChooseMazeUI chooseMazeUI,
-			int[][] matrix) {
-		this.logicModel = model;
-		this.mazeId = mazeId;
-		this.layoutId = layoutId;
-		this.matrix = matrix;
+	public ResultsMazeUI(Controller controller) {
+
+		this.controller = controller;
+		ChooseMazeUI chooseMazeUI = controller.getUiController().getChooseMazeUI();
 
 		setTitle("Game Summary");
 		setResizable(false);
@@ -65,7 +68,7 @@ public class ResultsMazeUI extends JFrame {
 		summaryPanel.setBorder(BorderFactory.createTitledBorder("Summary"));
 		contentPane.add(summaryPanel);
 
-		JLabel lblResult = new JLabel(victory ? "You won!" : "You lost");
+		lblResult = new JLabel();
 		lblResult.setFont(new Font("Tahoma", Font.BOLD, 16));
 		lblResult.setBounds(80, 20, 150, 25);
 		summaryPanel.add(lblResult);
@@ -74,28 +77,28 @@ public class ResultsMazeUI extends JFrame {
 		JLabel lblUser = new JLabel("User:");
 		lblUser.setBounds(10, 60, 80, 14);
 		summaryPanel.add(lblUser);
-		lblUserValue = new JLabel(username);
+		lblUserValue = new JLabel();
 		lblUserValue.setBounds(100, 60, 180, 14);
 		summaryPanel.add(lblUserValue);
 
 		JLabel lblPoints = new JLabel("Points:");
 		lblPoints.setBounds(10, 90, 80, 14);
 		summaryPanel.add(lblPoints);
-		lblPointsValue = new JLabel(String.valueOf(points));
+		lblPointsValue = new JLabel();
 		lblPointsValue.setBounds(100, 90, 180, 14);
 		summaryPanel.add(lblPointsValue);
 
 		JLabel lblLife = new JLabel("Life:");
 		lblLife.setBounds(10, 120, 80, 14);
 		summaryPanel.add(lblLife);
-		lblLifeValue = new JLabel(String.valueOf(finalLife));
+		lblLifeValue = new JLabel();
 		lblLifeValue.setBounds(100, 120, 180, 14);
 		summaryPanel.add(lblLifeValue);
 
 		JLabel lblTime = new JLabel("Time:");
 		lblTime.setBounds(10, 150, 80, 14);
 		summaryPanel.add(lblTime);
-		lblTimeValue = new JLabel(time);
+		lblTimeValue = new JLabel();
 		lblTimeValue.setBounds(100, 150, 180, 14);
 		summaryPanel.add(lblTimeValue);
 
@@ -103,7 +106,7 @@ public class ResultsMazeUI extends JFrame {
 		JLabel lblCorrect = new JLabel("Correct answers:");
 		lblCorrect.setBounds(10, 180, 150, 14);
 		summaryPanel.add(lblCorrect);
-		JTextField tfCorrect = new JTextField(String.valueOf(correctAnswers));
+		tfCorrect = new JTextField();
 		tfCorrect.setBounds(160, 180, 50, 20);
 		tfCorrect.setEditable(false);
 		summaryPanel.add(tfCorrect);
@@ -111,7 +114,7 @@ public class ResultsMazeUI extends JFrame {
 		JLabel lblIncorrect = new JLabel("Incorrect answers:");
 		lblIncorrect.setBounds(10, 210, 150, 14);
 		summaryPanel.add(lblIncorrect);
-		JTextField tfIncorrect = new JTextField(String.valueOf(incorrectAnswers));
+		tfIncorrect = new JTextField();
 		tfIncorrect.setBounds(160, 210, 50, 20);
 		tfIncorrect.setEditable(false);
 		summaryPanel.add(tfIncorrect);
@@ -137,8 +140,6 @@ public class ResultsMazeUI extends JFrame {
 		btnShowLayout.setBounds(119, 402, 147, 34);
 		contentPane.add(btnShowLayout);
 
-		loadStats();
-
 		// Back button click
 		btnBack.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -154,6 +155,21 @@ public class ResultsMazeUI extends JFrame {
 				printMatrix();
 			}
 		});
+	}
+
+	public void initialize(int correctAnswers, int incorrectAnswers, Player player, String time, boolean victory,
+			int mazeId, int layoutId, int[][] matrix) {
+		this.mazeId = mazeId;
+		this.layoutId = layoutId;
+		this.matrix = matrix;
+		lblResult.setText(victory ? "You won!" : "You lost");
+		lblUserValue.setText(controller.getPlayer().getName());
+		lblPointsValue.setText(String.valueOf(player.getPoints()));
+		lblLifeValue.setText(String.valueOf(player.getHealth()));
+		lblTimeValue.setText(time);
+		tfCorrect.setText(String.valueOf(correctAnswers));
+		tfIncorrect.setText(String.valueOf(incorrectAnswers));
+		loadStats();
 	}
 
 	private void loadStats() {

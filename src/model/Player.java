@@ -4,16 +4,12 @@ public class Player {
 
 	private int id;
 	private String name;
-	private int x, y;
-	private int health;
-	private int points;
+	private int x, y = 0;
+	private int health  = 100;
+	private int points = 0;
 
 	public Player(String name) {
 		this.name = name;
-		this.health = 100;
-		this.points = 0;
-		this.x = 0;
-		this.y = 0;
 	}
 
 	public String getName() {

@@ -18,6 +18,9 @@ import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
 
 import dao.DBConnector;
+import logic.Controller;
+import logic.DBController;
+import logic.UIController;
 import model.Player;
 
 public class LoginUI extends JFrame {
@@ -26,13 +29,15 @@ public class LoginUI extends JFrame {
 	private JButton btnLogin;
 	private JButton btnCreateUser;
 
-	private DBConnector model;
 	private Player player;
 	private ChooseMazeUI chooseMaze;
 	private MazeManagementUI mazeManagement;
+	private DBController dbController;
+	private UIController uiController;
 
-	public LoginUI(DBConnector model) {
-		this.model = model;
+	public LoginUI(Controller controller) {
+		dbController = controller.getDbController();
+		uiController = controller.getUiController();
 		setTitle("Login");
 		setSize(400, 200);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -104,7 +109,7 @@ public class LoginUI extends JFrame {
 			return;
 
 		try {
-			ResultSet rs = model.queryUser(username, password);
+			ResultSet rs = dbController.queryUser(username, password);
 			if (rs.next()) {
 				int userId = rs.getInt("id");
 				String user = rs.getString("name");
@@ -115,20 +120,15 @@ public class LoginUI extends JFrame {
 				JOptionPane.showMessageDialog(this, "Welcome " + user + "!");
 
 				if (user.equals("admin")) {
-					if (mazeManagement == null) {
-						mazeManagement = new MazeManagementUI(null, model);
-					}
 					mazeManagement.updateMazes();
-					mazeManagement.setVisible(true);
-				} else {
-					if (chooseMaze == null) {
-						chooseMaze = new ChooseMazeUI(null, model, player);
-					}
-					chooseMaze.loadMazes();
-					chooseMaze.setVisible(true);
-				}
+					uiController.changeView(LoginUI.this, mazeManagement);
 
-				dispose();
+				} else {
+					ChooseMazeUI chooseMaze = uiController.getChooseMazeUI();
+					chooseMaze.loadMazes(dbController);
+					uiController.changeView(LoginUI.this, chooseMaze);
+				}
+				
 			} else {
 				JOptionPane.showMessageDialog(this, "Incorrect username or password.");
 			}
@@ -156,7 +156,7 @@ public class LoginUI extends JFrame {
 			return;
 		}
 
-		int playerId = model.insertUser(newUser, newPassword);
+		int playerId = dbController.insertUser(newUser, newPassword);
 		if (playerId != -1) {
 			player = new Player(newUser);
 			player.setId(playerId);
@@ -180,13 +180,6 @@ public class LoginUI extends JFrame {
 			return false;
 		}
 		return true;
-	}
-
-	public static void main(String[] args) throws Exception {
-		DBConnector model = new DBConnector();
-		SwingUtilities.invokeLater(() -> {
-			new LoginUI(model).setVisible(true);
-		});
 	}
 
 	public String getUsername() {

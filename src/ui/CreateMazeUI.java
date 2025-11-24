@@ -18,7 +18,9 @@ import javax.swing.SwingConstants;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
-import dao.DBConnector;
+import logic.Controller;
+import logic.DBController;
+import logic.UIController;
 import model.Disposition;
 import model.Maze;
 
@@ -37,10 +39,11 @@ public class CreateMazeUI {
 	private JSlider sliderQuestionDamage;
 	private JScrollPane scrollPaneMazeTable;
 
-	private MazeManagementUI mazeManagement;
 	private Maze maze;
-	private DBConnector model;
+	private DBController dbController;
 	private Disposition disposition;
+	private UIController uiController;
+	private MazeManagementUI mazeManagement;
 
 	private int minQuestionTime = 5;
 	private int maxQuestionTime = 45;
@@ -53,10 +56,12 @@ public class CreateMazeUI {
 	private int minWidth = 4;
 	private int maxWidth = 10;
 
-	public CreateMazeUI(MazeManagementUI mazeManagement, DBConnector model) {
+	public CreateMazeUI(Controller controller) {
 		initialize();
-		this.mazeManagement = mazeManagement;
-		this.model = model;
+		this.dbController = controller.getDbController();
+		uiController = controller.getUiController();
+		mazeManagement = uiController.getMazeManagementUI();
+		
 	}
 
 	public JFrame getFrame() {
@@ -65,6 +70,8 @@ public class CreateMazeUI {
 
 	@SuppressWarnings("serial")
 	private void initialize() {
+		
+		
 
 		frame = new JFrame();
 		frame.setBounds(100, 100, 680, 462);
@@ -270,9 +277,10 @@ public class CreateMazeUI {
 
 		btnBack.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				getFrame().dispose();
 				resetWindow();
 				mazeManagement.setVisible(true);
+				uiController.changeView(CreateMazeUI.this.getFrame(), mazeManagement);
+				
 			}
 		});
 
@@ -298,7 +306,7 @@ public class CreateMazeUI {
 
 				maze = new Maze(width, height, numCrocodiles, crocodileDamage, numMedkits, medkitHeal, questionTime,
 						questionDamage, numQuestions, map);
-				disposition = new Disposition(maze.getMap(), maze.getId(), model);
+				disposition = new Disposition(maze.getMap(), maze.getId());
 
 				try {
 					disposition.generateMatrix(numMedkits, numCrocodiles);
@@ -308,10 +316,10 @@ public class CreateMazeUI {
 					return;
 				}
 
-				model.insertMaze(maze);
+				dbController.insertMaze(maze);
 				disposition.setMazeId(maze.getId());
-				model.insertDisposition(disposition);
-				disposition.saveMatrix();
+				dbController.insertDisposition(disposition);
+				disposition.saveMatrix(dbController);
 				mazeManagement.updateMazes();
 				getFrame().dispose();
 				mazeManagement.setVisible(true);
@@ -346,4 +354,6 @@ public class CreateMazeUI {
 
 		btnCreate.setEnabled(false);
 	}
+	
+	
 }
