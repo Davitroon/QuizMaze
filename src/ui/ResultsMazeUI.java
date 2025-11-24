@@ -22,7 +22,8 @@ import javax.swing.table.DefaultTableModel;
 
 import dao.DBConnector;
 import logic.Controller;
-import model.Player;
+import logic.DBController;
+import model.User;
 
 public class ResultsMazeUI extends JFrame {
 
@@ -33,7 +34,7 @@ public class ResultsMazeUI extends JFrame {
 	private DefaultTableModel statsModel;
 	private JTable statsTable;
 
-	private DBConnector logicModel;
+	private DBController dbController;
 	private int mazeId, layoutId;
 	private Controller controller;
 
@@ -50,7 +51,9 @@ public class ResultsMazeUI extends JFrame {
 
 	private int[][] matrix;
 
-	public ResultsMazeUI() {
+	public ResultsMazeUI(Controller controller) {
+		
+		dbController = controller.getDbController();
 
 		setTitle("Game Summary");
 		setResizable(false);
@@ -121,7 +124,7 @@ public class ResultsMazeUI extends JFrame {
 		// ——— Top 10 stats panel (right) ———
 		JPanel statsPanel = new JPanel(new BorderLayout());
 		statsPanel.setBounds(330, 10, 350, 370);
-		statsPanel.setBorder(BorderFactory.createTitledBorder("Top 10 Players"));
+		statsPanel.setBorder(BorderFactory.createTitledBorder("Top 10 Users"));
 		contentPane.add(statsPanel);
 
 		statsModel = new DefaultTableModel(new Object[] { "User", "Points", "Time", "Life", "Victory" }, 0);
@@ -156,15 +159,15 @@ public class ResultsMazeUI extends JFrame {
 		});
 	}
 
-	public void loadData(int correctAnswers, int incorrectAnswers, Player player, String time, boolean victory,
+	public void loadData(int correctAnswers, int incorrectAnswers, User user, String time, boolean victory,
 			int mazeId, int layoutId, int[][] matrix) {
 		this.mazeId = mazeId;
 		this.layoutId = layoutId;
 		this.matrix = matrix;
 		lblResult.setText(victory ? "You won!" : "You lost");
-		lblUserValue.setText(controller.getPlayer().getName());
-		lblPointsValue.setText(String.valueOf(player.getPoints()));
-		lblLifeValue.setText(String.valueOf(player.getHealth()));
+		lblUserValue.setText(controller.getUser().getName());
+		lblPointsValue.setText(String.valueOf(user.getPoints()));
+		lblLifeValue.setText(String.valueOf(user.getHealth()));
 		lblTimeValue.setText(time);
 		tfCorrect.setText(String.valueOf(correctAnswers));
 		tfIncorrect.setText(String.valueOf(incorrectAnswers));
@@ -178,10 +181,10 @@ public class ResultsMazeUI extends JFrame {
 
 	private void loadStats() {
 		statsModel.setRowCount(0);
-		try (ResultSet rs = logicModel.getTop10(mazeId, layoutId)) {
+		try (ResultSet rs = dbController.getTop10(mazeId, layoutId)) {
 			while (rs != null && rs.next()) {
-				statsModel.addRow(new Object[] { rs.getString("usuario"), rs.getInt("puntos"), rs.getString("tiempo"),
-						rs.getInt("vida"), rs.getBoolean("victoria") ? "Yes" : "No" });
+				statsModel.addRow(new Object[] { rs.getString("username"), rs.getInt("points"), rs.getString("time"),
+						rs.getInt("health"), rs.getBoolean("victory") ? "Yes" : "No" });
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();

@@ -1,6 +1,6 @@
 package model;
 
-public class Player {
+public class User {
 
 	private int id;
 	private String name;
@@ -8,8 +8,9 @@ public class Player {
 	private int health  = 100;
 	private int points = 0;
 
-	public Player(String name) {
-		this.name = name;
+	public User(String userName, int userId) {
+		this.name = userName;
+		this.id = userId;
 	}
 
 	public String getName() {
@@ -59,6 +60,10 @@ public class Player {
 
 	public void reduceHealth(int amount) {
 		health -= amount;
+		
+		if (health < 0) {
+			health = 0;
+		}
 	}
 
 	public int heal(int amount) {

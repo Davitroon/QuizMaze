@@ -35,12 +35,16 @@ CREATE TABLE questions (
 	hint VARCHAR(150) NOT NULL
 );
 
-CREATE TABLE matches (
+CREATE TABLE games (
 	user_id INT,
     maze_id INT,
     disposition_id INT,
     victory BOOLEAN,
-    life INT,
+    health INT,
+	correct_questions INT,
+    wrong_questions INT,
+    points INT,
+    time VARCHAR(20),
     FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
     FOREIGN KEY (maze_id) REFERENCES mazes(id) ON DELETE CASCADE,
 	FOREIGN KEY (disposition_id) REFERENCES dispositions(id) ON DELETE CASCADE
@@ -57,8 +61,7 @@ CREATE TABLE disposition_grid (
 );
 
 INSERT INTO users (name, password) VALUES 
-  ('admin', 'admin'), 
-  ('user', 'user');
+('user', 'user');
 
 INSERT INTO questions (question, answer, hint) VALUES
 ('¿Qué gas respiramos para vivir?', 'Oxígeno', 'No se ve ni se huele, pero sin él no duraríamos ni unos minutos despiertos.'),

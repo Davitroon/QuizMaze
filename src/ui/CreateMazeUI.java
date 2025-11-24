@@ -45,7 +45,7 @@ public class CreateMazeUI {
 	private UIController uiController;
 	private MazeManagementUI mazeManagement;
 
-	private int minQuestionTime = 5;
+	private int minQuestionTime = 7;
 	private int maxQuestionTime = 45;
 
 	private int maxMedkits = 10;
@@ -117,7 +117,7 @@ public class CreateMazeUI {
 
 		SpinnerNumberModel questionTimeModel = new SpinnerNumberModel(minQuestionTime, minQuestionTime, maxQuestionTime,
 				5);
-		spinnerQuestionTime = new JSpinner(questionTimeModel);
+		spinnerQuestionTime = new JSpinner(new SpinnerNumberModel(10, 10, 45, 5));
 		spinnerQuestionTime.setBounds(202, 313, 63, 25);
 		frame.getContentPane().add(spinnerQuestionTime);
 

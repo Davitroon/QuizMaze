@@ -28,7 +28,7 @@ public class UIController {
 		createMazeUI = new CreateMazeUI();
 		loginUI = new LoginUI();
 		mazeManagementUI = new MazeManagementUI(controller);
-		resultsMazeUI = new ResultsMazeUI();
+		resultsMazeUI = new ResultsMazeUI(controller);
 		mazeUI = new MazeUI();
 		
 		createMazeUI.initialize(controller);

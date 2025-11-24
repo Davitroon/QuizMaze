@@ -6,6 +6,7 @@ import java.util.List;
 import model.Disposition;
 import model.Maze;
 import model.Question;
+import model.User;
 
 public class DBController {
 	private dao.DBConnector dbConnector;
@@ -60,12 +61,16 @@ public class DBController {
 		return rset;
 	}
 
-	public int insertUser(String newUser, String newPassword) {
+	public User insertUser(String newUser, String newPassword) {
 		return dbConnector.insertUser(newUser, newPassword);
 	}
 
 	public void deleteMaze(int mazeId) {
 		dbConnector.deleteMaze(mazeId);
 
+	}
+
+	public ResultSet getTop10(int mazeId, int layoutId) {
+		return dbConnector.getTop10(mazeId, layoutId);
 	}
 }

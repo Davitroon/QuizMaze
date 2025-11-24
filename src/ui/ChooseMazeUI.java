@@ -24,7 +24,7 @@ import logic.Controller;
 import logic.DBController;
 import logic.UIController;
 import model.Disposition;
-import model.Player;
+import model.User;
 
 public class ChooseMazeUI extends JFrame {
 
@@ -34,9 +34,12 @@ public class ChooseMazeUI extends JFrame {
 	private JTable tableDisposition;
 	private DefaultTableModel mazeModel;
 	private DefaultTableModel dispositionModel;
+	JLabel lblPlay;
 
 	private JButton btnPlay;
 	private JButton btnPlayRandomDisposition;
+	private User user;
+	private Controller controller;
 
 	/**
 	 * Create the frame.
@@ -45,9 +48,9 @@ public class ChooseMazeUI extends JFrame {
 	 */
 	@SuppressWarnings("serial")
 	public ChooseMazeUI(Controller controller) {
+		this.controller = controller;
 		UIController uiController = controller.getUiController();
 		DBController dbController = controller.getDbController();
-		Player player = controller.getPlayer();
 		
 		setResizable(false);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -59,7 +62,7 @@ public class ChooseMazeUI extends JFrame {
 		setContentPane(contentPane);
 		contentPane.setLayout(null);
 
-		JLabel lblPlay = new JLabel("Welcome " + player.getName() + ", choose a maze and a disposition to play.");
+		lblPlay = new JLabel();
 		lblPlay.setFont(new Font("Tahoma", Font.BOLD, 16));
 		lblPlay.setBounds(10, 21, 803, 27);
 		lblPlay.setHorizontalAlignment(SwingConstants.CENTER);
@@ -186,7 +189,7 @@ public class ChooseMazeUI extends JFrame {
 				row = tableDisposition.getSelectedRow();
 				int dispId = (int) dispositionModel.getValueAt(row, 0);
 
-				uiController.getMazeUI().startGame(matrix, yCoord, row, player, timeQuestion, medkitLife, crocodileDamage, questionDamage, mazeId, dispId);
+				uiController.getMazeUI().startGame(matrix, xCoord, yCoord, user, timeQuestion, medkitLife, crocodileDamage, questionDamage, mazeId, dispId);
 				uiController.changeView(ChooseMazeUI.this, uiController.getMazeUI().getFrame());
 			}
 		});
@@ -224,7 +227,7 @@ public class ChooseMazeUI extends JFrame {
 					return;
 				}
 				
-				uiController.getMazeUI().startGame(newDisp.getMap(), xCoord, yCoord, player, timeQuestion, medkitLife, crocodileDamage, questionDamage, mazeId, mazeId);
+				uiController.getMazeUI().startGame(newDisp.getMap(), xCoord, yCoord, user, timeQuestion, medkitLife, crocodileDamage, questionDamage, mazeId, mazeId);
 				uiController.changeView(ChooseMazeUI.this, uiController.getMazeUI().getFrame());
 
 			}
@@ -234,7 +237,10 @@ public class ChooseMazeUI extends JFrame {
 	/**
 	 * Load mazes from DB and insert into table.
 	 */
-	public void loadMazes(DBController dbController) {
+	public void loadWindow(DBController dbController) {
+		user = controller.getUser();
+		lblPlay.setText("Welcome " + user.getName() + ", choose a maze and a disposition to play.");
+		
 		ResultSet rset;
 		try {
 			rset = dbController.queryAll("mazes");

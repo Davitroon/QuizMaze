@@ -1,12 +1,18 @@
 package dao;
 
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
 import model.Disposition;
 import model.Maze;
 import model.Question;
+import model.User;
 
 public class DBConnector {
 	private static Connection connection;
@@ -178,9 +184,9 @@ public class DBConnector {
 		}
 	}
 
-	public void insertGame(int userId, int mazeId, int dispositionId, boolean victory, int life, int correctQuestions,
+	public void insertGame(int userId, int mazeId, int dispositionId, boolean victory, int health, int correctQuestions,
 			int wrongQuestions, int points, String time) {
-		String query = "INSERT INTO matches (user_id, maze_id, disposition_id, victory, life, "
+		String query = "INSERT INTO games (user_id, maze_id, disposition_id, victory, health, "
 				+ "correct_questions, wrong_questions, points, time) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
 		try {
@@ -189,7 +195,7 @@ public class DBConnector {
 			stmt.setInt(2, mazeId);
 			stmt.setInt(3, dispositionId);
 			stmt.setBoolean(4, victory);
-			stmt.setInt(5, life);
+			stmt.setInt(5, health);
 			stmt.setInt(6, correctQuestions);
 			stmt.setInt(7, wrongQuestions);
 			stmt.setInt(8, points);
@@ -201,28 +207,30 @@ public class DBConnector {
 		}
 	}
 
-	public int insertUser(String user, String password) {
-		String query = "INSERT INTO users (name, password) VALUES (?, ?)";
-		int generatedId = -1;
+	public User insertUser(String userName, String password) {
+	    String query = "INSERT INTO users (name, password) VALUES (?, ?)";
+	    User user = null;
 
-		try {
-			PreparedStatement stmt = connection.prepareStatement(query, Statement.RETURN_GENERATED_KEYS);
-			stmt.setString(1, user);
-			stmt.setString(2, password);
-			stmt.executeUpdate();
+	    try {
+	        PreparedStatement stmt = connection.prepareStatement(query, Statement.RETURN_GENERATED_KEYS);
+	        stmt.setString(1, userName);
+	        stmt.setString(2, password);
+	        stmt.executeUpdate();
 
-			ResultSet rs = stmt.getGeneratedKeys();
-			if (rs.next()) {
-				generatedId = rs.getInt(1);
-			}
+	        ResultSet rs = stmt.getGeneratedKeys();
+	        if (rs.next()) {
+	            int generatedId = rs.getInt(1);
+	            user = new User(userName, generatedId);
+	        }
 
-			rs.close();
-			stmt.close();
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
+	        rs.close();
+	        stmt.close();
 
-		return generatedId;
+	    } catch (SQLException e) {
+	        e.printStackTrace();
+	    }
+
+	    return user;
 	}
 
 	public List<Question> getQuestions() {
@@ -241,7 +249,7 @@ public class DBConnector {
 	}
 
 	public ResultSet getTop10(int mazeId, int dispositionId) {
-		String sql = "SELECT u.name AS user, m.points, m.time, m.life, m.victory FROM matches m "
+		String sql = "SELECT u.name AS username, m.points, m.time, m.health, m.victory FROM games m "
 				+ "JOIN users u ON m.user_id = u.id "
 				+ "WHERE m.maze_id = ? AND m.disposition_id = ? "
 				+ "ORDER BY m.points DESC "
