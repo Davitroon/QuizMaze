@@ -21,7 +21,7 @@ public class DBConnector {
 	private String pwd = "Coco2006";
 	private String url = "jdbc:mysql://localhost/" + database;
 
-	public DBConnector() throws SQLException, ClassNotFoundException {
+	public DBConnector(Connection connection2) throws SQLException, ClassNotFoundException {
 		Class.forName("com.mysql.cj.jdbc.Driver");
 		connection = DriverManager.getConnection(url, login, pwd);
 		System.out.println(" - Database connection established -");
