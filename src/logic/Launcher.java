@@ -17,9 +17,11 @@ public class Launcher {
 
 	public static void main(String[] args) {
 	    try {
+            // Initialize database
 	        dbInitializer = new DBInitializer();
 	        dbConnector = new DBConnector(dbInitializer.getConnection());
 	        
+            // Initialize controller and UI
 	        controller = new Controller();
 	        controller.initialize(dbConnector);
 	        controller.getUiController().getLoginUI().setVisible(true);
