@@ -26,6 +26,11 @@ import logic.UIController;
 import model.Disposition;
 import model.User;
 
+/**
+ * GUI class for selecting a maze and a disposition to play. Displays all mazes
+ * from the database and allows the user to select a maze and either play with
+ * an existing disposition or generate a random one.
+ */
 public class ChooseMazeUI extends JFrame {
 
 	private static final long serialVersionUID = 1L;
@@ -34,7 +39,7 @@ public class ChooseMazeUI extends JFrame {
 	private JTable tableDisposition;
 	private DefaultTableModel mazeModel;
 	private DefaultTableModel dispositionModel;
-	JLabel lblPlay;
+	private JLabel lblPlay;
 
 	private JButton btnPlay;
 	private JButton btnPlayRandomDisposition;
@@ -42,16 +47,16 @@ public class ChooseMazeUI extends JFrame {
 	private Controller controller;
 
 	/**
-	 * Create the frame.
-	 * 
-	 * @param userMenu
+	 * Constructs the ChooseMazeUI window.
+	 *
+	 * @param controller The main application controller.
 	 */
 	@SuppressWarnings("serial")
 	public ChooseMazeUI(Controller controller) {
 		this.controller = controller;
 		UIController uiController = controller.getUiController();
 		DBController dbController = controller.getDbController();
-		
+
 		setResizable(false);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 839, 396);
@@ -76,9 +81,7 @@ public class ChooseMazeUI extends JFrame {
 				new String[] { "id", "xCoord", "yCoord", "num_crocodiles", "crocodile_damage", "num_medkits",
 						"medkit_heal", "question_time", "question_damage", "num_questions" });
 
-		dispositionModel = new DefaultTableModel(new Object[][] {
-
-		}, new String[] { "id_disposition" }) {
+		dispositionModel = new DefaultTableModel(new Object[][] {}, new String[] { "id_disposition" }) {
 			@Override
 			public boolean isCellEditable(int row, int column) {
 				return false;
@@ -118,6 +121,7 @@ public class ChooseMazeUI extends JFrame {
 		btnPlayRandomDisposition.setBounds(457, 298, 205, 34);
 		contentPane.add(btnPlayRandomDisposition);
 
+		// Back button listener
 		btnBack.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				resetWindow();
@@ -125,6 +129,7 @@ public class ChooseMazeUI extends JFrame {
 			}
 		});
 
+		// Maze table click listener
 		tableMazes.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
@@ -145,7 +150,6 @@ public class ChooseMazeUI extends JFrame {
 							Object[] dispositionRow = new Object[] { rset.getInt("id"), };
 							dispositionModel.addRow(dispositionRow);
 						}
-
 					} catch (SQLException e1) {
 						e1.printStackTrace();
 					}
@@ -153,6 +157,7 @@ public class ChooseMazeUI extends JFrame {
 			}
 		});
 
+		// Disposition table click listener
 		tableDisposition.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
@@ -165,6 +170,7 @@ public class ChooseMazeUI extends JFrame {
 			}
 		});
 
+		// Play button listener
 		btnPlay.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				int rowMaze = tableMazes.getSelectedRow();
@@ -184,16 +190,16 @@ public class ChooseMazeUI extends JFrame {
 				int questionDamage = (int) mazeModel.getValueAt(rowMaze, 8);
 
 				int[][] matrix = dbController.loadDispositionMatrix(idDisposition, xCoord, yCoord);
-				int row = tableMazes.getSelectedRow();
-				int mazeId = (int) mazeModel.getValueAt(row, 0);
-				row = tableDisposition.getSelectedRow();
-				int dispId = (int) dispositionModel.getValueAt(row, 0);
+				int mazeId = (int) mazeModel.getValueAt(rowMaze, 0);
+				int dispId = (int) dispositionModel.getValueAt(rowDisposition, 0);
 
-				uiController.getMazeUI().startGame(matrix, xCoord, yCoord, user, timeQuestion, medkitLife, crocodileDamage, questionDamage, mazeId, dispId);
+				uiController.getMazeUI().startGame(matrix, xCoord, yCoord, user, timeQuestion, medkitLife,
+						crocodileDamage, questionDamage, mazeId, dispId);
 				uiController.changeView(ChooseMazeUI.this, uiController.getMazeUI().getFrame());
 			}
 		});
 
+		// Play with random disposition listener
 		btnPlayRandomDisposition.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				int rowMaze = tableMazes.getSelectedRow();
@@ -220,30 +226,31 @@ public class ChooseMazeUI extends JFrame {
 					newDisp.generateMatrix(numMedkits, numCrocodiles);
 					dbController.insertDisposition(newDisp);
 					newDisp.saveMatrix(dbController);
-					
+
 				} catch (IllegalArgumentException ex) {
 					JOptionPane.showMessageDialog(null, ex.getMessage(), "Error generating matrix",
 							JOptionPane.ERROR_MESSAGE);
 					return;
 				}
-				
-				uiController.getMazeUI().startGame(newDisp.getMap(), xCoord, yCoord, user, timeQuestion, medkitLife, crocodileDamage, questionDamage, mazeId, mazeId);
-				uiController.changeView(ChooseMazeUI.this, uiController.getMazeUI().getFrame());
 
+				uiController.getMazeUI().startGame(newDisp.getMap(), xCoord, yCoord, user, timeQuestion, medkitLife,
+						crocodileDamage, questionDamage, mazeId, mazeId);
+				uiController.changeView(ChooseMazeUI.this, uiController.getMazeUI().getFrame());
 			}
 		});
 	}
 
 	/**
-	 * Load mazes from DB and insert into table.
+	 * Loads mazes from the database and populates the table.
+	 *
+	 * @param dbController The database controller to query mazes.
 	 */
 	public void loadWindow(DBController dbController) {
 		user = controller.getUser();
 		lblPlay.setText("Welcome " + user.getName() + ", choose a maze and a disposition to play.");
-		
-		ResultSet rset;
+
 		try {
-			rset = dbController.queryAll("mazes");
+			ResultSet rset = dbController.queryAll("mazes");
 			while (rset.next()) {
 				Object[] row = new Object[] { rset.getInt("id"), rset.getInt("width"), rset.getInt("height"),
 						rset.getInt("num_crocodiles"), rset.getInt("crocodile_damage"), rset.getInt("num_medkits"),
@@ -252,19 +259,16 @@ public class ChooseMazeUI extends JFrame {
 				mazeModel.addRow(row);
 			}
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
 
 	/**
-	 * Reset visual state.
+	 * Resets the visual state of the window, clearing tables and disabling buttons.
 	 */
 	public void resetWindow() {
 		btnPlay.setEnabled(false);
 		btnPlayRandomDisposition.setEnabled(false);
-		tableMazes.clearSelection();
-
 		tableMazes.clearSelection();
 
 		if (dispositionModel.getRowCount() > 0) {

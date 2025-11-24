@@ -1,12 +1,12 @@
 package ui;
 
-import java.awt.Color; // Allows defining colors (e.g., Color.WHITE, Color.RED)
+import java.awt.Color;
 import java.awt.Font;
 import java.awt.GridLayout;
 import java.util.Collections;
 import java.util.List;
 
-import javax.swing.BorderFactory; // To create borders around components
+import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -20,28 +20,32 @@ import logic.UIController;
 import model.Question;
 import model.User;
 
+/**
+ * The {@code MazeUI} class represents the main interface for playing a maze
+ * game. The player navigates through a matrix-based maze, encounters medkits,
+ * crocodiles, and must answer timed questions to progress.
+ */
 public class MazeUI {
+
 	private JFrame frame;
-	private JPanel[] gridCells = new JPanel[9]; // Array of JPanels representing the user's view
+	private JPanel[] gridCells = new JPanel[9];
 	private int[][] matrix;
+
 	private int width, height;
 	private User user;
 	private int mazeId;
 	private int layoutId;
-
+	
 	private JLabel lifeLabel;
 	private JLabel timerLabel;
 	private Timer timer;
 	private int startTime;
-	private int questionTime; // seconds, obtained from maze/layout
-
+	private int questionTime;
 	private int medkitLife;
 	private int crocodileDamage;
 	private int questionDamage;
-
-	private List<Question> questions; // List of Question objects
+	private List<Question> questions;
 	private int questionIndex = 0;
-
 	private int correctAnswers = 0;
 	private int incorrectAnswers = 0;
 	private JLabel scoreLabel;
@@ -50,7 +54,10 @@ public class MazeUI {
 	private DBController dbController;
 	private UIController uiController;
 
-	// Constructor receives parameters to create a unique view
+	/**
+	 * Constructs the MazeUI window and initializes all UI components, but does not
+	 * start the game yet.
+	 */
 	public MazeUI() {
 		frame = new JFrame("Maze");
 		frame.setResizable(false);
@@ -58,13 +65,11 @@ public class MazeUI {
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.getContentPane().setLayout(null);
 
-		// Life label
 		lifeLabel = new JLabel();
 		lifeLabel.setFont(new Font("Tahoma", Font.BOLD, 18));
 		lifeLabel.setBounds(50, 10, 200, 30);
 		frame.getContentPane().add(lifeLabel);
 
-		// Timer label
 		timerLabel = new JLabel("Time: 00:00");
 		timerLabel.setFont(new Font("Tahoma", Font.BOLD, 18));
 		timerLabel.setBounds(250, 10, 150, 30);
@@ -75,6 +80,7 @@ public class MazeUI {
 		frame.getContentPane().add(userViewPanel);
 		userViewPanel.setLayout(new GridLayout(3, 3, 5, 5));
 
+		// Movement buttons
 		JButton btnUP = new JButton("↑");
 		btnUP.setFont(new Font("Tahoma", Font.BOLD, 40));
 		btnUP.setBounds(180, 410, 75, 65);
@@ -100,32 +106,17 @@ public class MazeUI {
 		scoreLabel.setBounds(180, 590, 200, 30);
 		frame.getContentPane().add(scoreLabel);
 
-		// Movement listeners
-		btnUP.addActionListener(new java.awt.event.ActionListener() {
-			public void actionPerformed(java.awt.event.ActionEvent e) {
-				tryMove(0, -1);
-			}
-		});
-		btnDOWN.addActionListener(new java.awt.event.ActionListener() {
-			public void actionPerformed(java.awt.event.ActionEvent e) {
-				tryMove(0, 1);
-			}
-		});
-		btnLEFT.addActionListener(new java.awt.event.ActionListener() {
-			public void actionPerformed(java.awt.event.ActionEvent e) {
-				tryMove(-1, 0);
-			}
-		});
-		btnRIGHT.addActionListener(new java.awt.event.ActionListener() {
-			public void actionPerformed(java.awt.event.ActionEvent e) {
-				tryMove(1, 0);
-			}
-		});
-
+		// Movement actions
+		btnUP.addActionListener(e -> tryMove(0, -1));
+		btnDOWN.addActionListener(e -> tryMove(0, 1));
+		btnLEFT.addActionListener(e -> tryMove(-1, 0));
+		btnRIGHT.addActionListener(e -> tryMove(1, 0));
 	}
 
 	/**
-	 * Initialize the application.
+	 * Initializes controllers and loads questions from the database.
+	 *
+	 * @param controller main controller used to access database and UI logic
 	 */
 	public void initialize(Controller controller) {
 		dbController = controller.getDbController();
@@ -134,25 +125,37 @@ public class MazeUI {
 		Collections.shuffle(this.questions);
 	}
 
+	/**
+	 * Attempts to move the user to a new position in the maze. Applies wall checks,
+	 * boundary checks, medkit and crocodile effects, and triggers a timed question
+	 * before allowing movement.
+	 *
+	 * @param offsetX horizontal movement (-1, 0, 1)
+	 * @param offsetY vertical movement (-1, 0, 1)
+	 */
 	private void tryMove(int offsetX, int offsetY) {
 		int targetX = user.getX() + offsetX;
 		int targetY = user.getY() + offsetY;
+
+		// Boundary checks
 		if (targetX < 0 || targetX >= width || targetY < 0 || targetY >= height) {
 			JOptionPane.showMessageDialog(frame, "You cannot leave the maze.");
 			return;
 		}
+
+		// Wall detection
 		if (matrix[targetY][targetX] == 3) {
 			JOptionPane.showMessageDialog(frame, "There is a wall!");
 			return;
 		}
 
-		// Timed question
+		// Question gate
 		if (showTimedQuestion()) {
 			user.moveTo(targetX, targetY);
 
-			// Cell effects
+			// Cell interactions
 			if (matrix[targetY][targetX] == 1) { // Medkit
-				int leftover = user.heal(medkitLife); // Returns leftover life as points
+				int leftover = user.heal(medkitLife);
 				if (leftover > 0) {
 					user.addPoints(leftover);
 					JOptionPane.showMessageDialog(frame,
@@ -161,16 +164,16 @@ public class MazeUI {
 					JOptionPane.showMessageDialog(frame, "You found a medkit! +" + medkitLife + " life");
 				}
 				scoreLabel.setText("Score = 0");
-				matrix[targetY][targetX] = 0; // Remove medkit
+				matrix[targetY][targetX] = 0;
 			} else if (matrix[targetY][targetX] == 2) { // Crocodile
 				user.reduceHealth(crocodileDamage);
 				JOptionPane.showMessageDialog(frame, "A crocodile bit you! -" + crocodileDamage + " life");
-				matrix[targetY][targetX] = 0; // Remove crocodile
+				matrix[targetY][targetX] = 0;
 			}
 
 			updateView();
 
-			// Check if reached goal (bottom-right corner)
+			// Goal detection
 			if (targetX == width - 1 && targetY == height - 1) {
 				timer.stop();
 				JOptionPane.showMessageDialog(frame,
@@ -178,20 +181,29 @@ public class MazeUI {
 				showSummary();
 				frame.dispose();
 			}
-		} else { // If user loses life after failing the question
+		} else {
+			// Player failed question
 			if (user.getHealth() <= 0) {
 				timer.stop();
 				JOptionPane.showMessageDialog(frame, "You lost! You ran out of life.");
 				showSummary();
 				frame.dispose();
 			}
-			// Otherwise, user does not move
 		}
 	}
 
-	/*
-	 * This method is essential. Renders a 3x3 window centered on the user with
-	 * colors based on maze content.
+	/**
+	 * Updates the 3x3 interface showing the cells around the player's current
+	 * position. Colors represent:
+	 * <ul>
+	 * <li>White – empty</li>
+	 * <li>Green – medkit</li>
+	 * <li>Red – crocodile</li>
+	 * <li>Gray – wall</li>
+	 * <li>Yellow – player</li>
+	 * <li>Gold – goal</li>
+	 * <li>Black – out of bounds</li>
+	 * </ul>
 	 */
 	private void updateView() {
 		int userX = user.getX();
@@ -201,73 +213,67 @@ public class MazeUI {
 			for (int offsetX = -1; offsetX <= 1; offsetX++) {
 				int x = userX + offsetX;
 				int y = userY + offsetY;
-				int index = (offsetY + 1) * 3 + (offsetX + 1); // Map 2D (-1 to 1) to 1D 0-8
+				int index = (offsetY + 1) * 3 + (offsetX + 1);
 				JPanel cell = gridCells[index];
+
 				if (x >= 0 && x < width && y >= 0 && y < height) {
 					int element = matrix[y][x];
+
 					if (x == width - 1 && y == height - 1) {
-						cell.setBackground(new Color(255, 215, 0)); // Gold color for goal
+						cell.setBackground(new Color(255, 215, 0));
 					} else {
 						switch (element) {
 						case 0:
 							cell.setBackground(Color.WHITE);
-							break; // Empty
+							break;
 						case 1:
 							cell.setBackground(Color.GREEN);
-							break; // Medkit
+							break;
 						case 2:
 							cell.setBackground(Color.RED);
-							break; // Crocodile
+							break;
 						case 3:
 							cell.setBackground(Color.GRAY);
-							break; // Wall
+							break;
 						default:
 							cell.setBackground(Color.LIGHT_GRAY);
 							break;
 						}
 					}
 				} else {
-					cell.setBackground(Color.BLACK); // Out of bounds
+					cell.setBackground(Color.BLACK);
 				}
 			}
 		}
 
-		// Central cell is the user
 		gridCells[4].setBackground(Color.YELLOW);
 		lifeLabel.setText("Life: " + user.getHealth());
 	}
 
-	/** Starts the timer */
+	/** Starts the game timer which updates the displayed time every second. */
 	private void startTimer() {
 		startTime = (int) System.currentTimeMillis();
-		timer = new Timer(1000, new java.awt.event.ActionListener() {
-			public void actionPerformed(java.awt.event.ActionEvent e) {
-				updateTimer();
-			}
-		});
+		timer = new Timer(1000, e -> updateTimer());
 		timer.start();
 	}
 
-	/* Updates the timer label every second */
+	/** Updates the timer label based on elapsed time since game start. */
 	private void updateTimer() {
 		int currentTime = (int) System.currentTimeMillis();
-		int seconds = (int) ((currentTime - startTime) / 1000);
+		int seconds = (currentTime - startTime) / 1000;
+
 		int min = seconds / 60;
 		int sec = seconds % 60;
 
-		StringBuilder minStr = new StringBuilder();
-		if (min < 10)
-			minStr.append('0');
-		minStr.append(min);
-
-		StringBuilder secStr = new StringBuilder();
-		if (sec < 10)
-			secStr.append('0');
-		secStr.append(sec);
-
-		timerLabel.setText("Time: " + minStr + ":" + secStr);
+		timerLabel.setText(String.format("Time: %02d:%02d", min, sec));
 	}
 
+	/**
+	 * Shows a timed question to the player. The player must answer correctly or
+	 * lose health.
+	 *
+	 * @return {@code true} if the answer was correct, {@code false} otherwise
+	 */
 	private boolean showTimedQuestion() {
 		if (questions == null || questions.isEmpty()) {
 			JOptionPane.showMessageDialog(frame, "No questions available.");
@@ -288,7 +294,6 @@ public class MazeUI {
 			user.addPoints(10);
 			scoreLabel.setText("Score = " + user.getPoints());
 			JOptionPane.showMessageDialog(frame, "Correct!");
-
 		} else {
 			incorrectAnswers++;
 			user.reduceHealth(questionDamage);
@@ -300,26 +305,42 @@ public class MazeUI {
 		return result;
 	}
 
+	/**
+	 * Shows a summary of the game, saves the data to the database, and displays the
+	 * results window.
+	 */
 	private void showSummary() {
 		String time = timerLabel.getText().replace("Time: ", "");
 		boolean victory = user.getHealth() > 0;
 
-		// Insert game record into database
-		dbController.insertGame(user.getId(), this.mazeId, this.layoutId, victory, user.getHealth(), correctAnswers,
+		dbController.insertGame(user.getId(), mazeId, layoutId, victory, user.getHealth(), correctAnswers,
 				incorrectAnswers, user.getPoints(), time);
 
-		// Open results window
 		ResultsMazeUI resultsWindow = uiController.getResultsMazeUI();
 		resultsWindow.loadData(correctAnswers, incorrectAnswers, user, time, victory, mazeId, layoutId, matrix);
-		resultsWindow.setLocationRelativeTo(frame); // Center over current window
+		resultsWindow.setLocationRelativeTo(frame);
 		resultsWindow.setVisible(true);
 
-		// Close the maze window
 		frame.dispose();
 	}
 
+	/**
+	 * Starts a new game by setting the maze, user, and configuration values.
+	 *
+	 * @param matrix          maze matrix
+	 * @param width           maze width
+	 * @param height          maze height
+	 * @param user            player object
+	 * @param questionTime    time allowed for each question
+	 * @param medkitLife      life restored by medkits
+	 * @param crocodileDamage damage dealt by crocodiles
+	 * @param questionDamage  damage for incorrect trivia answers
+	 * @param mazeId          maze identifier
+	 * @param layoutId        layout identifier
+	 */
 	public void startGame(int[][] matrix, int width, int height, User user, int questionTime, int medkitLife,
 			int crocodileDamage, int questionDamage, int mazeId, int layoutId) {
+
 		this.matrix = matrix;
 		this.width = width;
 		this.height = height;
@@ -332,7 +353,9 @@ public class MazeUI {
 		this.layoutId = layoutId;
 
 		lifeLabel.setText("Life: " + user.getHealth());
-		for (int i = 0; i < 9; i++) { // Create 9 cells and store them in the array
+
+		// Generate 3×3 cells
+		for (int i = 0; i < 9; i++) {
 			JPanel cell = new JPanel();
 			cell.setBorder(BorderFactory.createLineBorder(Color.ORANGE));
 			userViewPanel.add(cell);
@@ -341,9 +364,11 @@ public class MazeUI {
 
 		updateView();
 		startTimer();
-
 	}
 
+	/**
+	 * @return the game window frame
+	 */
 	public JFrame getFrame() {
 		return frame;
 	}
