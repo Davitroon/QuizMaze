@@ -1,5 +1,25 @@
 <h1 align="center">QuizMaze</h1>
 
+<p align="center">
+  <em>A strategic maze survival game built in Java where trivia knowledge is your key to escaping crocodiles and reaching the exit.</em>
+</p>
+
+<p align="center">
+  <img src="https://img.shields.io/badge/Java-21%2B-orange?logo=openjdk&logoColor=white" alt="Java" />
+  <img src="https://img.shields.io/badge/Javax%20Swing-UI-blue?logo=java&logoColor=white" alt="Swing" />
+  <img src="https://img.shields.io/badge/MySQL-Database-4479A1?logo=mysql&logoColor=white" alt="MySQL" />
+</p>
+
+---
+
+## 📚 Table of Contents
+- [📝 Description](#-description "Learn more about the game's concept and purpose")
+- [⚙️ Installation](#️-installation "Instructions to install and run the project locally")
+- [🕹️ How to Play](#%EF%B8%8F-how-to-play "Step-by-step guide on how to play the game")
+- [🔧 Game Architecture](#-game-architecture "Understand the structure and logic behind the game")
+- [🧠 Technologies](#-technologies "See which technologies were used to build the project")
+- [👥 Authors](#-authors "The autors of the proyect")
+
 ---
 
 ## 📝 Description
@@ -28,17 +48,22 @@ The application features a robust **Management System** allowing users to design
 ---
 
 ## ⚙️ Installation
-To run this project on your local machine, follow these steps:
+To run this program, you can easily use the **installer** in the [latest release](https://github.com/Davitroon/QuizMaze/releases "See latest release").
 
-**Prerequisites**
+Otherwise, you can manually download the proyect following these steps:
+
+### Prerequisites
 - **Java Development Kit (JDK) 21** or higher.
 
 - An IDE (Eclipse, IntelliJ, or VS Code) is recommended.
 
 - **SQLite JDBC Driver** (ensure this library is added to your project's build path/classpath).
 
-**Setup**
+### Setup
 1. **Clone/Download** the repository to your local machine.
+``` Bash
+git clone https://github.com/usuario/nombre-del-repo.git
+```` 
 
 2. Open the project in your preferred IDE.
 
@@ -53,7 +78,7 @@ To run this project on your local machine, follow these steps:
 ---
 
 ## 🕹️ How to Play
-1. **Login**
+### Login
 
 Upon launching, you will be greeted by the Login screen.
 
@@ -65,7 +90,7 @@ Upon launching, you will be greeted by the Login screen.
 
 - Alternatively, you can register a new account.
 
-2. **Modes**
+### Modes
 
 Once logged in, you have two main options:
 
@@ -136,20 +161,39 @@ The project is structured using the **Model-View-Controller (MVC)** architectura
 ## 🧠 Technologies
 This project was built using the following technologies:
 
-Language: Java (JDK 21)
+| Technology | Description |
+|-------------|-------------|
+| ![Java](https://img.shields.io/badge/Java-21%2B-orange?logo=openjdk&logoColor=white) | Main programming language used to build the entire application. |
+| ![Swing](https://img.shields.io/badge/Javax%20Swing-UI-blue?logo=java&logoColor=white) | Used to create the graphical user interface. |
+| ![MySQL](https://img.shields.io/badge/MySQL-Database-4479A1?logo=mysql&logoColor=white) | Relational database for storing users, games, and statistics. |
+| ![JDBC](https://img.shields.io/badge/JDBC-Connector-yellow?logo=java&logoColor=white) | Enables communication between Java and the MySQL database. |
 
-GUI Framework: Java Swing (javax.swing)
+--- 
 
-Database: SQLite (Embedded Relational Database)
+## 👥 Authors
 
-Database Driver: JDBC (Java Database Connectivity)
-
-Concepts Applied:
-
-Object-Oriented Programming (OOP)
-
-MVC Architecture
-
-DAO Design Pattern
-
-SQL Data Persistence
+<div style="display: flex; justify-content: center; gap: 40px;">
+  <div style="text-align: center;">
+    <a href="https://github.com/Davitroon" title="Davitroon's profile">
+      <img src="https://github.com/Davitroon.png" width="100px" alt="Davitroon's avatar"/>
+      <br />
+      <sub><b>Davitroon</b></sub>
+    </a>
+  </div>
+  
+  <div style="text-align: center;">
+    <a href="https://github.com/exili0" title="exili0's profile">
+      <img src="https://github.com/exili0.png" width="100px" alt="exili0's avatar"/>
+      <br />
+      <sub><b>exili0</b></sub>
+    </a>
+  </div>
+  
+  <div style="text-align: center;">
+    <a href="https://github.com/Tineo06" title="Tineo06's profile">
+      <img src="https://github.com/Tineo06.png" width="100px" alt="Tineo06's avatar"/>
+      <br />
+      <sub><b>Tineo06</b></sub>
+    </a>
+  </div>
+</div>
