@@ -111,7 +111,9 @@ Once logged in, you have two main options:
 
   - Configure **Questions** (Time limit to answer and damage taken for wrong answers).
 
-  !["Maze creation showcase"](/docs/creation-showcase.gif)
+    <div align="center">
+        <img src="/docs/creation-showcase.gif" alt="Maze creation showcase">
+    </div>
 
 - **Play Maze**: Select an existing maze configuration.
 
