@@ -84,9 +84,9 @@ Upon launching, you will be greeted by the Login screen.
 
 - **Default Credentials:** You can log in immediately using the pre-installed admin user:
 
-    - **User:** `user`
+    - **User:** `admin`
 
-    - **Password:** `user`
+    - **Password:** `admin`
 
 - Alternatively, you can register a new account.
 
