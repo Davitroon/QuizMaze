@@ -91,9 +91,9 @@ Upon launching, you will be greeted by the Login screen.
 
 - **Default Credentials:** You can log in immediately using the pre-installed admin user:
 
-  - **User:** `user`
+    - **User:** `admin`
 
-  - **Password:** `user`
+    - **Password:** `admin`
 
 - Alternatively, you can register a new account.
 
@@ -191,29 +191,30 @@ This project was built using the following technologies:
 ---
 
 ## 👥 Authors
-
-<div style="display: flex; justify-content: center; gap: 40px;">
-  <div style="text-align: center;">
-    <a href="https://github.com/Davitroon" title="Davitroon's profile">
-      <img src="https://github.com/Davitroon.png" width="100px" alt="Davitroon's avatar"/>
-      <br />
-      <sub><b>Davitroon</b></sub>
-    </a>
-  </div>
-  
-  <div style="text-align: center;">
-    <a href="https://github.com/exili0" title="exili0's profile">
-      <img src="https://github.com/exili0.png" width="100px" alt="exili0's avatar"/>
-      <br />
-      <sub><b>exili0</b></sub>
-    </a>
-  </div>
-  
-  <div style="text-align: center;">
-    <a href="https://github.com/Tineo06" title="Tineo06's profile">
-      <img src="https://github.com/Tineo06.png" width="100px" alt="Tineo06's avatar"/>
-      <br />
-      <sub><b>Tineo06</b></sub>
-    </a>
-  </div>
+<div align="center">
+  <table>
+    <tr>
+      <td align="center">
+        <a href="https://github.com/Davitroon" title="Davitroon's profile">
+          <img src="https://github.com/Davitroon.png" width="100px;" alt="Davitroon's avatar"/>
+          <br />
+          <sub><b>Davitroon</b></sub>
+        </a>
+      </td>
+      <td align="center">
+        <a href="https://github.com/exili0" title="exili0's profile">
+          <img src="https://github.com/exili0.png" width="100px;" alt="exili0's avatar"/>
+          <br />
+          <sub><b>exili0</b></sub>
+        </a>
+      </td>
+      <td align="center">
+        <a href="https://github.com/Tineo06" title="Tineo06's profile">
+          <img src="https://github.com/Tineo06.png" width="100px;" alt="Tineo06's avatar"/>
+          <br />
+          <sub><b>Tineo06</b></sub>
+        </a>
+      </td>
+    </tr>
+  </table>
 </div>
