@@ -13,6 +13,7 @@
 ---
 
 ## 📚 Table of Contents
+
 - [📝 Description](#-description "Learn more about the game's concept and purpose")
 - [⚙️ Installation](#️-installation "Instructions to install and run the project locally")
 - [🕹️ How to Play](#%EF%B8%8F-how-to-play "Step-by-step guide on how to play the game")
@@ -23,6 +24,7 @@
 ---
 
 ## 📝 Description
+
 QuizMaze is a Java-based interactive desktop game developed as a group project. It combines logic, strategy, and trivia knowledge. The core concept revolves around navigating procedurally generated mazes where progress is determined not just by pathfinding, but by answering questions correctly.
 
 The application features a robust **Management System** allowing users to design custom maze configurations (size, difficulty, item density) and a **Gameplay Mode** where users attempt to survive the maze while managing their health points against obstacles and trivia challenges.
@@ -35,11 +37,11 @@ The application features a robust **Management System** allowing users to design
 
 - **Dynamic Gameplay:** Mazes are populated with:
 
-    - 🐊 **Crocodiles:** Enemies that inflict damage.
+  - 🐊 **Crocodiles:** Enemies that inflict damage.
 
-    - ❤️ **Medkits:** Items that restore health.
+  - ❤️ **Medkits:** Items that restore health.
 
-    - ❓ **Trivia Questions:** Required to advance through specific sections or penalties.
+  - ❓ **Trivia Questions:** Required to advance through specific sections or penalties.
 
 - **Persistence:** All data (users, mazes, game history, questions) is stored locally using SQLite.
 
@@ -48,11 +50,13 @@ The application features a robust **Management System** allowing users to design
 ---
 
 ## ⚙️ Installation
+
 To run this program, you can easily use the **installer** in the [latest release](https://github.com/Davitroon/QuizMaze/releases "See latest release").
 
 Otherwise, you can manually download the proyect following these steps:
 
 ### Prerequisites
+
 - **Java Development Kit (JDK) 21** or higher.
 
 - An IDE (Eclipse, IntelliJ, or VS Code) is recommended.
@@ -60,10 +64,12 @@ Otherwise, you can manually download the proyect following these steps:
 - **SQLite JDBC Driver** (ensure this library is added to your project's build path/classpath).
 
 ### Setup
+
 1. **Clone/Download** the repository to your local machine.
-``` Bash
+
+```Bash
 git clone https://github.com/usuario/nombre-del-repo.git
-```` 
+```
 
 2. Open the project in your preferred IDE.
 
@@ -78,15 +84,16 @@ git clone https://github.com/usuario/nombre-del-repo.git
 ---
 
 ## 🕹️ How to Play
+
 ### Login
 
 Upon launching, you will be greeted by the Login screen.
 
 - **Default Credentials:** You can log in immediately using the pre-installed admin user:
 
-    - **User:** `user`
+  - **User:** `user`
 
-    - **Password:** `user`
+  - **Password:** `user`
 
 - Alternatively, you can register a new account.
 
@@ -96,13 +103,15 @@ Once logged in, you have two main options:
 
 - **Create Maze:** Define the rules of the game.
 
-    - Set the grid size (Width/Height).
+  - Set the grid size (Width/Height).
 
-    - Define the number of **Crocodiles and Medkits**.
+  - Define the number of **Crocodiles and Medkits**.
 
-    - Set **Damage/Heal values** (how much life a croc takes or a medkit gives).
+  - Set **Damage/Heal values** (how much life a croc takes or a medkit gives).
 
-    - Configure **Questions** (Time limit to answer and damage taken for wrong answers).
+  - Configure **Questions** (Time limit to answer and damage taken for wrong answers).
+
+  !["Maze creation showcase"](/docs/creation-showcase.gif)
 
 - **Play Maze**: Select an existing maze configuration.
 
@@ -112,63 +121,74 @@ Once logged in, you have two main options:
 
     - **Survival:** Keep your health above 0. If you hit 0 HP, it is Game Over.
 
+    <div align="center">
+        <img src="/docs/game-showcase.gif" alt="Maze creation showcase">
+    </div>
+
     - **Winning:** Reach the end of the maze to save your score and time to the leaderboard.
+
+    <div align="center">
+        <img src="/docs/leadboard-showcase.png" alt="Maze creation showcase">
+    </div>
 
 ---
 
 ## 🔧 Game Architecture
+
 The project is structured using the **Model-View-Controller (MVC)** architectural pattern to ensure a clean separation of concerns and maintainable code.
 
 ### 📂 Package Structure
+
 - `dao` **(Data Access Object)**:
 
-    - Handles all direct interactions with the SQLite database.
+  - Handles all direct interactions with the SQLite database.
 
-    - `DBConnector.java`: Contains SQL queries for inserting/retrieving mazes, users, and game results.
+  - `DBConnector.java`: Contains SQL queries for inserting/retrieving mazes, users, and game results.
 
-    - `DBInitializer.java`: Handles the automatic setup of the database schema and default data injection.
+  - `DBInitializer.java`: Handles the automatic setup of the database schema and default data injection.
 
 - `model`:
 
-    - Represents the data objects of the application.
+  - Represents the data objects of the application.
 
-    - `Maze.java`: Stores configuration (size, difficulty settings).
+  - `Maze.java`: Stores configuration (size, difficulty settings).
 
-    - `Disposition.java`: Represents the specific grid layout (where walls, items, and enemies are located).
+  - `Disposition.java`: Represents the specific grid layout (where walls, items, and enemies are located).
 
-    - `User.java`: Stores player state (health, coordinates, points).
+  - `User.java`: Stores player state (health, coordinates, points).
 
-    - `Question.java`: Structure for trivia questions and answers.
+  - `Question.java`: Structure for trivia questions and answers.
 
 - `logic` **(Controller)**:
 
-    - Acts as the bridge between the UI and the Data.
+  - Acts as the bridge between the UI and the Data.
 
-    - `Controller.java`: The central hub that coordinates the app.
+  - `Controller.java`: The central hub that coordinates the app.
 
-    - `DBController.java`: A wrapper that safely exposes database functions to the rest of the app.
+  - `DBController.java`: A wrapper that safely exposes database functions to the rest of the app.
 
-    - `Launcher.java`: The entry point (main method) of the application.
+  - `Launcher.java`: The entry point (main method) of the application.
 
 - `ui` **(View)**:
 
-    - Contains all `JFrame` classes responsible for the graphical user interface.
+  - Contains all `JFrame` classes responsible for the graphical user interface.
 
-    - Managed by `UIController.java` which handles screen transitions (e.g., swapping from Login to Maze View).
+  - Managed by `UIController.java` which handles screen transitions (e.g., swapping from Login to Maze View).
 
 ---
 
 ## 🧠 Technologies
+
 This project was built using the following technologies:
 
-| Technology | Description |
-|-------------|-------------|
-| ![Java](https://img.shields.io/badge/Java-21%2B-orange?logo=openjdk&logoColor=white) | Main programming language used to build the entire application. |
-| ![Swing](https://img.shields.io/badge/Javax%20Swing-UI-blue?logo=java&logoColor=white) | Used to create the graphical user interface. |
-| ![MySQL](https://img.shields.io/badge/MySQL-Database-4479A1?logo=mysql&logoColor=white) | Relational database for storing users, games, and statistics. |
-| ![JDBC](https://img.shields.io/badge/JDBC-Connector-yellow?logo=java&logoColor=white) | Enables communication between Java and the MySQL database. |
+| Technology                                                                              | Description                                                     |
+| --------------------------------------------------------------------------------------- | --------------------------------------------------------------- |
+| ![Java](https://img.shields.io/badge/Java-21%2B-orange?logo=openjdk&logoColor=white)    | Main programming language used to build the entire application. |
+| ![Swing](https://img.shields.io/badge/Javax%20Swing-UI-blue?logo=java&logoColor=white)  | Used to create the graphical user interface.                    |
+| ![MySQL](https://img.shields.io/badge/MySQL-Database-4479A1?logo=mysql&logoColor=white) | Relational database for storing users, games, and statistics.   |
+| ![JDBC](https://img.shields.io/badge/JDBC-Connector-yellow?logo=java&logoColor=white)   | Enables communication between Java and the MySQL database.      |
 
---- 
+---
 
 ## 👥 Authors
 
