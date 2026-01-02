@@ -6,7 +6,7 @@
 
 <p align="center">
   <img src="https://img.shields.io/badge/Java-21%2B-orange?logo=openjdk&logoColor=white" alt="Java" />
-  <img src="https://img.shields.io/badge/Javax%20Swing-UI-blue?logo=java&logoColor=white" alt="Swing" />
+<img src="https://img.shields.io/badge/Swing-UI-blue?logo=openjdk&logoColor=white" alt="Swing" />
   <img src="https://img.shields.io/badge/MySQL-Database-4479A1?logo=mysql&logoColor=white" alt="MySQL" />
 </p>
 
@@ -186,9 +186,9 @@ This project was built using the following technologies:
 | Technology                                                                              | Description                                                     |
 | --------------------------------------------------------------------------------------- | --------------------------------------------------------------- |
 | ![Java](https://img.shields.io/badge/Java-21%2B-orange?logo=openjdk&logoColor=white)    | Main programming language used to build the entire application. |
-| ![Swing](https://img.shields.io/badge/Javax%20Swing-UI-blue?logo=java&logoColor=white)  | Used to create the graphical user interface.                    |
+| ![Swing](https://img.shields.io/badge/Javax%20Swing-UI-blue?logo=openjdk&logoColor=white)  | Used to create the graphical user interface.                    |
 | ![MySQL](https://img.shields.io/badge/MySQL-Database-4479A1?logo=mysql&logoColor=white) | Relational database for storing users, games, and statistics.   |
-| ![JDBC](https://img.shields.io/badge/JDBC-Connector-yellow?logo=java&logoColor=white)   | Enables communication between Java and the MySQL database.      |
+| ![JDBC](https://img.shields.io/badge/JDBC-Connector-yellow?logo=openjdk&logoColor=white)   | Enables communication between Java and the MySQL database.      |
 
 ---
 
