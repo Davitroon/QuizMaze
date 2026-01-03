@@ -228,6 +228,7 @@ This project was built using the following technologies:
 <sub>
 
 This project is licensed under the MIT License.  
+
 Copyright (c) 2025 Davitroon, exili0, Tineo06
 
 </sub>
